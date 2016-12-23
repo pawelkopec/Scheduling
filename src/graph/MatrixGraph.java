@@ -4,15 +4,18 @@ import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 /**
- * Created by vivace on 23.12.16.
+ * Created by Paweł Kopeć on 23.12.16.
+ *
+ * Implementation of graph data structure
+ * based on adjacency matrix.
  */
-public class ArrayGraph extends Graph {
+public class MatrixGraph extends Graph {
 
-    public ArrayGraph() {
+    public MatrixGraph() {
         super();
     }
 
-    public ArrayGraph(InputStream in) {
+    public MatrixGraph(InputStream in) {
         super(in);
     }
 

@@ -1,11 +1,11 @@
 package main;
 
-import graph.ArrayGraph;
+import graph.MatrixGraph;
 
 public class Main {
 
     public static void main(String[] args) {
-        ArrayGraph g = new ArrayGraph();
+        MatrixGraph g = new MatrixGraph();
         System.out.print(g + "Gandzia Yo");
     }
 }

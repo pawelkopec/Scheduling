@@ -4,7 +4,10 @@ import java.io.InputStream;
 import java.util.NoSuchElementException;
 
 /**
- * Created by vivace on 23.12.16.
+ * Created by Paweł Kopeć on 23.12.16.
+ *
+ * Abstract class for implementation of graph
+ * abstract data structure.
  */
 public abstract class Graph {
 
