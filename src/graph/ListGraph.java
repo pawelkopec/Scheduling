@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
@@ -11,27 +12,24 @@ import java.util.NoSuchElementException;
  */
 public class ListGraph extends Graph {
 
-    ListGraph() {
+    private LinkedList<Integer>[] neighbourList;
+
+    public ListGraph() {
         super();
     }
 
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
-    ListGraph(InputStream in) {
+    public ListGraph(InputStream in) {
         super(in);
+    }
+
+    @Override
+    protected void read(InputStream in) throws IllegalArgumentException {
+        super.read(in);
+    }
+
+    @Override
+    protected void initContainers(int verticesNumber, int edgesNumber) {
+
     }
 
     @Override
@@ -87,10 +85,5 @@ public class ListGraph extends Graph {
     @Override
     public String toString() {
         return super.toString();
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
     }
 }

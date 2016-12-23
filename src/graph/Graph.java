@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.InputStream;
+import java.util.InvalidPropertiesFormatException;
 import java.util.NoSuchElementException;
 
 /**
@@ -11,11 +12,33 @@ import java.util.NoSuchElementException;
  */
 public abstract class Graph {
 
-    Graph() {}
+    Graph() {
+        initContainers(0, 0);
+    }
 
     Graph(InputStream in) {
+        read(in);
+    }
+
+    /**
+     * Reads a graph from input stream.
+     *
+     * @param in stream from which graph is read
+     * @throws IllegalArgumentException if input format is incorrect
+     */
+    protected void read(InputStream in) throws IllegalArgumentException {
 
     }
+
+    /**
+     * Initialize all necessary containers
+     * to provide abstraction for further initialization.
+     * @see #read(InputStream)
+     *
+     * @param verticesNumber number of vertices
+     * @param edgesNumber number of edges
+     */
+    protected abstract void initContainers(int verticesNumber, int edgesNumber);
 
     /**
      * Returns the number of vertices.
@@ -94,7 +117,7 @@ public abstract class Graph {
      * @return array of indexes of vertex's neighbours
      * @throws NoSuchElementException if there is no vertex of such index
      */
-    public abstract int [] getNeighbours(int index) throws NoSuchElementException;
+    public abstract int[] getNeighbours(int index) throws NoSuchElementException;
 
     /**
      * Checks if there is an edge between vertices

@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
@@ -11,12 +12,24 @@ import java.util.NoSuchElementException;
  */
 public class MatrixGraph extends Graph {
 
-    public MatrixGraph() {
+    int[][] adjacencyMatrix;
+
+    MatrixGraph() {
         super();
     }
 
-    public MatrixGraph(InputStream in) {
+    MatrixGraph(InputStream in) {
         super(in);
+    }
+
+    @Override
+    protected void read(InputStream in) throws IllegalArgumentException {
+        super.read(in);
+    }
+
+    @Override
+    protected void initContainers(int verticesNumber, int edgesNumber) {
+
     }
 
     @Override
@@ -72,25 +85,5 @@ public class MatrixGraph extends Graph {
     @Override
     public String toString() {
         return super.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
     }
 }

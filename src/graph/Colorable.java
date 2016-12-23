@@ -46,7 +46,7 @@ public interface Colorable {
      * @param color which we look for
      * @return array of indexes of vertices in goven color
      */
-    default int [] getColored(int color) {
+    default int[] getColored(int color) {
         return new int [0];
     }
 }
