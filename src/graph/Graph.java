@@ -1,8 +1,8 @@
 package graph;
 
 import java.io.InputStream;
-import java.util.InvalidPropertiesFormatException;
 import java.util.NoSuchElementException;
+import java.util.Scanner;
 
 /**
  * Created by Paweł Kopeć on 23.12.16.
@@ -27,7 +27,26 @@ public abstract class Graph {
      * @throws IllegalArgumentException if input format is incorrect
      */
     protected void read(InputStream in) throws IllegalArgumentException {
+        Scanner scanner = new Scanner(in);
 
+        int verticesSize = scanner.nextInt();
+        if(verticesSize < 0) {
+            throw new IllegalArgumentException("Number of vertices in a graph cannot be negative");
+        }
+
+        int edgesNumber = scanner.nextInt();
+        if(edgesNumber < 0) {
+            throw new IllegalArgumentException("Number of edges in a graph cannot be negative");
+        }
+
+        initContainers(verticesSize, edgesNumber);
+
+        int from, to;
+        for(int i = 0; i < edgesNumber; i++) {
+            from = scanner.nextInt();
+            to = scanner.nextInt();
+            addEdge(from, to);
+        }
     }
 
     /**
@@ -62,33 +81,11 @@ public abstract class Graph {
     /**
      * Removes the vertex of given index.
      * Warning - this can change indexes of other vertices.
-     * @see #disableVertex(int) and
-     * @see #enableVertex(int) instead
      *
      * @param index of vertex to be removed
      * @throws NoSuchElementException if there is no vertex of such index
      */
     public abstract void removeVertex(int index) throws NoSuchElementException;
-
-    /**
-     * From now Graph acts as if there was no vertex of given index
-     * and no edges between it and its neighbours.
-     *
-     * @param index of vertex to be disabled
-     * @return true if this vertex was not already disabled
-     * @throws NoSuchElementException if there is no vertex of such index
-     */
-    public abstract boolean disableVertex(int index) throws NoSuchElementException;
-
-    /**
-     * Undos action performed by the above.
-     * @see #disableVertex(int)
-     *
-     * @param index of vertex to be enabled
-     * @return true if this vertex was not already enabled
-     * @throws NoSuchElementException if there is no vertex of such index
-     */
-    public abstract boolean enableVertex(int index) throws NoSuchElementException;
 
     /**
      * Adds new edge.

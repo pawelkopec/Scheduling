@@ -23,13 +23,8 @@ public class ListGraph extends Graph {
     }
 
     @Override
-    protected void read(InputStream in) throws IllegalArgumentException {
-        super.read(in);
-    }
-
-    @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
-
+        System.out.print("poszlo V: " + verticesNumber + ", E: " + edgesNumber);
     }
 
     @Override
@@ -50,16 +45,6 @@ public class ListGraph extends Graph {
     @Override
     public void removeVertex(int index) throws NoSuchElementException {
 
-    }
-
-    @Override
-    public boolean disableVertex(int index) throws NoSuchElementException {
-        return false;
-    }
-
-    @Override
-    public boolean enableVertex(int index) throws NoSuchElementException {
-        return false;
     }
 
     @Override

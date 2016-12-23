@@ -1,12 +1,13 @@
 package main;
 
 import graph.ListGraph;
-import graph.MatrixGraph;
+
+import java.io.*;
 
 public class Main {
 
-    public static void main(String[] args) {
-        ListGraph g = new ListGraph();
-        System.out.print(g + "Gandzia Yo");
+    public static void main(String[] args) throws FileNotFoundException {
+        System.out.println("Gandzia Yo");
+        ListGraph g = new ListGraph(new FileInputStream("GRAPH.txt"));
     }
 }

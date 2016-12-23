@@ -5,9 +5,9 @@ import java.util.NoSuchElementException;
 /**
  * Created by Paweł Kopeć on 23.12.16.
  *
- * Colorable interface provides necessary methods
- * for graph coloring and dividing graph into color classes.
- * Color is represented as an int.
+ * Colorable interface enables graph coloring
+ * and dividing graph into color classes.
+ * Color is referenced to as an int.
  */
 public interface Colorable {
 

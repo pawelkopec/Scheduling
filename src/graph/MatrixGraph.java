@@ -1,7 +1,6 @@
 package graph;
 
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
@@ -20,11 +19,6 @@ public class MatrixGraph extends Graph {
 
     MatrixGraph(InputStream in) {
         super(in);
-    }
-
-    @Override
-    protected void read(InputStream in) throws IllegalArgumentException {
-        super.read(in);
     }
 
     @Override
@@ -50,16 +44,6 @@ public class MatrixGraph extends Graph {
     @Override
     public void removeVertex(int index) throws NoSuchElementException {
 
-    }
-
-    @Override
-    public boolean disableVertex(int index) throws NoSuchElementException {
-        return false;
-    }
-
-    @Override
-    public boolean enableVertex(int index) throws NoSuchElementException {
-        return false;
     }
 
     @Override
