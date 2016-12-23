@@ -6,13 +6,28 @@ import java.util.NoSuchElementException;
 /**
  * Created by vivace on 23.12.16.
  */
-public class ArrayGraph extends Graph {
+public class ListGraph extends Graph {
 
-    public ArrayGraph() {
+    ListGraph() {
         super();
     }
 
-    public ArrayGraph(InputStream in) {
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    ListGraph(InputStream in) {
         super(in);
     }
 
@@ -69,21 +84,6 @@ public class ArrayGraph extends Graph {
     @Override
     public String toString() {
         return super.toString();
-    }
-
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
     }
 
     @Override

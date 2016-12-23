@@ -8,7 +8,7 @@ import java.util.NoSuchElementException;
  */
 public abstract class Graph {
 
-    Graph() {};
+    Graph() {}
 
     Graph(InputStream in) {
 
