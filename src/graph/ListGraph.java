@@ -1,7 +1,10 @@
 package graph;
 
+import sun.awt.image.ImageWatched;
+
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
@@ -17,6 +20,10 @@ public class ListGraph extends Graph {
 
     public ListGraph() {
         super();
+    }
+
+    public ListGraph(int verticesNumber) {
+        super(verticesNumber, 0);
     }
 
     public ListGraph(InputStream in) {
@@ -50,7 +57,7 @@ public class ListGraph extends Graph {
         }
         neighbourList.remove(index);
         for(LinkedList<Integer> neighbours : neighbourList) {
-            neighbours.remove(index);
+            neighbours.removeFirstOccurrence(index);
         }
         verticesNumber--;
     }
@@ -85,10 +92,23 @@ public class ListGraph extends Graph {
         return neighbourList.get(from).contains(to);
     }
 
+    // TODO
+    // work on better performance
     @Override
     public String toString() {
-        StringBuffer str = new StringBuffer("V: " + verticesNumber + ", ");
-        str.append("E: " + edgesNumber);
+        StringBuffer str = new StringBuffer("V: " + verticesNumber + "; ");
+        str.append("E: " + edgesNumber + ";");
+
+        ArrayList<LinkedList<Integer>> copy = new ArrayList<LinkedList<Integer>>(neighbourList);
+        int index;
+        for(int i = 0; i < verticesNumber; i++) {
+            Iterator<Integer> iterator = copy.get(i).iterator();
+            while(iterator.hasNext()) {
+                index = iterator.next();
+                str.append(" (" + i + ", " + index + ")");
+                copy.get(index).removeFirstOccurrence(i);
+            }
+        }
 
         return str.toString();
     }

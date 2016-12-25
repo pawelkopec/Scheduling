@@ -27,6 +27,12 @@ public abstract class Graph {
         initContainers(0, 0);
     }
 
+    Graph(int verticesNumber, int edgesNumber) {
+        this.verticesNumber = verticesNumber;
+        this.edgesNumber = edgesNumber;
+        initContainers(verticesNumber, edgesNumber);
+    }
+
     Graph(InputStream in) {
         read(in);
     }

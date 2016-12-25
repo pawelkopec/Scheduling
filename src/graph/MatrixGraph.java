@@ -18,6 +18,14 @@ public class MatrixGraph extends Graph {
         super();
     }
 
+    MatrixGraph(int verticesNumber, int edgesNumber) {
+        super(verticesNumber, edgesNumber);
+    }
+
+    public MatrixGraph(InputStream in) {
+        super(in);
+    }
+
     @Override
     protected void read(InputStream in) throws IllegalArgumentException {
         super.read(in);
@@ -61,9 +69,5 @@ public class MatrixGraph extends Graph {
     @Override
     public String toString() {
         return super.toString();
-    }
-
-    MatrixGraph(InputStream in) {
-        super(in);
     }
 }
