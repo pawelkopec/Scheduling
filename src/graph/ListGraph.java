@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
@@ -12,7 +13,7 @@ import java.util.NoSuchElementException;
  */
 public class ListGraph extends Graph {
 
-    private LinkedList<Integer>[] neighbourList;
+    private ArrayList<LinkedList<Integer>> neighbourList;
 
     public ListGraph() {
         super();
@@ -23,52 +24,72 @@ public class ListGraph extends Graph {
     }
 
     @Override
+    protected void read(InputStream in) throws IllegalArgumentException {
+        super.read(in);
+    }
+
+    @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
-        System.out.print("poszlo V: " + verticesNumber + ", E: " + edgesNumber);
-    }
+        neighbourList = new ArrayList<>(verticesNumber);
 
-    @Override
-    public int getVerices() {
-        return 0;
-    }
-
-    @Override
-    public int getEdges() {
-        return 0;
+        for(int i = 0; i < verticesNumber; i++) {
+            neighbourList.add(new LinkedList<>());
+        }
     }
 
     @Override
     public void addVertex() {
-
+        neighbourList.add(new LinkedList<>());
+        verticesNumber++;
     }
 
     @Override
     public void removeVertex(int index) throws NoSuchElementException {
-
+        if(!isValidVertex(index)) {
+            throw new NoSuchElementException(INVALID_VERTEX);
+        }
+        neighbourList.remove(index);
+        for(LinkedList<Integer> neighbours : neighbourList) {
+            neighbours.remove(index);
+        }
+        verticesNumber--;
     }
 
     @Override
-    public boolean addEdge(int from, int to) throws IllegalArgumentException {
-        return false;
+    public void addEdge(int from, int to) throws IllegalArgumentException {
+        if(!isValidEdge(from, to)) {
+            throw new IllegalArgumentException(INVALID_EDGE);
+        }
+        neighbourList.get(from).add(to);
+        neighbourList.get(to).add(from);
+        edgesNumber++;
     }
 
     @Override
     public void removeEdge(int from, int to) throws IllegalArgumentException {
-
+        if(!hasEdge(from, to)) {
+            throw new IllegalArgumentException(NO_SUCH_EDGE);
+        }
+        neighbourList.get(from).removeFirstOccurrence(to);
+        neighbourList.get(to).removeFirstOccurrence(from);
+        edgesNumber--;
     }
 
     @Override
-    public int[] getNeighbours(int index) throws NoSuchElementException {
-        return new int[0];
+    public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
+        return new LinkedList<>();
     }
 
     @Override
-    public int hasEdge(int from, int to) throws IllegalArgumentException {
-        return 0;
+    public boolean hasEdge(int from, int to) throws IllegalArgumentException {
+        return neighbourList.get(from).contains(to);
     }
 
     @Override
     public String toString() {
-        return super.toString();
+        StringBuffer str = new StringBuffer("V: " + verticesNumber + ", ");
+        str.append("E: " + edgesNumber);
+
+        return str.toString();
     }
 }

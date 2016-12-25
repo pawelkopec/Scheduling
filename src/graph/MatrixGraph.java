@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
@@ -17,23 +18,14 @@ public class MatrixGraph extends Graph {
         super();
     }
 
-    MatrixGraph(InputStream in) {
-        super(in);
+    @Override
+    protected void read(InputStream in) throws IllegalArgumentException {
+        super.read(in);
     }
 
     @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
 
-    }
-
-    @Override
-    public int getVerices() {
-        return 0;
-    }
-
-    @Override
-    public int getEdges() {
-        return 0;
     }
 
     @Override
@@ -47,8 +39,8 @@ public class MatrixGraph extends Graph {
     }
 
     @Override
-    public boolean addEdge(int from, int to) throws IllegalArgumentException {
-        return false;
+    public void addEdge(int from, int to) throws IllegalArgumentException {
+
     }
 
     @Override
@@ -57,17 +49,21 @@ public class MatrixGraph extends Graph {
     }
 
     @Override
-    public int[] getNeighbours(int index) throws NoSuchElementException {
-        return new int[0];
+    public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
+        return new LinkedList<>();
     }
 
     @Override
-    public int hasEdge(int from, int to) throws IllegalArgumentException {
-        return 0;
+    public boolean hasEdge(int from, int to) throws IllegalArgumentException {
+        return false;
     }
 
     @Override
     public String toString() {
         return super.toString();
+    }
+
+    MatrixGraph(InputStream in) {
+        super(in);
     }
 }

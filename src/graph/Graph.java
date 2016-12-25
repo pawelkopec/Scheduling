@@ -1,6 +1,8 @@
 package graph;
 
+import java.awt.*;
 import java.io.InputStream;
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -11,6 +13,15 @@ import java.util.Scanner;
  * abstract data structure.
  */
 public abstract class Graph {
+
+    protected int verticesNumber;
+    protected int edgesNumber;
+
+    protected static final String INVALID_VERTEX_NUM = "Number of vertices in a graph cannot be negative ";
+    protected static final String INVALID_EDGE_NUM = "Number of edges in a graph cannot be negative.";
+    protected static final String INVALID_VERTEX = "Vertex index out of bounds.";
+    protected static final String INVALID_EDGE = "Edge's vertex index out of bounds.";
+    protected static final String NO_SUCH_EDGE = "Such edge does not exist..";
 
     Graph() {
         initContainers(0, 0);
@@ -29,22 +40,26 @@ public abstract class Graph {
     protected void read(InputStream in) throws IllegalArgumentException {
         Scanner scanner = new Scanner(in);
 
-        int verticesSize = scanner.nextInt();
-        if(verticesSize < 0) {
-            throw new IllegalArgumentException("Number of vertices in a graph cannot be negative");
+        verticesNumber = scanner.nextInt();
+        if(verticesNumber < 0) {
+            throw new IllegalArgumentException(INVALID_VERTEX_NUM);
         }
 
-        int edgesNumber = scanner.nextInt();
+        edgesNumber = scanner.nextInt();
         if(edgesNumber < 0) {
-            throw new IllegalArgumentException("Number of edges in a graph cannot be negative");
+            throw new IllegalArgumentException(INVALID_EDGE_NUM);
         }
 
-        initContainers(verticesSize, edgesNumber);
+        initContainers(verticesNumber, edgesNumber);
 
         int from, to;
         for(int i = 0; i < edgesNumber; i++) {
             from = scanner.nextInt();
             to = scanner.nextInt();
+            if(isValidVertex(from) || isValidVertex(to)) {
+                throw new IllegalArgumentException(INVALID_VERTEX);
+            }
+
             addEdge(from, to);
         }
     }
@@ -64,14 +79,18 @@ public abstract class Graph {
      *
      * @return number of vertices
      */
-    public abstract int getVerices();
+    public int getVerices() {
+        return verticesNumber;
+    }
 
     /**
      * Returns the number of edges.
      *
      * @return the number of edges
      */
-    public abstract int getEdges();
+    public int getEdges() {
+        return edgesNumber;
+    };
 
     /**
      * Adds new vertex with index = |V|.
@@ -95,7 +114,7 @@ public abstract class Graph {
      * @return true if such edge does not
      * @throws IllegalArgumentException if one of given vertices does not exist
      */
-    public abstract boolean addEdge(int from, int to) throws IllegalArgumentException;
+    public abstract void addEdge(int from, int to) throws IllegalArgumentException;
 
     /**
      * Removes an existing edge.
@@ -114,7 +133,7 @@ public abstract class Graph {
      * @return array of indexes of vertex's neighbours
      * @throws NoSuchElementException if there is no vertex of such index
      */
-    public abstract int[] getNeighbours(int index) throws NoSuchElementException;
+    public abstract LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException;
 
     /**
      * Checks if there is an edge between vertices
@@ -122,10 +141,31 @@ public abstract class Graph {
      *
      * @param from index of beginning vertex
      * @param to to index of end vertex
-     * @return true if such edge exists
      * @throws IllegalArgumentException if one of given vertices does not exist
      */
-    public abstract int hasEdge(int from, int to) throws IllegalArgumentException;
+    public abstract boolean hasEdge(int from, int to) throws IllegalArgumentException;
+
+    /**
+     * Check if this graph can have a vertex such index.
+     *
+     * @param index of a vertex to be checked
+     * @return true if index is valid
+     */
+    protected boolean isValidVertex(int index) {
+        return index < verticesNumber && index >= 0;
+    }
+
+    /**
+     * Check if this graph can have an edge between
+     * vertices of such indexes.
+     *
+     * @param from index of edge beginning
+     * @param to index of edge end
+     * @return if indexes are valid
+     */
+    protected boolean isValidEdge(int from, int to) {
+        return isValidVertex(from) && isValidVertex(to);
+    }
 
     @Override
     public String toString() {
