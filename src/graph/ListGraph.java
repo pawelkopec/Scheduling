@@ -80,11 +80,17 @@ public class ListGraph extends Graph {
 
     @Override
     public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
+        if(!isValidVertex(index)) {
+            throw new IllegalArgumentException(INVALID_VERTEX);
+        }
         return new LinkedList<>(neighbourList.get(index));
     }
 
     @Override
     public boolean hasEdge(int from, int to) throws IllegalArgumentException {
+        if(!isValidEdge(from, to)) {
+            throw new IllegalArgumentException(INVALID_EDGE);
+        }
         return neighbourList.get(from).contains(to);
     }
 

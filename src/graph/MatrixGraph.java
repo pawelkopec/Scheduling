@@ -84,6 +84,9 @@ public class MatrixGraph extends Graph {
 
     @Override
     public boolean hasEdge(int from, int to) throws IllegalArgumentException {
+        if(!isValidEdge(from, to)) {
+            throw new IllegalArgumentException(INVALID_EDGE);
+        }
         return adjacencyMatrix[from][to] == CONNECTED;
     }
 
