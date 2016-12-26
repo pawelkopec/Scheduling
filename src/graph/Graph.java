@@ -37,35 +37,32 @@ public abstract class Graph {
     }
 
     Graph(InputStream in) {
-        read(in);
+        scan(new Scanner(in));
     }
 
-    /**
-     * Reads a graph from input stream.
-     *
-     * @param in stream from which graph is read
-     * @throws IllegalArgumentException if input format is incorrect
-     */
-    protected void read(InputStream in) throws IllegalArgumentException {
-        Scanner scanner = new Scanner(in);
+    Graph(String string) {
+        scan(new Scanner(string));
+    }
 
+    private void scan(Scanner scanner) throws IllegalArgumentException {
         verticesNumber = scanner.nextInt();
         if(verticesNumber < 0) {
             throw new IllegalArgumentException(INVALID_VERTEX_NUM);
         }
 
-        edgesNumber = scanner.nextInt();
+        int edgesNumber = scanner.nextInt();
         if(edgesNumber < 0) {
             throw new IllegalArgumentException(INVALID_EDGE_NUM);
         }
-
+        System.out.println("V: " + verticesNumber + ", E: " + edgesNumber + "; ");
         initContainers(verticesNumber, edgesNumber);
 
         int from, to;
         for(int i = 0; i < edgesNumber; i++) {
             from = scanner.nextInt();
             to = scanner.nextInt();
-            if(isValidVertex(from) || isValidVertex(to)) {
+            System.out.println("i: " + i + ", from: " + from + ", to: " + to + "; ");
+            if(!isValidVertex(from) || !isValidVertex(to)) {
                 throw new IllegalArgumentException(INVALID_VERTEX);
             }
 
@@ -76,7 +73,6 @@ public abstract class Graph {
     /**
      * Initialize all necessary containers
      * to provide abstraction for further initialization.
-     * @see #read(InputStream)
      *
      * @param verticesNumber number of vertices
      * @param edgesNumber number of edges
@@ -99,7 +95,7 @@ public abstract class Graph {
      */
     public int getEdges() {
         return edgesNumber;
-    };
+    }
 
     /**
      * Adds new vertex with index = |V|.
@@ -120,7 +116,6 @@ public abstract class Graph {
      *
      * @param from index of beginning vertex
      * @param to index of end vertex
-     * @return true if such edge does not
      * @throws IllegalArgumentException if one of given vertices does not exist
      */
     public abstract void addEdge(int from, int to) throws IllegalArgumentException;
@@ -156,8 +151,6 @@ public abstract class Graph {
 
     /**
      * Removes all the edges.
-     *
-     * @return false if graph is already empty
      */
     public abstract void makeEmpty();
 
