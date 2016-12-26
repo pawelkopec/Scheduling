@@ -67,6 +67,11 @@ public class MatrixGraph extends Graph {
     }
 
     @Override
+    public void makeEmpty() {
+
+    }
+
+    @Override
     public String toString() {
         return super.toString();
     }

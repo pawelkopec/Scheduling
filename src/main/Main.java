@@ -16,6 +16,9 @@ public class Main {
         g.addEdge(1, 2);
         g.addEdge(1, 4);
         System.out.println(g);
+        g.removeEdge(1, 3);
+        System.out.println(g);
+        g.makeEmpty();
         System.out.println(g);
     }
 }

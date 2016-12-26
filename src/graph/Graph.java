@@ -1,6 +1,5 @@
 package graph;
 
-import java.awt.*;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -31,6 +30,10 @@ public abstract class Graph {
         this.verticesNumber = verticesNumber;
         this.edgesNumber = edgesNumber;
         initContainers(verticesNumber, edgesNumber);
+    }
+
+    public Graph(int verticesNumber) {
+        this(verticesNumber, 0);
     }
 
     Graph(InputStream in) {
@@ -150,6 +153,13 @@ public abstract class Graph {
      * @throws IllegalArgumentException if one of given vertices does not exist
      */
     public abstract boolean hasEdge(int from, int to) throws IllegalArgumentException;
+
+    /**
+     * Removes all the edges.
+     *
+     * @return false if graph is already empty
+     */
+    public abstract void makeEmpty();
 
     /**
      * Check if this graph can have a vertex such index.

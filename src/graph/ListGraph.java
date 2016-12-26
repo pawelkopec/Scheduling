@@ -84,12 +84,20 @@ public class ListGraph extends Graph {
 
     @Override
     public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
-        return new LinkedList<>();
+        return new LinkedList<Integer>(neighbourList.get(index));
     }
 
     @Override
     public boolean hasEdge(int from, int to) throws IllegalArgumentException {
         return neighbourList.get(from).contains(to);
+    }
+
+    @Override
+    public void makeEmpty() {
+        for(LinkedList<Integer> neighbours : neighbourList) {
+            neighbours.clear();
+        }
+        edgesNumber = 0;
     }
 
     // TODO
