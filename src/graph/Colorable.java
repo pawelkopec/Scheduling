@@ -44,7 +44,7 @@ public interface Colorable {
      * Get array of vertices that have a given color.
      *
      * @param color which we look for
-     * @return array of indexes of vertices in goven color
+     * @return array of indexes of vertices in given color
      */
     default int[] getColored(int color) {
         return new int [0];
