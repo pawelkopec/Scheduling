@@ -1,15 +1,15 @@
 package graph.test;
 
-import graph.ListGraph;
 import org.junit.Before;
 
 /**
  * Created by Paweł Kopeć on 26.12.16.
+ *
+ * Test for graph implementation based on neighbour list.
  */
 public class ListGraphTest extends GraphTest {
-
     @Before
-    public void setGraph() {
-        this.graph = new ListGraph(5);
+    public void init() {
+        graphSubclassName = "graph.ListGraph";
     }
 }

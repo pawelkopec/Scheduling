@@ -1,14 +1,16 @@
 package main;
 
+import graph.Graph;
+import graph.GraphFactory;
 import graph.ListGraph;
 
 import java.io.*;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException {
-        //Tester.runAllTests();
-        ListGraph g = new ListGraph(5);
+    public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException {
+        Tester.runAllTests();
+        /*Graph g = GraphFactory.getInstance("graph.ListGraph", 7);
         g.addEdge(3, 4);
         g.addEdge(0, 2);
         g.addEdge(3, 1);
@@ -18,7 +20,6 @@ public class Main {
         System.out.println(g);
         g.removeEdge(1, 3);
         System.out.println(g);
-        g.makeEmpty();
-        System.out.println(g);
+        g.makeEmpty();*/
     }
 }
