@@ -1,9 +1,10 @@
 package main;
 
-import graph.test.ListGraphTest;
 import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
+
+import java.util.function.Consumer;
 
 /**
  * Created by Paweł Kopeć on 26.12.16.
@@ -12,17 +13,24 @@ import org.junit.runner.notification.Failure;
  */
 public class Tester {
 
-    public static void runAllTests() {
-        runClassTest(ListGraphTest.class);
+    private Consumer<String> logger;
+
+    public Tester(Consumer<String> logger) {
+        this.logger = logger;
     }
 
-    public static void runClassTest(Class classTest) {
+    public Tester() {
+        this.logger = System.out::println;
+    }
+
+    public void runClassTest(Class classTest) {
         Result result = JUnitCore.runClasses(classTest);
 
         for (Failure failure : result.getFailures()) {
-            System.out.println(failure.toString());
+            logger.accept(failure.toString());
         }
 
-        System.out.println(result.wasSuccessful());
+        logger.accept("Result of testing " + classTest.getName() +
+                (result.wasSuccessful() ? " positive" : " negative"));
     }
 }
