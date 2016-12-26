@@ -11,3 +11,11 @@ We are given n unit-length jobs. Each job is in conflict with exactly 3 other jo
   2. Overall processing time will be minimal.
 
 This problem can be presented as finding an apropriate 3-coloring of cubic incompatibility graph. All the details are provided in the above mentioned article.
+
+## Packages
+  * __graph__ package will contain necessary abstraction for building graph algorithms alongside with their basic implementations (neighbour list graph, adjacency matrix graph, colorable interface etc.)  
+  * __scheduling__ package will contain graph subclasses needed specifically for this scheduling problem
+
+## Status
+In production. Not for use.  
+Can try out available classes though and leave some feedback.
