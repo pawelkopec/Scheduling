@@ -2,7 +2,6 @@ package graph.test;
 
 
 import graph.Graph;
-import graph.ListGraph;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -15,7 +14,6 @@ import static org.junit.Assert.*;
  *
  * Tests for graph class.
  */
-
 abstract public class GraphTest {
 
     protected Graph graph;

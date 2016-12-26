@@ -1,7 +1,5 @@
 package graph;
 
-import sun.awt.image.ImageWatched;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -28,11 +26,6 @@ public class ListGraph extends Graph {
 
     public ListGraph(InputStream in) {
         super(in);
-    }
-
-    @Override
-    protected void read(InputStream in) throws IllegalArgumentException {
-        super.read(in);
     }
 
     @Override
@@ -84,7 +77,7 @@ public class ListGraph extends Graph {
 
     @Override
     public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
-        return new LinkedList<Integer>(neighbourList.get(index));
+        return new LinkedList<>(neighbourList.get(index));
     }
 
     @Override
@@ -100,22 +93,20 @@ public class ListGraph extends Graph {
         edgesNumber = 0;
     }
 
-    // TODO
-    // work on better performance
     @Override
     public String toString() {
-        StringBuffer str = new StringBuffer("V: " + verticesNumber + "; ");
-        str.append("E: " + edgesNumber + ";");
+        StringBuilder str = new StringBuilder("V: ").append(verticesNumber).append("; ");
+        str.append("E: ").append(edgesNumber).append(";");
 
-        ArrayList<LinkedList<Integer>> copy = new ArrayList<LinkedList<Integer>>(neighbourList);
-        int index;
-        for(int i = 0; i < verticesNumber; i++) {
-            Iterator<Integer> iterator = copy.get(i).iterator();
-            while(iterator.hasNext()) {
-                index = iterator.next();
-                str.append(" (" + i + ", " + index + ")");
-                copy.get(index).removeFirstOccurrence(i);
+        int from = 0, to;
+        for(LinkedList<Integer> neighbours : neighbourList) {
+            for (Integer neighbour : neighbours) {
+                to = neighbour;
+                if (from < to) {
+                    str.append(" (").append(from).append(", ").append(to).append(")");
+                }
             }
+            from++;
         }
 
         return str.toString();

@@ -27,11 +27,6 @@ public class MatrixGraph extends Graph {
     }
 
     @Override
-    protected void read(InputStream in) throws IllegalArgumentException {
-        super.read(in);
-    }
-
-    @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
 
     }

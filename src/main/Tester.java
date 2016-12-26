@@ -5,6 +5,11 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.junit.runner.notification.Failure;
 
+/**
+ * Created by Paweł Kopeć on 26.12.16.
+ *
+ * Tester class automates tests in Junit test framework.
+ */
 public class Tester {
 
     public static void runAllTests() {
