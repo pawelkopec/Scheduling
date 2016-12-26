@@ -25,7 +25,7 @@ abstract public class GraphTest {
     }
 
     @Test
-    public void addRemoveEdge() throws Exception {
+    public void addRemoveEdge() throws ClassNotFoundException {
         Graph graph = GraphFactory.getInstance(graphSubclassName, 5);
         graph.addEdge(4, 0);
         graph.addEdge(2, 3);
@@ -73,7 +73,7 @@ abstract public class GraphTest {
     }
 
     @Test
-    public void getNeighbours() throws Exception {
+    public void getNeighbours() throws ClassNotFoundException {
         Graph graph = GraphFactory.getInstance(graphSubclassName, 7);
         graph.addEdge(1, 2);
         graph.addEdge(4, 1);

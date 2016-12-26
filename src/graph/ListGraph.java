@@ -27,6 +27,10 @@ public class ListGraph extends Graph {
         super(in);
     }
 
+    public ListGraph(String string) {
+        super(string);
+    }
+
     @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
         neighbourList = new ArrayList<>(verticesNumber);
