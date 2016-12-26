@@ -1,5 +1,6 @@
 package graph;
 
+import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 /**
@@ -22,7 +23,7 @@ public interface SubgraphFind {
     boolean disable(int index) throws NoSuchElementException;
 
     /**
-     * Undos action performed by the above.
+     * Undoes action performed by the above.
      * @see #disable(int)
      *
      * @param index of vertex to be enabled
@@ -44,4 +45,18 @@ public interface SubgraphFind {
      * @see #enable(int)
      */
     void enableAll();
+
+    /**
+     * Returns a list of enabled vertices indexes.
+     *
+     * @return list of enabled vertices indexes
+     */
+    LinkedList<Integer> getAllEnabled();
+
+    /**
+     * Returns a list of disabled vertices indexes.
+     *
+     * @return list of disabled vertices indexes
+     */
+    LinkedList<Integer> getAllDisabled();
 }
