@@ -3,6 +3,7 @@ package graph.test;
 
 import graph.Graph;
 import graph.GraphFactory;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -18,6 +19,9 @@ import static org.junit.Assert.*;
 abstract public class GraphTest {
 
     protected String graphSubclassName;
+
+    @Before
+    abstract public void initGraphSubclass();
 
     @Test
     public void read() throws Exception {

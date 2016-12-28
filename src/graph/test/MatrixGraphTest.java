@@ -9,5 +9,6 @@ import org.junit.Before;
  */
 public class MatrixGraphTest extends GraphTest {
     @Before
-    public void init() { graphSubclassName = "graph.MatrixGraph"; }
+    @Override
+    public void initGraphSubclass() { graphSubclassName = "graph.MatrixGraph"; }
 }

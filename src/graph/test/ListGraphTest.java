@@ -9,7 +9,8 @@ import org.junit.Before;
  */
 public class ListGraphTest extends GraphTest {
     @Before
-    public void init() {
+    @Override
+    public void initGraphSubclass() {
         graphSubclassName = "graph.ListGraph";
     }
 }
