@@ -20,7 +20,7 @@ public abstract class Graph {
     protected static final String INVALID_EDGE_NUM = "Number of edges in a graph cannot be negative.";
     protected static final String INVALID_VERTEX = "Vertex index out of bounds.";
     protected static final String INVALID_EDGE = "Edge's vertex index out of bounds.";
-    protected static final String NO_SUCH_EDGE = "Such edge does not exist..";
+    protected static final String NO_SUCH_EDGE = "Such edge does not exist.";
 
     Graph() {
         initContainers(0, 0);
