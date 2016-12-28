@@ -21,12 +21,12 @@ public class MatrixGraph extends Graph {
 
     int[][] adjacencyMatrix;
 
-    MatrixGraph() {
+    public MatrixGraph() {
         super();
     }
 
-    MatrixGraph(int verticesNumber, int edgesNumber) {
-        super(verticesNumber, edgesNumber);
+    public MatrixGraph(int verticesNumber) {
+        super(verticesNumber);
     }
 
     public MatrixGraph(InputStream in) {
