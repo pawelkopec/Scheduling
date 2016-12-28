@@ -17,7 +17,7 @@ public interface SubgraphFind {
      * and no edges between it and its neighbours.
      *
      * @param index of vertex to be disabled
-     * @return true if this vertex was not already disabled
+     * @return false if this vertex was already disabled
      * @throws NoSuchElementException if there is no vertex of such index
      */
     boolean disable(int index) throws NoSuchElementException;
@@ -27,7 +27,7 @@ public interface SubgraphFind {
      * @see #disable(int)
      *
      * @param index of vertex to be enabled
-     * @return true if this vertex was not already enabled
+     * @return false if this vertex was already enabled
      * @throws NoSuchElementException if there is no vertex of such index
      */
     boolean enable(int index) throws NoSuchElementException;
