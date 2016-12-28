@@ -27,6 +27,12 @@ public abstract class Graph {
     }
 
     Graph(int verticesNumber, int edgesNumber) {
+        if(verticesNumber < 0) {
+            throw new IllegalArgumentException(INVALID_VERTEX_NUM);
+        }
+        if(edgesNumber < 0) {
+            throw new IllegalArgumentException(INVALID_EDGE_NUM);
+        }
         this.verticesNumber = verticesNumber;
         this.edgesNumber = edgesNumber;
         initContainers(verticesNumber, edgesNumber);
