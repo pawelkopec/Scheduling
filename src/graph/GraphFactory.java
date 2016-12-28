@@ -13,8 +13,13 @@ import java.io.InputStream;
  */
 public class GraphFactory {
 
-    public static Graph getInstance(String className, int verticesNumber, int edgesNumber) throws ClassNotFoundException, IllegalArgumentException {
-        Class graphClass = Class.forName(className);
+    public static Graph getInstance(String className, int verticesNumber, int edgesNumber) throws IllegalArgumentException, ClassNotFoundException {
+        Class graphClass = null;
+        try {
+            graphClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundException(className + " is not a valid name for a class maintained by Graph Factory.");
+        }
 
         if (Graph.class.isAssignableFrom(graphClass)) {
             switch (graphClass.getName()) {
