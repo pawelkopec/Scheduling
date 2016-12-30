@@ -44,13 +44,20 @@ public class GraphFactory {
         return GraphFactory.getInstance(className, 0);
     }
 
-    public static Graph getInstanceFromString(String className, String string) throws ClassNotFoundException, IllegalArgumentException {
-        Class graphClass = Class.forName(className);
+    public static Graph getInstanceFromString(String className, String s) throws ClassNotFoundException, IllegalArgumentException {
+        Class graphClass = null;
+        try {
+            graphClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundException(className + " is not a valid name for a class maintained by Graph Factory.");
+        }
 
         if (Graph.class.isAssignableFrom(graphClass)) {
             switch (graphClass.getName()) {
                 case "graph.ListGraph":
-                    return new ListGraph(string);
+                    return new ListGraph(s);
+                case "graph.MatrixGraph":
+                    return new MatrixGraph(s);
                 default:
                     throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
 
@@ -61,7 +68,12 @@ public class GraphFactory {
     }
 
     public static Graph getInstanceFromStream(String className, InputStream in) throws ClassNotFoundException, IllegalArgumentException {
-        Class graphClass = Class.forName(className);
+        Class graphClass = null;
+        try {
+            graphClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new ClassNotFoundException(className + " is not a valid name for a class maintained by Graph Factory.");
+        }
 
         if (Graph.class.isAssignableFrom(graphClass)) {
             switch (graphClass.getName()) {
