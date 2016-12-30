@@ -41,17 +41,15 @@ public class ListGraph extends Graph {
     }
 
     @Override
-    public void addEdge(int from, int to) throws IllegalArgumentException {
-        if(!isValidEdge(from, to)) {
-            throw new IllegalArgumentException(INVALID_EDGE);
-        }
+    public void addEdge(int from, int to) {
+        validateEdge(from, to);
         neighbourList.get(from).add(to);
         neighbourList.get(to).add(from);
         edgesNumber++;
     }
 
     @Override
-    public void removeEdge(int from, int to) throws IllegalArgumentException {
+    public void removeEdge(int from, int to) {
         if(!hasEdge(from, to)) {
             throw new IllegalArgumentException(NO_SUCH_EDGE);
         }
@@ -61,26 +59,20 @@ public class ListGraph extends Graph {
     }
 
     @Override
-    public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
-        if(!isValidVertex(index)) {
-            throw new IllegalArgumentException(INVALID_VERTEX);
-        }
+    public LinkedList<Integer> getNeighbours(int index) {
+        validateVertex(index);
         return new LinkedList<>(neighbourList.get(index));
     }
 
     @Override
-    public boolean hasEdge(int from, int to) throws IllegalArgumentException {
-        if(!isValidEdge(from, to)) {
-            throw new IllegalArgumentException(INVALID_EDGE);
-        }
+    public boolean hasEdge(int from, int to) {
+        validateEdge(from, to);
         return neighbourList.get(from).contains(to);
     }
 
     @Override
     public void makeEmpty() {
-        for(LinkedList<Integer> neighbours : neighbourList) {
-            neighbours.clear();
-        }
+        neighbourList.forEach(LinkedList::clear);
         edgesNumber = 0;
     }
 

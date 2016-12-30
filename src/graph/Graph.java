@@ -18,7 +18,7 @@ public abstract class Graph {
 
     protected static final String INVALID_VERTEX_NUM = "Number of vertices in a graph cannot be negative ";
     protected static final String INVALID_EDGE_NUM = "Number of edges in a graph cannot be negative.";
-    protected static final String INVALID_VERTEX = "Vertex index out of bounds.";
+    public static final String INVALID_VERTEX = "Vertex index out of bounds.";
     protected static final String INVALID_EDGE = "Edge's vertex index out of bounds.";
     protected static final String NO_SUCH_EDGE = "Such edge does not exist.";
 
@@ -72,9 +72,9 @@ public abstract class Graph {
         for(int i = 0; i < edgesNumber; i++) {
             from = scanner.nextInt();
             to = scanner.nextInt();
-            if(!isValidVertex(from) || !isValidVertex(to)) {
-                throw new IllegalArgumentException(INVALID_VERTEX);
-            }
+
+            validateVertex(from);
+            validateVertex(to);
 
             addEdge(from, to);
         }
@@ -112,18 +112,16 @@ public abstract class Graph {
      *
      * @param from index of beginning vertex
      * @param to index of end vertex
-     * @throws IllegalArgumentException if one of given vertices does not exist
      */
-    public abstract void addEdge(int from, int to) throws IllegalArgumentException;
+    public abstract void addEdge(int from, int to);
 
     /**
      * Removes an existing edge.
      *
      * @param from index of beginning vertex
      * @param to index of end vertex
-     * @throws IllegalArgumentException if one of given vertices does not exist
      */
-    public abstract void removeEdge(int from, int to) throws IllegalArgumentException;
+    public abstract void removeEdge(int from, int to);
 
     /**
      * Returns an array of indexes of all
@@ -131,9 +129,8 @@ public abstract class Graph {
      *
      * @param index of the vertex whose neighbours are to be found
      * @return array of indexes of vertex's neighbours
-     * @throws NoSuchElementException if there is no vertex of such index
      */
-    public abstract LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException;
+    public abstract LinkedList<Integer> getNeighbours(int index);
 
     /**
      * Checks if there is an edge between vertices
@@ -141,9 +138,8 @@ public abstract class Graph {
      *
      * @param from index of beginning vertex
      * @param to to index of end vertex
-     * @throws IllegalArgumentException if one of given vertices does not exist
      */
-    public abstract boolean hasEdge(int from, int to) throws IllegalArgumentException;
+    public abstract boolean hasEdge(int from, int to);
 
     /**
      * Removes all the edges.
@@ -156,8 +152,10 @@ public abstract class Graph {
      * @param index of a vertex to be checked
      * @return true if index is valid
      */
-    protected boolean isValidVertex(int index) {
-        return index < verticesNumber && index >= 0;
+    public void  validateVertex(int index) {
+        if(!(index < verticesNumber && index >= 0)) {
+            throw new IllegalArgumentException(INVALID_VERTEX);
+        }
     }
 
     /**
@@ -168,8 +166,14 @@ public abstract class Graph {
      * @param to index of edge end
      * @return if indexes are valid
      */
-    protected boolean isValidEdge(int from, int to) {
-        return isValidVertex(from) && isValidVertex(to);
+    protected void validateEdge(int from, int to) {
+        try {
+            validateVertex(from);
+            validateVertex(to);
+        }
+        catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(INVALID_EDGE);
+        }
     }
 
     @Override

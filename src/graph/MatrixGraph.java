@@ -16,10 +16,10 @@ import java.util.NoSuchElementException;
  */
 public class MatrixGraph extends Graph {
 
-    private static final int CONNECTED = 1;
-    private static final int DISCONNECTED = 0;
+    private static final boolean CONNECTED = true;
+    private static final boolean DISCONNECTED = false;
 
-    int[][] adjacencyMatrix;
+    private boolean[][] adjacencyMatrix;
 
     public MatrixGraph() {
         super();
@@ -39,21 +39,20 @@ public class MatrixGraph extends Graph {
 
     @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
-        adjacencyMatrix = new int[verticesNumber][verticesNumber];
+        adjacencyMatrix = new boolean[verticesNumber][verticesNumber];
     }
 
     @Override
-    public void addEdge(int from, int to) throws IllegalArgumentException {
-        if(!isValidEdge(from, to)) {
-            throw new IllegalArgumentException(INVALID_EDGE);
-        }
+    public void addEdge(int from, int to) {
+        validateEdge(from, to);
+
         adjacencyMatrix[from][to] = CONNECTED;
         adjacencyMatrix[to][from] = CONNECTED;
         edgesNumber++;
     }
 
     @Override
-    public void removeEdge(int from, int to) throws IllegalArgumentException {
+    public void removeEdge(int from, int to) {
         if(!hasEdge(from, to)) {
             throw new IllegalArgumentException(NO_SUCH_EDGE);
         }
@@ -63,10 +62,9 @@ public class MatrixGraph extends Graph {
     }
 
     @Override
-    public LinkedList<Integer> getNeighbours(int index) throws NoSuchElementException {
-        if(!isValidVertex(index)) {
-            throw new IllegalArgumentException(INVALID_VERTEX);
-        }
+    public LinkedList<Integer> getNeighbours(int index) {
+        validateVertex(index);
+
         LinkedList<Integer> neighbours = new LinkedList<>();
         for(int i = 0; i < adjacencyMatrix[index].length; i++) {
             if(adjacencyMatrix[index][i] == CONNECTED) {
@@ -77,10 +75,8 @@ public class MatrixGraph extends Graph {
     }
 
     @Override
-    public boolean hasEdge(int from, int to) throws IllegalArgumentException {
-        if(!isValidEdge(from, to)) {
-            throw new IllegalArgumentException(INVALID_EDGE);
-        }
+    public boolean hasEdge(int from, int to) {
+        validateEdge(from, to);
         return adjacencyMatrix[from][to] == CONNECTED;
     }
 
