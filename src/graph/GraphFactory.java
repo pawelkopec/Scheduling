@@ -26,7 +26,7 @@ public class GraphFactory {
                 case "graph.ListGraph":
                     return new ListGraph(verticesNumber);
                 case "graph.MatrixGraph":
-                    return new MatrixGraph(verticesNumber, edgesNumber);
+                    return new MatrixGraph(verticesNumber);
                 default:
                     throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
 
