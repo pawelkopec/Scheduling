@@ -66,14 +66,12 @@ public abstract class Graph {
         if(edgesNumber < 0) {
             throw new IllegalArgumentException(INVALID_EDGE_NUM);
         }
-        System.out.println("V: " + verticesNumber + ", E: " + edgesNumber + "; ");
         initContainers(verticesNumber, edgesNumber);
 
         int from, to;
         for(int i = 0; i < edgesNumber; i++) {
             from = scanner.nextInt();
             to = scanner.nextInt();
-            System.out.println("i: " + i + ", from: " + from + ", to: " + to + "; ");
             if(!isValidVertex(from) || !isValidVertex(to)) {
                 throw new IllegalArgumentException(INVALID_VERTEX);
             }
