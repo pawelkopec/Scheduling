@@ -33,19 +33,13 @@ public class MatrixGraph extends Graph {
         super(in);
     }
 
+    public MatrixGraph(String string) {
+        super(string);
+    }
+
     @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
         adjacencyMatrix = new int[verticesNumber][verticesNumber];
-    }
-
-    @Override
-    public void addVertex() {
-
-    }
-
-    @Override
-    public void removeVertex(int index) throws NoSuchElementException {
-
     }
 
     @Override

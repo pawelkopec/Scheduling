@@ -24,11 +24,6 @@ abstract public class GraphTest {
     abstract public void initGraphSubclass();
 
     @Test
-    public void read() throws Exception {
-
-    }
-
-    @Test
     public void addRemoveEdge() throws ClassNotFoundException {
         Graph graph = GraphFactory.getInstance(graphSubclassName, 5);
         graph.addEdge(4, 0);
@@ -36,7 +31,7 @@ abstract public class GraphTest {
         graph.addEdge(1, 3);
         graph.addEdge(0, 3);
 
-        assertTrue(graph.hasEdge(0, 4));
+        assertTrue(graph.hasEdge(4, 0));
         assertTrue(graph.hasEdge(2, 3));
         assertTrue(graph.hasEdge(1, 3));
         assertTrue(graph.hasEdge(0, 3));
@@ -72,11 +67,6 @@ abstract public class GraphTest {
     }
 
     @Test
-    public void addRemoveVertex() throws Exception {
-
-    }
-
-    @Test
     public void getNeighbours() throws ClassNotFoundException {
         Graph graph = GraphFactory.getInstance(graphSubclassName, 7);
         graph.addEdge(1, 2);
@@ -87,6 +77,28 @@ abstract public class GraphTest {
         LinkedList<Integer> neighbours = graph.getNeighbours(1);
         neighbours.sort(Integer::compareTo);
         assertEquals(neighbours, new LinkedList<>(Arrays.asList(2, 3, 4, 6)));
+    }
+
+    @Test
+    public void read() throws Exception {
+        String s = "5 4 0 3 2 3 1 3 4 3";
+        Graph graph = GraphFactory.getInstanceFromString(graphSubclassName, s);
+
+        assertTrue(graph.hasEdge(0, 3));
+        assertTrue(graph.hasEdge(2, 3));
+        assertTrue(graph.hasEdge(1, 3));
+        assertTrue(graph.hasEdge(4, 3));
+
+        assertFalse(graph.hasEdge(0, 1));
+        assertFalse(graph.hasEdge(0, 2));
+        assertFalse(graph.hasEdge(0, 4));
+        assertFalse(graph.hasEdge(1, 2));
+        assertFalse(graph.hasEdge(1, 4));
+        assertFalse(graph.hasEdge(2, 4));
+
+
+        assertEquals(graph.getVerices(), 5);
+        assertEquals(graph.getEdges(), 4);
     }
 
 }

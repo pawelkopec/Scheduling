@@ -108,20 +108,6 @@ public abstract class Graph {
     }
 
     /**
-     * Adds new vertex with index = |V|.
-     */
-    public abstract void addVertex();
-
-    /**
-     * Removes the vertex of given index.
-     * Warning - this can change indexes of other vertices.
-     *
-     * @param index of vertex to be removed
-     * @throws NoSuchElementException if there is no vertex of such index
-     */
-    public abstract void removeVertex(int index) throws NoSuchElementException;
-
-    /**
      * Adds new edge.
      *
      * @param from index of beginning vertex

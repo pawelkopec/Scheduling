@@ -41,24 +41,6 @@ public class ListGraph extends Graph {
     }
 
     @Override
-    public void addVertex() {
-        neighbourList.add(new LinkedList<>());
-        verticesNumber++;
-    }
-
-    @Override
-    public void removeVertex(int index) throws NoSuchElementException {
-        if(!isValidVertex(index)) {
-            throw new NoSuchElementException(INVALID_VERTEX);
-        }
-        neighbourList.remove(index);
-        for(LinkedList<Integer> neighbours : neighbourList) {
-            neighbours.removeFirstOccurrence(index);
-        }
-        verticesNumber--;
-    }
-
-    @Override
     public void addEdge(int from, int to) throws IllegalArgumentException {
         if(!isValidEdge(from, to)) {
             throw new IllegalArgumentException(INVALID_EDGE);
