@@ -27,7 +27,7 @@ public class Tester {
         Result result = JUnitCore.runClasses(classTest);
 
         for (Failure failure : result.getFailures()) {
-            logger.accept(failure.toString());
+            logger.accept("    " + failure.toString());
         }
 
         logger.accept("Result of testing " + classTest.getName() +

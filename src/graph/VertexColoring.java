@@ -2,6 +2,7 @@ package graph;
 
 import graph.Graph;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 /**
@@ -36,6 +37,7 @@ public class VertexColoring {
 
     /**
      * Get color of a given vertex.
+     * Equals zero by default.
      *
      * @param index of a given vertex
      * @return color of a given vertex
@@ -51,6 +53,10 @@ public class VertexColoring {
      * @return array of colors
      */
     public int[] getColors() {
-        return colors;
+        return colors.clone();
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 }

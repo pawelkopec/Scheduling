@@ -2,6 +2,7 @@ package main;
 
 import graph.test.ListGraphTest;
 import graph.test.MatrixGraphTest;
+import graph.test.VertexColoringTest;
 
 import java.io.FileNotFoundException;
 
@@ -15,5 +16,6 @@ public class Main {
         Tester tester = new Tester();
         tester.runClassTest(ListGraphTest.class);
         tester.runClassTest(MatrixGraphTest.class);
+        tester.runClassTest(VertexColoringTest.class);
     }
 }
