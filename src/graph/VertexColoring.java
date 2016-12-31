@@ -1,10 +1,5 @@
 package graph;
 
-import graph.Graph;
-
-import java.util.Arrays;
-import java.util.NoSuchElementException;
-
 /**
  * Created by Paweł Kopeć on 30.12.16.
  *
@@ -20,7 +15,7 @@ public class VertexColoring {
 
     public VertexColoring(Graph graph) {
         this.graph = graph;
-        verticesNumber = graph.getVerices();
+        verticesNumber = graph.getVertices();
         colors = new int[verticesNumber];
     }
 

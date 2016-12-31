@@ -43,7 +43,7 @@ abstract public class GraphTest {
         assertFalse(graph.hasEdge(2, 4));
         assertFalse(graph.hasEdge(3, 4));
 
-        assertEquals(graph.getVerices(), 5);
+        assertEquals(graph.getVertices(), 5);
         assertEquals(graph.getEdges(), 4);
 
         graph.removeEdge(2, 3);
@@ -62,7 +62,7 @@ abstract public class GraphTest {
         assertFalse(graph.hasEdge(2, 4));
         assertFalse(graph.hasEdge(3, 4));
 
-        assertEquals(graph.getVerices(), 5);
+        assertEquals(graph.getVertices(), 5);
         assertEquals(graph.getEdges(), 1);
     }
 
@@ -97,7 +97,7 @@ abstract public class GraphTest {
         assertFalse(graph.hasEdge(2, 4));
 
 
-        assertEquals(graph.getVerices(), 5);
+        assertEquals(graph.getVertices(), 5);
         assertEquals(graph.getEdges(), 4);
     }
 

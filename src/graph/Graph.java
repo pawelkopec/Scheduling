@@ -94,7 +94,7 @@ public abstract class Graph {
      *
      * @return number of vertices
      */
-    public int getVerices() {
+    public int getVertices() {
         return verticesNumber;
     }
 

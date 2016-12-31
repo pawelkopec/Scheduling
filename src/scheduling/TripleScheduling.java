@@ -58,7 +58,7 @@ public class TripleScheduling {
      *          requires O(|V| + |E|) time.
      */
     private void checkState() {
-        if(graph.getVerices() < 8) {
+        if(graph.getVertices() < 8) {
             state = BRUTE_FORCE_EASY;
         }
         else if(is2chromatic()) {
