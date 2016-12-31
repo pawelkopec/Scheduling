@@ -13,26 +13,17 @@ import java.io.InputStream;
  */
 public class GraphFactory {
 
-    public static Graph getInstance(String className, int verticesNumber, int edgesNumber) throws IllegalArgumentException, ClassNotFoundException {
-        Class graphClass = null;
-        try {
-            graphClass = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new ClassNotFoundException(className + " is not a valid name for a class maintained by Graph Factory.");
-        }
+    public static Graph getInstance(String className, int verticesNumber, int edgesNumber) {
+        Class graphClass = validateGraphClassName(className);
 
-        if (Graph.class.isAssignableFrom(graphClass)) {
-            switch (graphClass.getName()) {
-                case "graph.ListGraph":
-                    return new ListGraph(verticesNumber);
-                case "graph.MatrixGraph":
-                    return new MatrixGraph(verticesNumber);
-                default:
-                    throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
+        switch (graphClass.getName()) {
+            case "graph.ListGraph":
+                return new ListGraph(verticesNumber);
+            case "graph.MatrixGraph":
+                return new MatrixGraph(verticesNumber);
+            default:
+                throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
 
-            }
-        } else {
-            throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
         }
     }
 
@@ -44,49 +35,45 @@ public class GraphFactory {
         return GraphFactory.getInstance(className, 0);
     }
 
-    public static Graph getInstanceFromString(String className, String s) throws ClassNotFoundException, IllegalArgumentException {
-        Class graphClass = null;
-        try {
-            graphClass = Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw new ClassNotFoundException(className + " is not a valid name for a class maintained by Graph Factory.");
-        }
+    public static Graph getInstanceFromString(String className, String s) throws ClassNotFoundException {
+        Class graphClass = validateGraphClassName(className);
 
-        if (Graph.class.isAssignableFrom(graphClass)) {
-            switch (graphClass.getName()) {
-                case "graph.ListGraph":
-                    return new ListGraph(s);
-                case "graph.MatrixGraph":
-                    return new MatrixGraph(s);
-                default:
-                    throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
-
-            }
-        } else {
-            throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
+        switch (graphClass.getName()) {
+            case "graph.ListGraph":
+                return new ListGraph(s);
+            case "graph.MatrixGraph":
+                return new MatrixGraph(s);
+            default:
+                throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
         }
     }
 
-    public static Graph getInstanceFromStream(String className, InputStream in) throws ClassNotFoundException, IllegalArgumentException {
+    public static Graph getInstanceFromStream(String className, InputStream in) throws ClassNotFoundException {
+        Class graphClass = validateGraphClassName(className);
+
+        switch (graphClass.getName()) {
+            case "graph.ListGraph":
+                return new ListGraph(in);
+            case "graph.MatrixGraph":
+                return new MatrixGraph(in);
+            default:
+                throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
+        }
+    }
+
+    private static Class validateGraphClassName(String className) throws IllegalArgumentException {
         Class graphClass = null;
+
         try {
             graphClass = Class.forName(className);
         } catch (ClassNotFoundException e) {
-            throw new ClassNotFoundException(className + " is not a valid name for a class maintained by Graph Factory.");
+            throw new IllegalArgumentException(className + " is not a valid class name.");
         }
 
-        if (Graph.class.isAssignableFrom(graphClass)) {
-            switch (graphClass.getName()) {
-                case "graph.ListGraph":
-                    return new ListGraph(in);
-                case "graph.MatrixGraph":
-                    return new MatrixGraph(in);
-                default:
-                    throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
-
-            }
-        } else {
-            throw new IllegalArgumentException(className + " cannot be initialized as Graph.");
+        if(!Graph.class.isAssignableFrom(graphClass)) {
+            throw new IllegalArgumentException(className + " is not a valid Graph subclass name.");
         }
+
+        return graphClass;
     }
 }
