@@ -14,7 +14,7 @@ This problem can be presented as finding an apropriate 3-coloring of cubic incom
 
 ## Packages
   * __graph__ package will contain necessary abstraction for building graph algorithms alongside with their basic implementations (neighbour list graph, adjacency matrix graph, colorable interface etc.)  
-  * __scheduling__ package will contain graph subclasses needed specifically for this scheduling problem
+  * __scheduling__ package will contain classes needed specifically for this scheduling problem
 
 ## Status
 In production. Not for use.  
