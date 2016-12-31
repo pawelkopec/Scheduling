@@ -29,7 +29,7 @@ public class VertexColoring {
      * @param index of a vertex to be colored
      * @param color that is to be assigned to a vertex
      */
-    void setColor(int index, int color) {
+    public void setColor(int index, int color) {
         graph.validateVertex(index);
         colors[index] = color;
     }
@@ -40,7 +40,7 @@ public class VertexColoring {
      * @param index of a given vertex
      * @return color of a given vertex
      */
-    int getColor(int index) {
+    public int getColor(int index) {
         graph.validateVertex(index);
         return colors[index];
     }
@@ -50,7 +50,7 @@ public class VertexColoring {
      *
      * @return array of colors
      */
-    int[] getColors() {
+    public int[] getColors() {
         return colors;
     }
 }
