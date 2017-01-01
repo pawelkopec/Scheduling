@@ -8,12 +8,8 @@ import java.util.Arrays;
 /**
  * Created by Paweł Kopeć on 28.12.16.
  *
- * Graph subclass designed specifically for scheduling jobs
- * for 3 machines of given speeds.
- *
- * TODO
- * issues with colors array when adding new vertices;
- * think of better data structure (maybe move removeVertex() to another interface?)
+ * Class for implementing scheduling of unit-length
+ * jobs for 3 machines.
  */
 public class TripleScheduling {
 
