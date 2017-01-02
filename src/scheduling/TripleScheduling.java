@@ -4,6 +4,8 @@ import graph.ListGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
@@ -31,7 +33,7 @@ public class TripleScheduling {
     public static final int BRUTE_FORCE_EASY = 4;
     public static final int NOT_CHECKED = 5;
 
-    private static final String ILLEGAL_SPEED_NUM = "Graph is designed for 3 processing speeds.";
+    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
     private static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
 
     private ListGraph graph;
@@ -39,8 +41,14 @@ public class TripleScheduling {
     private double[] speeds;
     private int state = NOT_CHECKED;
 
+    public TripleScheduling(ListGraph graph) {
+        this.graph = graph;
+        this.speeds = new double[]{1., 1., 1.};
+        this.coloring = new VertexColoring(graph);
+    }
+
     public TripleScheduling(ListGraph graph, double[] speeds) {
-        checkSpeeds(speeds);
+        setSpeeds(speeds);
         this.graph = graph;
         this.speeds = speeds;
         this.coloring = new VertexColoring(graph);
@@ -71,12 +79,8 @@ public class TripleScheduling {
     /**
      * Apply different scheduling algorithms
      * depending on the which graph case is considered.
-     *
-     * @param speeds array with 3 machine processing speeds
      */
-    public void findScheduling(double[] speeds) {
-        checkSpeeds(speeds);
-        Arrays.sort(speeds);
+    public VertexColoring findScheduling() {
 
         if(state == NOT_CHECKED) {
             checkState();
@@ -94,6 +98,8 @@ public class TripleScheduling {
                 findSuboptimal(speeds);
                 break;
         }
+
+        return coloring;
     }
 
     private void findOptimal(double[] speeds) {
@@ -108,9 +114,37 @@ public class TripleScheduling {
         //TODO
     }
 
+    /**
+     * Check if graph is 2-chromatic via BFS.
+     * Assign colors of numbers 1 and 2 if it is true.
+     *
+     * @return true if graph is 2-chromatic
+     */
     private boolean is2chromatic() {
-        //TODO
-        return false;
+        Queue<Integer> queue = new LinkedList<>();
+        int current = 0, currentColor = 1, otherColor = 2, noColor = 0, tempColor;
+
+        queue.add(current);
+        coloring.setColor(current, currentColor);
+        while(!queue.isEmpty()) {
+            current = queue.poll();
+            currentColor = coloring.getColor(current);
+            otherColor = currentColor == 1 ? 2 : 1;
+
+            for(int neighbour : graph.getNeighbours(current)) {
+                tempColor = coloring.getColor(neighbour);
+
+                if(tempColor == noColor) {
+                    coloring.setColor(neighbour, otherColor);
+                    queue.add(neighbour);
+                }
+                else if(tempColor == currentColor) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -133,14 +167,16 @@ public class TripleScheduling {
         //TODO
     }
 
-    private void checkSpeeds(double[] speeds) {
+    private void setSpeeds(double[] speeds) {
         if(speeds.length != 3) {
-            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + speeds.length + " given.");
+            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
         }
         for(double speed: speeds) {
             if(speed <= 0) {
                 throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
             }
         }
+
+        Arrays.sort(speeds);
     }
 }

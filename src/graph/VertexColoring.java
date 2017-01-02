@@ -1,5 +1,7 @@
 package graph;
 
+import java.util.Arrays;
+
 /**
  * Created by Paweł Kopeć on 30.12.16.
  *
@@ -53,5 +55,9 @@ public class VertexColoring {
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public String toString() {
+        return Arrays.toString(colors);
     }
 }
