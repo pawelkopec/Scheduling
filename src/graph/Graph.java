@@ -133,6 +133,14 @@ public abstract class Graph {
     public abstract LinkedList<Integer> getNeighbours(int index);
 
     /**
+     * Returns number of vertex with given index.
+     *
+     * @param index of the vertex whose neighbours are to be counted
+     * @return number of neighbours
+     */
+    public abstract int getNeighboursNumber(int index);
+
+    /**
      * Checks if there is an edge between vertices
      * of given indexes.
      *

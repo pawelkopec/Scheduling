@@ -11,8 +11,9 @@ import java.util.NoSuchElementException;
  * based on adjacency matrix.
  *
  * TODO
- * Think of data structure for adjacency matrix
+ * 1. Think of data structure for adjacency matrix
  * based on bit operations, not integers.
+ * 2. Get rid of redundancies in adjacency matrix
  */
 public class MatrixGraph extends Graph {
 
@@ -20,6 +21,7 @@ public class MatrixGraph extends Graph {
     private static final boolean DISCONNECTED = false;
 
     private boolean[][] adjacencyMatrix;
+    private int[] neighbourNumbers;
 
     public MatrixGraph() {
         super();
@@ -40,6 +42,7 @@ public class MatrixGraph extends Graph {
     @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
         adjacencyMatrix = new boolean[verticesNumber][verticesNumber];
+        neighbourNumbers = new int[verticesNumber];
     }
 
     @Override
@@ -47,7 +50,9 @@ public class MatrixGraph extends Graph {
         validateEdge(from, to);
 
         adjacencyMatrix[from][to] = CONNECTED;
+        neighbourNumbers[from]++;
         adjacencyMatrix[to][from] = CONNECTED;
+        neighbourNumbers[to]++;
         edgesNumber++;
     }
 
@@ -57,7 +62,9 @@ public class MatrixGraph extends Graph {
             throw new IllegalArgumentException(NO_SUCH_EDGE);
         }
         adjacencyMatrix[from][to] = DISCONNECTED;
+        neighbourNumbers[from]--;
         adjacencyMatrix[to][from] = DISCONNECTED;
+        neighbourNumbers[to]--;
         edgesNumber--;
     }
 
@@ -72,6 +79,12 @@ public class MatrixGraph extends Graph {
             }
         }
         return neighbours;
+    }
+
+    @Override
+    public int getNeighboursNumber(int index) {
+        validateVertex(index);
+        return neighbourNumbers[index];
     }
 
     @Override

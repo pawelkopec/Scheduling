@@ -65,6 +65,12 @@ public class ListGraph extends Graph {
     }
 
     @Override
+    public int getNeighboursNumber(int index) {
+        validateVertex(index);
+        return neighbourList.get(index).size();
+    }
+
+    @Override
     public boolean hasEdge(int from, int to) {
         validateEdge(from, to);
         return neighbourList.get(from).contains(to);
