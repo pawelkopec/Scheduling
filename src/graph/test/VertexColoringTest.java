@@ -37,6 +37,11 @@ public class VertexColoringTest {
         assertEquals(coloring.getColor(6), 0);
         assertEquals(coloring.getColor(9), 0);
         assertEquals(coloring.getColor(11), 0);
+        assertEquals(coloring.getNumberOfColored(3), 1);
+        assertEquals(coloring.getNumberOfColored(9), 1);
+        assertEquals(coloring.getNumberOfColored(6), 2);
+        assertEquals(coloring.getNumberOfColored(0), 8);
+        assertEquals(coloring.getColorsNumber(), 4);
     }
 
     @Test

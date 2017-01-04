@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by Paweł Kopeć on 30.12.16.
@@ -14,11 +15,14 @@ public class VertexColoring {
     private Graph graph;
     private int verticesNumber;
     private int[] colors;
+    private HashMap<Integer, Integer> colorSizes;
 
     public VertexColoring(Graph graph) {
         this.graph = graph;
         verticesNumber = graph.getVertices();
         colors = new int[verticesNumber];
+        colorSizes = new HashMap<>();
+        colorSizes.put(0, verticesNumber);
     }
 
     /**
@@ -29,7 +33,16 @@ public class VertexColoring {
      */
     public void setColor(int index, int color) {
         graph.validateVertex(index);
+
+        colorSizes.put(colors[index], colorSizes.get(colors[index]) - 1);
         colors[index] = color;
+
+        if(colorSizes.get(color) == null) {
+            colorSizes.put(color, 1);
+        }
+        else {
+            colorSizes.put(color, colorSizes.get(color) + 1);
+        }
     }
 
     /**
@@ -45,13 +58,25 @@ public class VertexColoring {
     }
 
     /**
-     * Get array of colors.
+     * Get number of colors in this graph.
      *
-     * @return array of colors
+     * @return number of colors
      */
-    public int[] getColors() {
-        return colors.clone();
+    public int getColorsNumber() {
+        return colorSizes.size();
     }
+
+    /**
+     * Get number of vertices that are assigned given color.
+     *
+     * @param color of vertices to look for
+     * @return number of vertices in this color
+     */
+    public int getNumberOfColored(int color) {
+        return colorSizes.containsKey(color) ? colorSizes.get(color) : 0;
+    }
+
+    public int[] getColors() { return colors.clone();}
 
     public Graph getGraph() {
         return graph;
