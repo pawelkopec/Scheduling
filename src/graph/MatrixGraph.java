@@ -104,6 +104,17 @@ public class MatrixGraph extends Graph {
 
     @Override
     public String toString() {
-        return super.toString();
+        StringBuilder str = new StringBuilder("").append(verticesNumber).append(" ");
+        str.append(edgesNumber).append(" ");
+
+        for(int i = 0; i < verticesNumber; i++) {
+            for(int j = i + 1; j < verticesNumber; j++) {
+                if (adjacencyMatrix[i][j] == CONNECTED) {
+                    str.append(i).append(" ").append(j).append(" ");
+                }
+            }
+        }
+
+        return str.toString();
     }
 }

@@ -158,9 +158,8 @@ public abstract class Graph {
      * Check if this graph can have a vertex such index.
      *
      * @param index of a vertex to be checked
-     * @return true if index is valid
      */
-    public void  validateVertex(int index) {
+    public void validateVertex(int index) {
         if(!(index < verticesNumber && index >= 0)) {
             throw new IllegalArgumentException(INVALID_VERTEX);
         }
@@ -172,7 +171,6 @@ public abstract class Graph {
      *
      * @param from index of edge beginning
      * @param to index of edge end
-     * @return if indexes are valid
      */
     protected void validateEdge(int from, int to) {
         try {
@@ -184,8 +182,5 @@ public abstract class Graph {
         }
     }
 
-    @Override
-    public String toString() {
-        return super.toString();
-    }
+    abstract public String toString();
 }

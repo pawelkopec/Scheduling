@@ -84,15 +84,15 @@ public class ListGraph extends Graph {
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder("V: ").append(verticesNumber).append("; ");
-        str.append("E: ").append(edgesNumber).append(";");
+        StringBuilder str = new StringBuilder("").append(verticesNumber).append(" ");
+        str.append(edgesNumber).append(" ");
 
         int from = 0, to;
         for(LinkedList<Integer> neighbours : neighbourList) {
             for (Integer neighbour : neighbours) {
                 to = neighbour;
                 if (from < to) {
-                    str.append(" (").append(from).append(", ").append(to).append(")");
+                    str.append(from).append(" ").append(to).append(" ");
                 }
             }
             from++;
