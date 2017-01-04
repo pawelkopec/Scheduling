@@ -6,14 +6,14 @@ Algorithms are based on article "Scheduling of unit-length jobs with cubic incom
 http://eti.pg.edu.pl/documents/174618/23783336/Scheduling%20of%20unit-length%20jobs%20with%20cubic%20incompatibility%20graphs%20on%20three%20uniform%20machines.pdf
 
 ## Scheduling problem
-We are given n unit-length jobs. Each job is in conflict with exactly 3 other jobs. The goal is to find such a division of those jobs between 3 machines of given processing speeds that:
+We are given n unit-length jobs and processing speeds of 3 machines working in parallel. Each job is in conflict with exactly 3 other jobs. The goal is to find such a division of those jobs between machines that:
   1. No 2 jobs that are in conflict will be processed on the same machine.
-  2. Overall processing time will be minimal.
+  2. Processing time will be minimal.
 
 This problem can be presented as finding an apropriate 3-coloring of cubic incompatibility graph. All the details are provided in the above mentioned article.
 
 ## Packages
-  * __graph__ package will contain necessary abstraction for building graph algorithms alongside with their basic implementations (neighbour list graph, adjacency matrix graph, colorable interface etc.)  
+  * __graph__ package will contain necessary abstraction for building graph algorithms alongside with their basic implementations (neighbour list graph, adjacency matrix graph, vertex coloring class etc.)  
   * __scheduling__ package will contain classes needed specifically for this scheduling problem
 
 ## Status
