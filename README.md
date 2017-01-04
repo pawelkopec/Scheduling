@@ -13,7 +13,7 @@ We are given n unit-length jobs and processing speeds of 3 machines working in p
 This problem can be presented as finding an apropriate 3-coloring of cubic incompatibility graph. All the details are provided in the above mentioned article.
 
 ## Packages
-  * __graph__ package will contain necessary abstraction for building graph algorithms alongside with their basic implementations (neighbour list graph, adjacency matrix graph, vertex coloring class etc.)  
+  * __graph__ package will contain necessary abstractions for building graph algorithms alongside with basic implementations of those abstractions (neighbour list graph, adjacency matrix graph, vertex coloring class etc.)  
   * __scheduling__ package will contain classes needed specifically for this scheduling problem
 
 ## Status
