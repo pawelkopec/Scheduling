@@ -1,5 +1,6 @@
 package graph.test;
 
+import graph.GraphFactory;
 import org.junit.Before;
 
 /**
@@ -10,5 +11,5 @@ import org.junit.Before;
 public class MatrixGraphTest extends GraphTest {
     @Before
     @Override
-    public void initGraphSubclass() { graphSubclassName = "graph.MatrixGraph"; }
+    public void initGraphSubclass() { graphType = GraphFactory.GRAPH_TYPES.MATRIX_GRAPH; }
 }

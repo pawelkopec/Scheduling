@@ -18,14 +18,14 @@ import static org.junit.Assert.*;
  */
 abstract public class GraphTest {
 
-    protected String graphSubclassName;
+    protected GraphFactory.GRAPH_TYPES graphType;
 
     @Before
     abstract public void initGraphSubclass();
 
     @Test
-    public void addRemoveEdge() throws ClassNotFoundException {
-        Graph graph = GraphFactory.getInstance(graphSubclassName, 5);
+    public void addRemoveEdge() {
+        Graph graph = GraphFactory.getInstance(graphType, 5);
         graph.addEdge(4, 0);
         graph.addEdge(2, 3);
         graph.addEdge(1, 3);
@@ -67,8 +67,8 @@ abstract public class GraphTest {
     }
 
     @Test
-    public void getNeighbours() throws ClassNotFoundException {
-        Graph graph = GraphFactory.getInstance(graphSubclassName, 7);
+    public void getNeighbours() {
+        Graph graph = GraphFactory.getInstance(graphType, 7);
         graph.addEdge(1, 2);
         graph.addEdge(4, 1);
         graph.addEdge(1, 6);
@@ -80,9 +80,9 @@ abstract public class GraphTest {
     }
 
     @Test
-    public void read() throws Exception {
+    public void read() {
         String s = "5 4 0 3 2 3 1 3 4 3";
-        Graph graph = GraphFactory.getInstanceFromString(graphSubclassName, s);
+        Graph graph = GraphFactory.getInstanceFromString(graphType, s);
 
         assertTrue(graph.hasEdge(0, 3));
         assertTrue(graph.hasEdge(2, 3));
