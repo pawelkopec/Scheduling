@@ -1,7 +1,6 @@
 package graph;
 
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by Paweł Kopeć on 26.12.16.
