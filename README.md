@@ -1,6 +1,6 @@
 # Scheduling
 ## Description
-This repository will include implementation of algotihms for scheduling of unit-length jobs with cubic incompatibility graphs.
+This repository will include implementation of algorithms for scheduling of unit-length jobs with cubic incompatibility graphs.
 Algorithms are based on article "Scheduling of unit-length jobs with cubic incompatibility graphs on three uniform machines" written by Hanna Furmańczyk and Marek Kubale. Article is available under a link:  
 
 http://eti.pg.edu.pl/documents/174618/23783336/Scheduling%20of%20unit-length%20jobs%20with%20cubic%20incompatibility%20graphs%20on%20three%20uniform%20machines.pdf
