@@ -16,13 +16,11 @@ import java.util.Random;
  * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.55.7124&rep=rep1&type=pdf
  */
 public class RegularGraphGenerator<GraphType extends Graph> {
-    public static final int ALGORITHM_1 = 0b01;
-    public static final int ALGORITHM_2 = 0b10;
+    public enum ALGORITHMS { ALG_1, ALG_2 }
 
-    protected static final String INVALID_DEGREE = "Vertex degree cannot be less than 1.";
-    protected static final String INVALID_VERTICES_NUMBER = "Number of vertices cannot be less than 0.";
-    protected static final String INVALID_DEGREE_VERTICES = "Number of vertices times degree must be even.";
-    protected static final String INVALID_ALGORITHM = "Incorrect algorithm type.";
+    private static final String INVALID_DEGREE = "Vertex degree cannot be less than 1.";
+    private static final String INVALID_VERTICES_NUMBER = "Number of vertices cannot be less than 0.";
+    private static final String INVALID_DEGREE_VERTICES = "Number of vertices times degree must be even.";
 
     private int degree;
     private int verticesNumber;
@@ -31,7 +29,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     /**
      * Class constructor
      *
-     * @param graphClass used to represent graph, must extends Graph
+     * @param graphClass used to represent graph, must extend Graph
      */
     public RegularGraphGenerator(Class<GraphType> graphClass) {
         this.graphClass = graphClass;
@@ -45,7 +43,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
     public Graph getRandomGraph(int degree, int verticesNumber) throws IllegalArgumentException {
-        return getRandomGraph(degree, verticesNumber, ALGORITHM_1);
+        return getRandomGraph(degree, verticesNumber, ALGORITHMS.ALG_1);
     }
 
     /**
@@ -56,47 +54,50 @@ public class RegularGraphGenerator<GraphType extends Graph> {
      * @param algorithmType which algorithm
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    public Graph getRandomGraph(int degree, int verticesNumber, int algorithmType) throws IllegalArgumentException {
-        if (degree < 1)
+    public Graph getRandomGraph(int degree, int verticesNumber, ALGORITHMS algorithmType) throws IllegalArgumentException {
+        if (degree < 1) {
             throw new IllegalArgumentException(INVALID_DEGREE);
-        if (verticesNumber < 0)
+        }
+        if (verticesNumber < 0) {
             throw new IllegalArgumentException(INVALID_VERTICES_NUMBER);
-        if (!(verticesNumber % 2 == 0 || degree % 2 == 0))
+        }
+        if (!(verticesNumber % 2 == 0 || degree % 2 == 0)) {
             throw new IllegalArgumentException(INVALID_DEGREE_VERTICES);
+        }
 
         this.degree = degree;
         this.verticesNumber = verticesNumber;
 
         switch (algorithmType) {
-            case ALGORITHM_1:
+            case ALG_1:
                 return this.getGraphA1();
-            case ALGORITHM_2:
+            case ALG_2:
                 return this.getGraphA2();
             default:
-                throw new IllegalArgumentException(INVALID_ALGORITHM);
+                return null;
         }
     }
 
     private Graph getGraphA1() {
-        Graph g = getInstanceOfGraphType();
+        Graph g = GraphFactory.getInstance(graphClass, verticesNumber);
         do {
-            /*
-                Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
-                Put points = {1, 2, ..., nd}. (points denotes the set of unpaired points.)
+            /**
+             * Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
+             * Put points = {1, 2, ..., nd} (points denotes the set of unpaired points.)
              */
             Random rand = new Random();
-            List<Integer> pairs = new ArrayList<Integer>(verticesNumber * degree +1);
+            List<Integer> pairs = new ArrayList<>(verticesNumber * degree +1);
             pairs.add(0);
-            List<Integer> points = new LinkedList<Integer>();
+            List<Integer> points = new LinkedList<>();
             for (int i = 1, nd = verticesNumber * degree; i <= nd; i++) {
                 points.add(i);
                 pairs.add(0);
             }
 
-            /*
-                Repeat the following until no suitable pair can be found:
-                Choose two random points i and j in points,
-                and if they are suitable, pair i with j and delete i and j from points .
+            /**
+             * Repeat the following until no suitable pair can be found:
+             * Choose two random points i and j in points,
+             * and if they are suitable, pair i with j and delete i and j from points.
              */
             int i, j, iIndex, jIndex;
             while (existsSuitable(points, pairs)) {
@@ -117,10 +118,10 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                 }
             }
 
-            /*
-                Create a graph G with edge from vertex r to vertex s if and only if there is a pair
-                containing points in the r'th and s'th groups. If G is degree-regular, output it, otherwise
-                return to Step 1.
+            /**
+             * Create a graph G with edge from vertex r to vertex s if and only if there is a pair
+             * containing points in the r'th and s'th groups. If G is degree-regular, output it, otherwise
+             * return to Step 1.
              */
             for (int a = 1, nd = verticesNumber * degree + 1; a < nd; a++) {
                 if (pairs.get(a) != 0) {
@@ -133,19 +134,16 @@ public class RegularGraphGenerator<GraphType extends Graph> {
         return g;
     }
 
-    private Graph getInstanceOfGraphType()
-    {
-        return GraphFactory.getInstance(graphClass, verticesNumber);
-    }
-
     private boolean existsSuitable(List<Integer> points, List<Integer> pairs) {
-        if (points.size() == 0)
+        if (points.size() == 0) {
             return false;
+        }
 
         for (int i = 0; i < points.size(); i++) {
             for (int j = 0; j < points.size(); j++) {
-                if (areSuitable(points.get(i), points.get(j), pairs))
+                if (areSuitable(points.get(i), points.get(j), pairs)) {
                     return true;
+                }
             }
         }
 
@@ -153,20 +151,21 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     }
 
     private int getPointGroup(int point) {
-        return point% verticesNumber;
+        return point % verticesNumber;
     }
 
     private boolean areSuitable(int a, int b, List<Integer> pairs) {
-        /*
-            First, we define two points to be suitable
-            if they lie in different groups and no currently existing pair
-            contains points in the same two groups.
+        /**
+         * First, we define two points to be suitable
+         * if they lie in different groups and no currently existing pair
+         * contains points in the same two groups.
          */
         int aGroup = getPointGroup(a);
         int bGroup = getPointGroup(b);
 
-        if (aGroup == bGroup)
+        if (aGroup == bGroup) {
             return false;
+        }
 
         int aCurr, bCurr, aCurrPair, bCurrPair;
         for (int i = 0; i < degree; i++) {
@@ -176,8 +175,9 @@ public class RegularGraphGenerator<GraphType extends Graph> {
             bCurrPair = pairs.get(bCurr);
 
             if ((aCurrPair != 0 && getPointGroup(aCurrPair) == bGroup) ||
-                    (bCurrPair != 0 && getPointGroup(bCurrPair) == aGroup))
+                    (bCurrPair != 0 && getPointGroup(bCurrPair) == aGroup)) {
                 return false;
+            }
         }
 
         return true;
@@ -185,9 +185,10 @@ public class RegularGraphGenerator<GraphType extends Graph> {
 
     private boolean isRegular(Graph g) {
 
-        for (int i = 0, n = g.getVertices()-1; i < n; i++){
-            if (g.getNeighboursNumber(i) != degree)
+        for (int i = 0, n = g.getVertices() - 1; i < n; i++){
+            if (g.getNeighboursNumber(i) != degree) {
                 return false;
+            }
         }
 
         return true;
