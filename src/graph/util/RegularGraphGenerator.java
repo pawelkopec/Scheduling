@@ -111,7 +111,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                     if (iIndex > jIndex) {
                         points.remove(iIndex);
                         points.remove(jIndex);
-                    } else {
+                    }
+                    else {
                         points.remove(jIndex);
                         points.remove(iIndex);
                     }
@@ -185,13 +186,13 @@ public class RegularGraphGenerator<GraphType extends Graph> {
 
     private boolean isRegular(Graph g) {
 
-        for (int i = 0, n = g.getVertices() - 1; i < n; i++){
-            if (g.getNeighboursNumber(i) != degree) {
-                return false;
-            }
+        if (2 * g.getEdges() == g.getVertices() * g.getNeighboursNumber(0)) {
+            return true;
+        }
+        else {
+            return false;
         }
 
-        return true;
     }
 
     private Graph getGraphA2() {
