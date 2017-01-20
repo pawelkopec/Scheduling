@@ -22,8 +22,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     private static final String INVALID_VERTICES_NUMBER = "Number of vertices cannot be less than 0.";
     private static final String INVALID_DEGREE_VERTICES = "Number of vertices times degree must be even.";
 
-    private int degree;
-    private int verticesNumber;
+    private static int degree;
+    private static int verticesNumber;
     private Class<GraphType> graphClass;
 
     /**
