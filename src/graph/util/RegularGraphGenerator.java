@@ -22,8 +22,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     private static final String INVALID_VERTICES_NUMBER = "Number of vertices cannot be less than 0.";
     private static final String INVALID_DEGREE_VERTICES = "Number of vertices times degree must be even.";
 
-    private int degree;
-    private int verticesNumber;
+    private static int degree;
+    private static int verticesNumber;
     private Class<GraphType> graphClass;
 
     /**
@@ -111,7 +111,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                     if (iIndex > jIndex) {
                         points.remove(iIndex);
                         points.remove(jIndex);
-                    } else {
+                    }
+                    else {
                         points.remove(jIndex);
                         points.remove(iIndex);
                     }
@@ -185,13 +186,13 @@ public class RegularGraphGenerator<GraphType extends Graph> {
 
     private boolean isRegular(Graph g) {
 
-        for (int i = 0, n = g.getVertices() - 1; i < n; i++){
-            if (g.getNeighboursNumber(i) != degree) {
-                return false;
-            }
+        if (2 * g.getEdges() == g.getVertices() * g.getNeighboursNumber(0)) {
+            return true;
+        }
+        else {
+            return false;
         }
 
-        return true;
     }
 
     private Graph getGraphA2() {
