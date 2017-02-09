@@ -1,7 +1,5 @@
 package graph;
 
-import graph.test.VertexAssignment;
-
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -14,7 +12,6 @@ import java.util.HashMap;
  */
 public class VertexColoring extends VertexAssignment {
 
-    private Graph graph;
     private int[] colors;
     private HashMap<Integer, Integer> colorSizes;
 
