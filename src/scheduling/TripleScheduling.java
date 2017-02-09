@@ -5,7 +5,6 @@ import graph.VertexColoring;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 
 import static org.junit.Assert.assertEquals;
@@ -57,7 +56,7 @@ public class TripleScheduling {
      * for that particular graph.
      *
      * Warning: Checking if graph is 2-chromatic
-     *          requires O(|V| + |E|) time.
+     *          requires O(|V|) time.
      */
     private void checkState() {
         if(graph.getVertices() < 8) {
@@ -83,7 +82,7 @@ public class TripleScheduling {
         if(state == NOT_CHECKED) {
             checkState();
         }
-        findOptimalDivision();
+
         switch(state) {
             case BRUTE_FORCE:
             case BRUTE_FORCE_EASY:
@@ -100,23 +99,6 @@ public class TripleScheduling {
         return coloring;
     }
 
-    private void findOptimal() {
-        if(speeds[2] < speeds[1] + speeds[2]) {
-            CLW(findOptimalDivision());
-        }
-        else {
-            int n2 = (int)Math.ceil(0.5 * speeds[1]/(speeds[0] + speeds[1]));
-        }
-    }
-
-    private void findSuboptimal() {
-        //TODO
-    }
-
-    private void findBruteForce() {
-        //TODO
-    }
-
     /**
      * Check if graph is 2-chromatic via BFS.
      * Assign colors of numbers 1 and 2 if it is true.
@@ -128,17 +110,17 @@ public class TripleScheduling {
         int current = 0, currentColor = 1, otherColor, noColor = 0, tempColor;
 
         queue.add(current);
-        coloring.setColor(current, currentColor);
+        coloring.set(current, currentColor);
         while(!queue.isEmpty()) {
             current = queue.poll();
-            currentColor = coloring.getColor(current);
+            currentColor = coloring.get(current);
             otherColor = currentColor == 1 ? 2 : 1;
 
             for(int neighbour : graph.getNeighbours(current)) {
-                tempColor = coloring.getColor(neighbour);
+                tempColor = coloring.get(neighbour);
 
                 if(tempColor == noColor) {
-                    coloring.setColor(neighbour, otherColor);
+                    coloring.set(neighbour, otherColor);
                     queue.add(neighbour);
                 }
                 else if(tempColor == currentColor) {
@@ -150,6 +132,25 @@ public class TripleScheduling {
         return true;
     }
 
+    /**
+     * Find optimal scheduling for bicubic graph.
+     */
+    private void findOptimal() {
+        if(speeds[2] < speeds[1] + speeds[2]) {
+            obtainOptimalViaCLW(findOptimalDivision());
+        }
+        else {
+            int n2 = (int)Math.ceil(0.5 * speeds[1]/(speeds[0] + speeds[1]));
+        }
+    }
+
+    /**
+     * Check how to round optimal sizes of color classes
+     * to integers to obtain minimal processing time
+     * for bicubic graph.
+     *
+     * @return sizes of color sizes
+     */
     int[] findOptimalDivision() {
         int n = graph.getVertices();
         double[] nFloat = new double[3];
@@ -194,22 +195,26 @@ public class TripleScheduling {
     }
 
     /**
-     * Decrease width of colouring using
-     * modified CLW procedure.
-     *
-     * @param sizes array of desired sizes of color classes
-     */
-    private void decreaseWidth(int[] sizes) {
-        //TODO
-        CLW(sizes);
-    }
-
-    /**
      *
      *
      * @param sizes
      */
-    private void CLW(int[] sizes) {
+    private void obtainOptimalViaCLW(int[] sizes) {
+        //TODO
+    }
+
+    /**
+     * Find suboptimal scheduling for tricubic graph.
+     */
+    private void findSuboptimal() {
+        //TODO
+    }
+
+    /**
+     * Find optimal solution in
+     * non-polynomial time.
+     */
+    private void findBruteForce() {
         //TODO
     }
 
