@@ -1,5 +1,7 @@
 package graph;
 
+import graph.test.VertexAssignment;
+
 import java.util.Arrays;
 import java.util.HashMap;
 
