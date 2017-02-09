@@ -1,7 +1,5 @@
 package graph;
 
-import graph.Graph;
-
 /**
  * Created by Paweł Kopeć on 09.02.17.
  *
