@@ -1,13 +1,10 @@
 package scheduling;
 
-import graph.ListGraph;
+import graph.RegularListGraph;
 import graph.VertexColoring;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
@@ -35,19 +32,14 @@ public class TripleScheduling {
     public static final int BRUTE_FORCE_EASY = 4;
     public static final int NOT_CHECKED = 5;
 
-    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
-    private static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
-
-    private ListGraph graph;
+    private RegularListGraph graph;
     private VertexColoring coloring;
     private double[] speeds;
-    private double sumOfSpeeds;
     private int state = NOT_CHECKED;
 
-    public TripleScheduling(ListGraph graph, double[] speeds) {
-        setSpeeds(speeds);
+    public TripleScheduling(RegularListGraph graph, double[] speeds) {
+        this.speeds = speeds;
         this.graph = graph;
-        for(double i : speeds) sumOfSpeeds += i;
         coloring = new VertexColoring(graph);
     }
 
@@ -89,10 +81,10 @@ public class TripleScheduling {
                 findBruteForce();
                 break;
             case OPTIMAL:
-                findOptimal();
+                coloring = new BicubicScheduling(graph, coloring, speeds).findColoring();
                 break;
             case SUBOPTIMAL:
-                findSuboptimal();
+                coloring = new TricubicScheduling(graph, coloring, speeds).findColoring();
                 break;
         }
 
@@ -133,102 +125,10 @@ public class TripleScheduling {
     }
 
     /**
-     * Find optimal scheduling for bicubic graph.
-     */
-    private void findOptimal() {
-        if(speeds[2] < speeds[1] + speeds[2]) {
-            obtainOptimalViaCLW(findOptimalDivision());
-        }
-        else {
-            int n2 = (int)Math.ceil(0.5 * speeds[1]/(speeds[0] + speeds[1]));
-        }
-    }
-
-    /**
-     * Check how to round optimal sizes of color classes
-     * to integers to obtain minimal processing time
-     * for bicubic graph.
-     *
-     * @return sizes of color sizes
-     */
-    int[] findOptimalDivision() {
-        int n = graph.getVertices();
-        double[] nFloat = new double[3];
-        for(int i = 0; i < speeds.length; i++) {
-            nFloat[i] = n * speeds[i] / sumOfSpeeds;
-        }
-
-        double time2Floor = Math.floor(nFloat[1]) / speeds[1];
-        double time2Ceil= Math.ceil(nFloat[1]) / speeds[1];
-        double time3Floor = Math.floor(nFloat[2]) / speeds[2];
-        double time3Ceil= Math.ceil(nFloat[2]) / speeds[2];
-        double totalTime = n / sumOfSpeeds;
-
-
-        double maxTime1 = Math.max(time3Floor, Math.max(time2Ceil, totalTime - time3Floor - time2Ceil));
-        double maxTime2 = Math.max(time3Ceil, Math.max(time2Floor, totalTime - time3Ceil - time2Floor));
-        double maxTime3 = Math.max(time3Ceil, Math.max(time2Ceil, totalTime - time3Ceil - time2Ceil));
-
-        double minTime = Math.min(maxTime1, Math.min(maxTime2, maxTime3));
-
-        int[] division = new int[3];
-
-        if(minTime == maxTime1) {
-            division[2] = (int)Math.floor(nFloat[2]);
-            division[1] = (int)Math.ceil(nFloat[1]);
-        }
-        else if(minTime == maxTime2) {
-            division[2] = (int)Math.ceil(nFloat[2]);
-            division[1] = (int)Math.floor(nFloat[1]);
-        }
-        else {
-            division[2] = (int)Math.ceil(nFloat[2]);
-            division[1] = (int)Math.ceil(nFloat[1]);
-        }
-        division[0] = n - division[1] - division[2];
-
-        assertEquals(division[0] + division[1] + division[2], n);
-        System.out.println(Arrays.toString(division));
-        System.out.println(Arrays.toString(speeds));
-
-        return division;
-    }
-
-    /**
-     *
-     *
-     * @param sizes
-     */
-    private void obtainOptimalViaCLW(int[] sizes) {
-        //TODO
-    }
-
-    /**
-     * Find suboptimal scheduling for tricubic graph.
-     */
-    private void findSuboptimal() {
-        //TODO
-    }
-
-    /**
      * Find optimal solution in
      * non-polynomial time.
      */
     private void findBruteForce() {
         //TODO
-    }
-
-    private void setSpeeds(double[] speeds) {
-        if(speeds.length != 3) {
-            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
-        }
-        for(double speed: speeds) {
-            if(speed <= 0) {
-                throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
-            }
-        }
-
-        Arrays.sort(speeds);
-        this.speeds = speeds;
     }
 }
