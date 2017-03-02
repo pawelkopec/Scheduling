@@ -17,7 +17,6 @@ public class BicubicScheduling extends CubicScheduling {
 
     public BicubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
         super(graph, coloring, speeds);
-        System.out.println(speeds);
     }
 
     public BicubicScheduling(RegularListGraph graph, double[] speeds) {

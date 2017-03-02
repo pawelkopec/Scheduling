@@ -30,7 +30,7 @@ public abstract class CubicScheduling {
         this.graph = graph;
         this.coloring = coloring;
         for(double i : speeds) sumOfSpeeds += i;
-        this.speeds = speeds;
+        setSpeeds(speeds);
     }
 
     public CubicScheduling(RegularListGraph graph, double[] speeds) {
