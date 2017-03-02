@@ -10,12 +10,17 @@ import java.io.InputStream;
  */
 public class RegularListGraph extends ListGraph {
 
-    private static final String TOO_MANY_NEIGHBOURS = "Regular graph cannot have vertex of so many neighbours.";
+    public static final String TOO_MANY_NEIGHBOURS = "Regular graph cannot have vertex of so many neighbours.";
+    public static final String CANNOT_BE_REGULAR = "Such degree and vertices number cannot make regular graph";
     private int degree;
     private boolean isRegular;
 
     public RegularListGraph(int verticesNumber, int degree) {
         super(verticesNumber);
+        if(degree < 0 || (verticesNumber * degree) % 2 != 0) {
+            throw new IllegalArgumentException(CANNOT_BE_REGULAR);
+        }
+
         this.degree = degree;
     }
 
