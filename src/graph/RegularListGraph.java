@@ -12,6 +12,7 @@ public class RegularListGraph extends ListGraph {
 
     public static final String TOO_MANY_NEIGHBOURS = "Regular graph cannot have vertex of so many neighbours.";
     public static final String CANNOT_BE_REGULAR = "Such degree and vertices number cannot make regular graph";
+
     private int degree;
     private boolean isRegular;
 

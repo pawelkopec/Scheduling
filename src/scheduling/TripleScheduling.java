@@ -81,11 +81,9 @@ public class TripleScheduling {
                 findBruteForce();
                 break;
             case OPTIMAL:
-                coloring = new BicubicScheduling(graph, coloring, speeds).findColoring();
-                break;
+                return new BicubicScheduling(graph, coloring, speeds).findColoring();
             case SUBOPTIMAL:
-                coloring = new TricubicScheduling(graph, coloring, speeds).findColoring();
-                break;
+                return new TricubicScheduling(graph, coloring, speeds).findColoring();
         }
 
         return coloring;
