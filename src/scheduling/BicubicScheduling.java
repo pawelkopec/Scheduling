@@ -3,6 +3,9 @@ package scheduling;
 import graph.RegularListGraph;
 import graph.VertexColoring;
 
+import static scheduling.Const.B;
+import static scheduling.Const.C;
+
 /**
  * Created by Paweł Kopeć on 02.03.17.
  * <p>

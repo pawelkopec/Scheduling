@@ -58,6 +58,8 @@ public class ListGraph extends Graph {
         edgesNumber--;
     }
 
+    // TODO
+    // change to forEachNeighbourDo()
     @Override
     public LinkedList<Integer> getNeighbours(int index) {
         validateVertex(index);

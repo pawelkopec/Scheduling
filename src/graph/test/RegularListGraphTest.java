@@ -6,6 +6,6 @@ package graph.test;
  *
  * Tests for regular graph class.
  */
-abstract public class RegularGraphTest extends GraphTest {
+abstract public class RegularListGraphTest extends GraphTest {
     //TODO
 }

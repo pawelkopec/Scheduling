@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static scheduling.Const.A;
+import static scheduling.Const.B;
+
 /**
  * Created by Paweł Kopeć on 28.12.16.
  * <p>
@@ -103,14 +106,14 @@ public class TripleScheduling {
      */
     private boolean is2chromatic() {
         Queue<Integer> queue = new LinkedList<>();
-        int current = 0, currentColor = 1, otherColor, noColor = 0, tempColor;
+        int current = 0, currentColor = A, otherColor, noColor = 0, tempColor;
 
         queue.add(current);
         coloring.set(current, currentColor);
         while (!queue.isEmpty()) {
             current = queue.poll();
             currentColor = coloring.get(current);
-            otherColor = currentColor == 1 ? 2 : 1;
+            otherColor = currentColor == A ? B : A;
 
             for (int neighbour : graph.getNeighbours(current)) {
                 tempColor = coloring.get(neighbour);

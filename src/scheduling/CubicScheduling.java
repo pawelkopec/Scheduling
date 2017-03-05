@@ -15,12 +15,6 @@ public abstract class CubicScheduling {
 
     public static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
 
-    /**
-     * Color identifiers of three independent subsets,
-     * where A is the biggest subset.
-     */
-    protected static final int A = 1, B = 2, C = 3;
-
     protected RegularListGraph graph;
     protected VertexColoring coloring;
     protected double[] speeds;
