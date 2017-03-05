@@ -131,4 +131,8 @@ public class TripleScheduling {
     private void findBruteForce() {
         //TODO
     }
+
+    public int getState() {
+        return state;
+    }
 }
