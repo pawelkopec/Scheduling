@@ -3,6 +3,7 @@ package scheduling;
 import graph.RegularListGraph;
 import graph.VertexColoring;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -14,6 +15,8 @@ import java.util.Queue;
  */
 public class TripleScheduling {
 
+    public static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
+    public static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
     public static final String GRAPH_NOT_CUBIC = "Algorithm is applied only to cubic graphs.";
 
     /**
@@ -61,7 +64,7 @@ public class TripleScheduling {
             state = BRUTE_FORCE_EASY;
         } else if (is2chromatic()) {
             state = OPTIMAL;
-        } else if (speeds[2] > speeds[1] && speeds[1] == speeds[0]) {
+        } else if (speeds[0] > speeds[1] && speeds[1] == speeds[2]) {
             state = SUBOPTIMAL;
         } else {
             state = BRUTE_FORCE;
@@ -132,7 +135,25 @@ public class TripleScheduling {
         //TODO
     }
 
+    private void setSpeeds(double[] speeds) {
+        if(speeds.length != 3) {
+            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
+        }
+        for(double speed: speeds) {
+            if(speed <= 0) {
+                throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
+            }
+        }
+
+        Arrays.sort(speeds);
+        this.speeds = speeds;
+    }
+
     public int getState() {
+        if (state == NOT_CHECKED) {
+            checkState();
+        }
+
         return state;
     }
 }

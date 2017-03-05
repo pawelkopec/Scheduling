@@ -14,8 +14,6 @@ import java.util.Arrays;
 public abstract class CubicScheduling {
 
     public static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
-    public static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
-    public static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
 
     /**
      * Color identifiers of three independent subsets,
@@ -36,7 +34,7 @@ public abstract class CubicScheduling {
         this.graph = graph;
         this.coloring = coloring;
         for(double i : speeds) sumOfSpeeds += i;
-        setSpeeds(speeds);
+        this.speeds = speeds;
     }
 
     public CubicScheduling(RegularListGraph graph, double[] speeds) {
@@ -44,18 +42,4 @@ public abstract class CubicScheduling {
     }
 
     public abstract VertexColoring findColoring();
-
-    private void setSpeeds(double[] speeds) {
-        if(speeds.length != 3) {
-            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
-        }
-        for(double speed: speeds) {
-            if(speed <= 0) {
-                throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
-            }
-        }
-
-        Arrays.sort(speeds);
-        this.speeds = speeds;
-    }
 }

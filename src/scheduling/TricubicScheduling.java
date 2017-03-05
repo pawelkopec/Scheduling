@@ -8,6 +8,7 @@ import graph.VertexColoring;
  *
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines on 3-chromatic cubic graph.
+ * It delegates scheduling to two possible algorithms.
  */
 public class TricubicScheduling extends CubicScheduling {
 
