@@ -13,9 +13,15 @@ import java.util.Arrays;
  */
 public abstract class CubicScheduling {
 
-    private static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
-    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
-    private static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
+    public static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
+    public static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
+    public static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
+
+    /**
+     * Color identifiers of three independent subsets,
+     * where A is the biggest subset.
+     */
+    protected static final int A = 1, B = 2, C = 3;
 
     protected RegularListGraph graph;
     protected VertexColoring coloring;
