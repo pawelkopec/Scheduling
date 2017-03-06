@@ -1,10 +1,9 @@
-package scheduling;
+package scheduling.triple;
 
 import graph.RegularListGraph;
 import graph.VertexColoring;
 
-import static scheduling.Const.B;
-import static scheduling.Const.C;
+import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
@@ -13,11 +12,6 @@ import static scheduling.Const.C;
  * jobs for 3 machines on 2-chromatic cubic graph.
  */
 public class BicubicScheduling extends CubicScheduling {
-
-    /**
-     * Speed indexes in array of speeds.
-     */
-    private static final int FASTEST = 2, MIDDLE = 1, SLOWEST = 0;
 
     public BicubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
         super(graph, coloring, speeds);
@@ -38,7 +32,8 @@ public class BicubicScheduling extends CubicScheduling {
 
             int toDecrease = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
             clw.decreaseBy(toDecrease);
-        } else {
+        }
+        else {
             /*
              * Determine how to split one color class of size n / 2
              * evenly between two slower machines.
@@ -46,11 +41,10 @@ public class BicubicScheduling extends CubicScheduling {
             int sizeOfB = (int) Math.ceil((graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
             int sizeOfC = (graph.getVertices() / 2) - sizeOfB;
 
-            double maxTime1 = Math.max(sizeOfB * speeds[MIDDLE], sizeOfC * speeds[SLOWEST]);
-            double maxTime2 = Math.max((sizeOfB - 1) * speeds[MIDDLE], (sizeOfC + 1) * speeds[SLOWEST]);
+            double maxTime1 = Math.max(sizeOfB / speeds[MIDDLE], sizeOfC / speeds[SLOWEST]);
+            double maxTime2 = Math.max((sizeOfB - 1) / speeds[MIDDLE], (sizeOfC + 1) / speeds[SLOWEST]);
 
-            if (maxTime1 < maxTime2) {
-                sizeOfB--;
+            if (maxTime2 < maxTime1) {
                 sizeOfC++;
             }
 
@@ -126,10 +120,12 @@ public class BicubicScheduling extends CubicScheduling {
     private void splitBetweenSlowerMachines(int sizeOfC) {
         int index = 0;
 
-        while (sizeOfC-- != 0) {
-            if (coloring.get(index) == B) {
-                coloring.set(index, C);
+        while (sizeOfC > 0) {
+            if (coloring.get(index) == Const.B) {
+                coloring.set(index, Const.C);
+                sizeOfC--;
             }
+            index++;
         }
     }
 }
