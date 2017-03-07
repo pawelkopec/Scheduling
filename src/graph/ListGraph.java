@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
  */
 public class ListGraph extends Graph {
 
-    private ArrayList<LinkedList<Integer>> neighbourList;
+    protected ArrayList<LinkedList<Integer>> neighbourList;
 
     public ListGraph() {
         super();
