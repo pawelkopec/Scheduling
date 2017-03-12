@@ -1,14 +1,10 @@
 package scheduling;
 
-import graph.ListGraph;
+import graph.RegularListGraph;
 import graph.VertexColoring;
 
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
@@ -36,19 +32,14 @@ public class TripleScheduling {
     public static final int BRUTE_FORCE_EASY = 4;
     public static final int NOT_CHECKED = 5;
 
-    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
-    private static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
-
-    private ListGraph graph;
+    private RegularListGraph graph;
     private VertexColoring coloring;
     private double[] speeds;
-    private double sumOfSpeeds;
     private int state = NOT_CHECKED;
 
-    public TripleScheduling(ListGraph graph, double[] speeds) {
-        setSpeeds(speeds);
+    public TripleScheduling(RegularListGraph graph, double[] speeds) {
+        this.speeds = speeds;
         this.graph = graph;
-        for(double i : speeds) sumOfSpeeds += i;
         coloring = new VertexColoring(graph);
     }
 
@@ -57,7 +48,7 @@ public class TripleScheduling {
      * for that particular graph.
      *
      * Warning: Checking if graph is 2-chromatic
-     *          requires O(|V| + |E|) time.
+     *          requires O(|V|) time.
      */
     private void checkState() {
         if(graph.getVertices() < 8) {
@@ -83,38 +74,19 @@ public class TripleScheduling {
         if(state == NOT_CHECKED) {
             checkState();
         }
-        findOptimalDivision();
+
         switch(state) {
             case BRUTE_FORCE:
             case BRUTE_FORCE_EASY:
                 findBruteForce();
                 break;
             case OPTIMAL:
-                findOptimal();
-                break;
+                return new BicubicScheduling(graph, coloring, speeds).findColoring();
             case SUBOPTIMAL:
-                findSuboptimal();
-                break;
+                return new TricubicScheduling(graph, coloring, speeds).findColoring();
         }
 
         return coloring;
-    }
-
-    private void findOptimal() {
-        if(speeds[2] < speeds[1] + speeds[2]) {
-            CLW(findOptimalDivision());
-        }
-        else {
-            int n2 = (int)Math.ceil(0.5 * speeds[1]/(speeds[0] + speeds[1]));
-        }
-    }
-
-    private void findSuboptimal() {
-        //TODO
-    }
-
-    private void findBruteForce() {
-        //TODO
     }
 
     /**
@@ -128,17 +100,17 @@ public class TripleScheduling {
         int current = 0, currentColor = 1, otherColor, noColor = 0, tempColor;
 
         queue.add(current);
-        coloring.setColor(current, currentColor);
+        coloring.set(current, currentColor);
         while(!queue.isEmpty()) {
             current = queue.poll();
-            currentColor = coloring.getColor(current);
+            currentColor = coloring.get(current);
             otherColor = currentColor == 1 ? 2 : 1;
 
             for(int neighbour : graph.getNeighbours(current)) {
-                tempColor = coloring.getColor(neighbour);
+                tempColor = coloring.get(neighbour);
 
                 if(tempColor == noColor) {
-                    coloring.setColor(neighbour, otherColor);
+                    coloring.set(neighbour, otherColor);
                     queue.add(neighbour);
                 }
                 else if(tempColor == currentColor) {
@@ -150,80 +122,11 @@ public class TripleScheduling {
         return true;
     }
 
-    int[] findOptimalDivision() {
-        int n = graph.getVertices();
-        double[] nFloat = new double[3];
-        for(int i = 0; i < speeds.length; i++) {
-            nFloat[i] = n * speeds[i] / sumOfSpeeds;
-        }
-
-        double time2Floor = Math.floor(nFloat[1]) / speeds[1];
-        double time2Ceil= Math.ceil(nFloat[1]) / speeds[1];
-        double time3Floor = Math.floor(nFloat[2]) / speeds[2];
-        double time3Ceil= Math.ceil(nFloat[2]) / speeds[2];
-        double totalTime = n / sumOfSpeeds;
-
-
-        double maxTime1 = Math.max(time3Floor, Math.max(time2Ceil, totalTime - time3Floor - time2Ceil));
-        double maxTime2 = Math.max(time3Ceil, Math.max(time2Floor, totalTime - time3Ceil - time2Floor));
-        double maxTime3 = Math.max(time3Ceil, Math.max(time2Ceil, totalTime - time3Ceil - time2Ceil));
-
-        double minTime = Math.min(maxTime1, Math.min(maxTime2, maxTime3));
-
-        int[] division = new int[3];
-
-        if(minTime == maxTime1) {
-            division[2] = (int)Math.floor(nFloat[2]);
-            division[1] = (int)Math.ceil(nFloat[1]);
-        }
-        else if(minTime == maxTime2) {
-            division[2] = (int)Math.ceil(nFloat[2]);
-            division[1] = (int)Math.floor(nFloat[1]);
-        }
-        else {
-            division[2] = (int)Math.ceil(nFloat[2]);
-            division[1] = (int)Math.ceil(nFloat[1]);
-        }
-        division[0] = n - division[1] - division[2];
-
-        assertEquals(division[0] + division[1] + division[2], n);
-        System.out.println(Arrays.toString(division));
-        System.out.println(Arrays.toString(speeds));
-
-        return division;
-    }
-
     /**
-     * Decrease width of colouring using
-     * modified CLW procedure.
-     *
-     * @param sizes array of desired sizes of color classes
+     * Find optimal solution in
+     * non-polynomial time.
      */
-    private void decreaseWidth(int[] sizes) {
+    private void findBruteForce() {
         //TODO
-        CLW(sizes);
-    }
-
-    /**
-     *
-     *
-     * @param sizes
-     */
-    private void CLW(int[] sizes) {
-        //TODO
-    }
-
-    private void setSpeeds(double[] speeds) {
-        if(speeds.length != 3) {
-            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
-        }
-        for(double speed: speeds) {
-            if(speed <= 0) {
-                throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
-            }
-        }
-
-        Arrays.sort(speeds);
-        this.speeds = speeds;
     }
 }
