@@ -2,7 +2,7 @@ package scheduling.test;
 
 import graph.RegularListGraph;
 import org.junit.Test;
-import scheduling.TripleScheduling;
+import scheduling.triple.ThreeMachinesScheduler;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,42 +11,42 @@ import static org.junit.Assert.assertEquals;
  *
  * Tests for TricubicScheduling class.
  */
-public class TricubicSchedulingTest {
+public class ThreeMachinesSchedulerTest {
 
     @Test
     public void chooseOptimalAlgorithm() {
         RegularListGraph graph = bicubic();
 
-        TripleScheduling scheduling = new TripleScheduling(graph, new double[]{34.6, 1.43, 1.43});
+        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
 
-        assertEquals(scheduling.getState(), TripleScheduling.OPTIMAL);
+        assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
     }
 
     @Test
     public void chooseSuboptimalAlgorithm() {
         RegularListGraph graph = tricubic();
 
-        TripleScheduling scheduling = new TripleScheduling(graph, new double[]{34.6, 1.43, 1.43});
+        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
 
-        assertEquals(scheduling.getState(), TripleScheduling.SUBOPTIMAL);
+        assertEquals(scheduling.getState(), ThreeMachinesScheduler.SUBOPTIMAL);
     }
 
     @Test
     public void chooseBruteForceAlgorithm() {
         RegularListGraph graph = tricubic();
 
-        TripleScheduling scheduling = new TripleScheduling(graph, new double[]{34.6, 13.43, 1.43});
+        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
-        assertEquals(scheduling.getState(), TripleScheduling.BRUTE_FORCE);
+        assertEquals(scheduling.getState(), ThreeMachinesScheduler.BRUTE_FORCE);
     }
 
     @Test
     public void chooseBruteForceEasyAlgorithm() {
         RegularListGraph graph = smallCubic();
 
-        TripleScheduling scheduling = new TripleScheduling(graph, new double[]{34.6, 13.43, 1.43});
+        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
-        assertEquals(scheduling.getState(), TripleScheduling.BRUTE_FORCE_EASY);
+        assertEquals(scheduling.getState(), ThreeMachinesScheduler.BRUTE_FORCE_EASY);
     }
 
     // TODO

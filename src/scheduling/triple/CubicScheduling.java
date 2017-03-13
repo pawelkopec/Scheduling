@@ -1,4 +1,4 @@
-package scheduling;
+package scheduling.triple;
 
 import graph.RegularListGraph;
 import graph.VertexColoring;
