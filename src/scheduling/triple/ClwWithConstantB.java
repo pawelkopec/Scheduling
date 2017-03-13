@@ -1,4 +1,4 @@
-package scheduling;
+package scheduling.triple;
 
 import graph.RegularListGraph;
 import graph.VertexColoring;
@@ -6,9 +6,7 @@ import graph.VertexColoring;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import static scheduling.Const.A;
-import static scheduling.Const.B;
-import static scheduling.Const.C;
+import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
