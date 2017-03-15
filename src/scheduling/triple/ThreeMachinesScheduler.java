@@ -55,7 +55,7 @@ public class ThreeMachinesScheduler {
     }
 
     /**
-     * Check which algorithm will will be needed
+     * Check which algorithm will be needed
      * for that particular graph.
      *
      * Warning: Checking if graph is 2-chromatic
@@ -75,7 +75,7 @@ public class ThreeMachinesScheduler {
 
     /**
      * Apply different scheduling algorithms
-     * depending on the which graph case is considered.
+     * depending on which graph case is considered.
      */
     public VertexColoring findScheduling() {
 

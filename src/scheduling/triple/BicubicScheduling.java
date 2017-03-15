@@ -7,7 +7,7 @@ import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
- * <p>
+ *
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines on 2-chromatic cubic graph.
  */
@@ -15,7 +15,6 @@ public class BicubicScheduling extends CubicScheduling {
 
     public BicubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
         super(graph, coloring, speeds);
-        System.out.println(speeds);
     }
 
     public BicubicScheduling(RegularListGraph graph, double[] speeds) {
@@ -86,7 +85,7 @@ public class BicubicScheduling extends CubicScheduling {
         /*
          * Calculate possible variants of total processing
          * time depending on how we round up the sizes
-         * of perfect color classes which are real numbers.
+         * of perfect color classes which sizes are real numbers.
          */
         double maxTime1 = Math.max(time3Floor, Math.max(time2Ceil, totalTime - time3Floor - time2Ceil));
         double maxTime2 = Math.max(time3Ceil, Math.max(time2Floor, totalTime - time3Ceil - time2Floor));
