@@ -18,7 +18,7 @@ public class RegularListGraph extends ListGraph {
 
     public RegularListGraph(int verticesNumber, int degree) {
         super(verticesNumber);
-        if(degree < 0 || (verticesNumber * degree) % 2 != 0) {
+        if(degree < 0 || verticesNumber <= degree || (verticesNumber * degree) % 2 != 0) {
             throw new IllegalArgumentException(CANNOT_BE_REGULAR);
         }
 
