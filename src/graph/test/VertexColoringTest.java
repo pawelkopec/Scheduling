@@ -17,7 +17,7 @@ import static org.junit.Assert.*;
 public class VertexColoringTest {
 
     @Test
-    public void setget() {
+    public void setGet() {
         VertexColoring coloring = new VertexColoring(new ListGraph(12));
 
         coloring.set(10, 6);

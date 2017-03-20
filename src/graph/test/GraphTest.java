@@ -1,6 +1,7 @@
 package graph.test;
 
 
+import graph.BaseGraph;
 import graph.Graph;
 import graph.GraphFactory;
 import org.junit.Before;
@@ -8,7 +9,6 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.Random;
 
 import static org.junit.Assert.*;
 
@@ -17,9 +17,9 @@ import static org.junit.Assert.*;
  *
  * Tests for graph class.
  */
-abstract public class GraphTest {
+abstract public class GraphTest<G extends Graph> {
 
-    protected GraphFactory.GRAPH_TYPES graphType;
+    Class<G> graphType;
 
     @Before
     abstract public void initGraphSubclass();

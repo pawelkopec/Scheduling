@@ -10,6 +10,10 @@ public abstract class VertexAssignment {
     protected Graph graph;
 
     protected VertexAssignment(Graph graph) {
+        if(graph == null) {
+            throw new NullPointerException("Graph cannot be null.");
+        }
+
         this.graph = graph;
     }
 

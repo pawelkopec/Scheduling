@@ -5,21 +5,19 @@ import java.io.InputStream;
 /**
  * Created by Paweł Kopeć on 19.02.17.
  *
- * Graph subclass that enables to take control over
- * whether graph is regular.
+ * RegularGraph implementation based on neighbour lists.
  */
-public class RegularListGraph extends ListGraph {
+public class RegularListGraph extends ListGraph implements RegularGraph {
 
-    public static final String TOO_MANY_NEIGHBOURS = "Regular graph cannot have vertex of so many neighbours.";
-    public static final String CANNOT_BE_REGULAR = "Such degree and vertices number cannot make regular graph";
+    private static final String TOO_MANY_NEIGHBOURS = "Regular graph cannot have vertex of so many neighbours.";
+    private static final String CANNOT_BE_REGULAR = "Such degree and vertices number cannot make regular graph";
+
     private int degree;
     private boolean isRegular;
 
     public RegularListGraph(int verticesNumber, int degree) {
         super(verticesNumber);
-        if(degree < 0 || (verticesNumber * degree) % 2 != 0) {
-            throw new IllegalArgumentException(CANNOT_BE_REGULAR);
-        }
+        setDegree(degree);
 
         this.degree = degree;
     }
@@ -32,13 +30,20 @@ public class RegularListGraph extends ListGraph {
         super(string);
     }
 
-    private boolean setDegree(int degree) {
-        return !((degree < 1) || verticesNumber - 1 < degree);
+    public RegularListGraph(BaseGraph other, int degree) {
+        super(other);
+        setDegree(degree);
+    }
+
+    public RegularListGraph(RegularListGraph other) {
+        super(other);
+        setDegree(other.getDegree());
     }
 
     @Override
     protected void validateEdge(int from, int to) {
         if(neighbourList.get(from).size() >= 3 || neighbourList.get(to).size() >= 3) {
+            System.out.println("krawedzi " + edgesNumber);
             throw new IllegalArgumentException(TOO_MANY_NEIGHBOURS);
         }
         super.validateEdge(from, to);
@@ -56,6 +61,16 @@ public class RegularListGraph extends ListGraph {
     public void removeEdge(int from, int to) {
         super.removeEdge(from, to);
         isRegular = false;
+    }
+
+    private void setDegree(int degree) {
+        if(degree < 0 || verticesNumber <= degree || (verticesNumber * degree) % 2 != 0) {
+            throw new IllegalArgumentException(CANNOT_BE_REGULAR);
+        }
+    }
+
+    public static RegularGraph getInstance(int verticesNumber, int degree) {
+        return new RegularListGraph(verticesNumber, degree);
     }
 
     public int getDegree() {

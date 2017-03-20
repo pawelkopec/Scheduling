@@ -1,10 +1,13 @@
-package scheduling;
+package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
@@ -12,7 +15,11 @@ import java.util.Queue;
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines.
  */
-public class TripleScheduling {
+public class ThreeMachinesScheduler {
+
+    public static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
+    public static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
+    public static final String GRAPH_NOT_CUBIC = "Algorithm is applied only to cubic graphs.";
 
     /**
      * Possible states of incompatibility graph.
@@ -32,50 +39,51 @@ public class TripleScheduling {
     public static final int BRUTE_FORCE_EASY = 4;
     public static final int NOT_CHECKED = 5;
 
-    private RegularListGraph graph;
+    private RegularGraph graph;
     private VertexColoring coloring;
     private double[] speeds;
     private int state = NOT_CHECKED;
 
-    public TripleScheduling(RegularListGraph graph, double[] speeds) {
-        this.speeds = speeds;
+    public ThreeMachinesScheduler(RegularGraph graph, double[] speeds) {
+        if (graph.getDegree() != 3 || !graph.isRegular()) {
+            throw new IllegalArgumentException(GRAPH_NOT_CUBIC);
+        }
+
         this.graph = graph;
+        setSpeeds(speeds);
         coloring = new VertexColoring(graph);
     }
 
     /**
-     * Check which algorithm will will be needed
+     * Check which algorithm will be needed
      * for that particular graph.
      *
      * Warning: Checking if graph is 2-chromatic
-     *          requires O(|V|) time.
+     * requires O(|V|) time.
      */
     private void checkState() {
-        if(graph.getVertices() < 8) {
+        if (graph.getVertices() < 8) {
             state = BRUTE_FORCE_EASY;
-        }
-        else if(is2chromatic()) {
+        } else if (is2chromatic()) {
             state = OPTIMAL;
-        }
-        else if (speeds[2] > speeds[1] && speeds[1] == speeds[0]) {
+        } else if (speeds[FASTEST] > speeds[MIDDLE] && speeds[MIDDLE] == speeds[SLOWEST]) {
             state = SUBOPTIMAL;
-        }
-        else {
+        } else {
             state = BRUTE_FORCE;
         }
     }
 
     /**
      * Apply different scheduling algorithms
-     * depending on the which graph case is considered.
+     * depending on which graph case is considered.
      */
     public VertexColoring findScheduling() {
 
-        if(state == NOT_CHECKED) {
+        if (state == NOT_CHECKED) {
             checkState();
         }
 
-        switch(state) {
+        switch (state) {
             case BRUTE_FORCE:
             case BRUTE_FORCE_EASY:
                 findBruteForce();
@@ -97,23 +105,23 @@ public class TripleScheduling {
      */
     private boolean is2chromatic() {
         Queue<Integer> queue = new LinkedList<>();
-        int current = 0, currentColor = 1, otherColor, noColor = 0, tempColor;
+        int current = 0, currentColor = A, otherColor, tempColor;
 
         queue.add(current);
         coloring.set(current, currentColor);
-        while(!queue.isEmpty()) {
+        while (!queue.isEmpty()) {
             current = queue.poll();
             currentColor = coloring.get(current);
-            otherColor = currentColor == 1 ? 2 : 1;
+            otherColor = currentColor == A ? B : A;
 
-            for(int neighbour : graph.getNeighbours(current)) {
+            for (int neighbour : graph.getNeighbours(current)) {
                 tempColor = coloring.get(neighbour);
 
-                if(tempColor == noColor) {
+                if (tempColor == NO_COLOR) {
                     coloring.set(neighbour, otherColor);
                     queue.add(neighbour);
                 }
-                else if(tempColor == currentColor) {
+                else if (tempColor == currentColor) {
                     return false;
                 }
             }
@@ -128,5 +136,27 @@ public class TripleScheduling {
      */
     private void findBruteForce() {
         //TODO
+    }
+
+    private void setSpeeds(double[] speeds) {
+        if (speeds.length != 3) {
+            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
+        }
+        for (double speed : speeds) {
+            if (speed <= 0) {
+                throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
+            }
+        }
+
+        Arrays.sort(speeds);
+        this.speeds = speeds;
+    }
+
+    public int getState() {
+        if (state == NOT_CHECKED) {
+            checkState();
+        }
+
+        return state;
     }
 }
