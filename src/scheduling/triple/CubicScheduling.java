@@ -1,6 +1,6 @@
 package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
@@ -11,16 +11,16 @@ import java.util.Arrays;
  * Base class for finding coloring of
  * cubic incompatibility graphs.
  */
-public abstract class CubicScheduling {
+abstract class CubicScheduling {
 
-    public static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
+    private static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
 
-    protected RegularListGraph graph;
+    protected RegularGraph graph;
     protected VertexColoring coloring;
     protected double[] speeds;
     protected double sumOfSpeeds;
 
-    protected CubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
+    protected CubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
         if(graph != coloring.getGraph()) {
             throw new IllegalArgumentException(ILLEGAL_COLORING);
         }
@@ -31,7 +31,7 @@ public abstract class CubicScheduling {
         this.speeds = speeds;
     }
 
-    public CubicScheduling(RegularListGraph graph, double[] speeds) {
+    public CubicScheduling(RegularGraph graph, double[] speeds) {
         this(graph, new VertexColoring(graph), speeds);
     }
 

@@ -1,6 +1,7 @@
 package graph.test;
 
 import graph.GraphFactory;
+import graph.ListGraph;
 import org.junit.Before;
 
 /**
@@ -11,5 +12,5 @@ import org.junit.Before;
 public class ListGraphTest extends GraphTest {
     @Before
     @Override
-    public void initGraphSubclass() { graphType = GraphFactory.GRAPH_TYPES.LIST_GRAPH; }
+    public void initGraphSubclass() { graphType = ListGraph.class; }
 }

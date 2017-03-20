@@ -1,6 +1,7 @@
 package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Iterator;
@@ -14,11 +15,13 @@ import static scheduling.triple.Const.*;
  * Class implementing algorithm for decreasing
  * the width of coloring of cubic graph.
  */
-public class ClwWithConstantB {
+class ClwWithConstantB {
 
-    private RegularListGraph graph;
+    private RegularGraph graph;
     private VertexColoring coloring;
     private int toDecrease;
+
+    private ComponentSwapper swapper;
 
     /**
      * Index contained by XnY means that this vertex
@@ -28,9 +31,11 @@ public class ClwWithConstantB {
 
     private boolean A3BUpTodate, A3CUpTodate, B3AUpTodate, C3AUpTodate, C3BUpTodate;
 
-    public ClwWithConstantB(RegularListGraph graph, VertexColoring coloring) {
+    public ClwWithConstantB(RegularGraph graph, VertexColoring coloring) {
         this.graph = graph;
         this.coloring = coloring;
+
+        swapper = new ComponentSwapper(coloring);
 
         A3B = new LinkedList<>();
         C3B = new LinkedList<>();
@@ -46,7 +51,7 @@ public class ClwWithConstantB {
                 continue;
             }
             else if (C3AEmpty()) {
-                swapAAndCComponents();
+                toDecrease -= swapper.swapBetween(A, C, toDecrease);
                 continue;
             }
             else if (B3AEmpty()) {
@@ -111,10 +116,6 @@ public class ClwWithConstantB {
             it.remove();
             toDecrease--;
         }
-    }
-
-    private void swapAAndCComponents() {
-        //TODO
     }
 
     private void makeB3ANotEmpty() {
@@ -192,6 +193,7 @@ public class ClwWithConstantB {
     }
 
     private void updateX3Y(LinkedList<Integer> set, int xColor, int yColor) {
+        set.clear();
         LinkedList<Integer> neighbours;
         for(int i = 0; i < graph.getVertices(); i++) {
             if (i == xColor) {

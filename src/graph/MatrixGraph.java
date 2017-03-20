@@ -16,7 +16,7 @@ import java.util.LinkedList;
  * Update - Java BitSet will do.
  * 2. Get rid of redundancies in adjacency matrix
  */
-public class MatrixGraph extends Graph {
+public class MatrixGraph extends BaseGraph {
 
     private static final boolean CONNECTED = true;
     private static final boolean DISCONNECTED = false;
@@ -38,6 +38,10 @@ public class MatrixGraph extends Graph {
 
     public MatrixGraph(String string) {
         super(string);
+    }
+
+    public MatrixGraph(BaseGraph other) {
+        super(other);
     }
 
     @Override

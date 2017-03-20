@@ -1,6 +1,6 @@
 package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
@@ -39,12 +39,12 @@ public class ThreeMachinesScheduler {
     public static final int BRUTE_FORCE_EASY = 4;
     public static final int NOT_CHECKED = 5;
 
-    private RegularListGraph graph;
+    private RegularGraph graph;
     private VertexColoring coloring;
     private double[] speeds;
     private int state = NOT_CHECKED;
 
-    public ThreeMachinesScheduler(RegularListGraph graph, double[] speeds) {
+    public ThreeMachinesScheduler(RegularGraph graph, double[] speeds) {
         if (graph.getDegree() != 3 || !graph.isRegular()) {
             throw new IllegalArgumentException(GRAPH_NOT_CUBIC);
         }

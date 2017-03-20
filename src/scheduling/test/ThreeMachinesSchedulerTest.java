@@ -1,6 +1,7 @@
 package scheduling.test;
 
 import graph.RegularListGraph;
+import graph.util.RegularGraphGenerator;
 import org.junit.Test;
 import scheduling.triple.ThreeMachinesScheduler;
 
@@ -13,13 +14,21 @@ import static org.junit.Assert.assertEquals;
  */
 public class ThreeMachinesSchedulerTest {
 
+    private RegularGraphGenerator generator;
+
+    public ThreeMachinesSchedulerTest() {
+        generator = new RegularGraphGenerator();
+    }
+
     @Test
     public void chooseOptimalAlgorithm() {
-        RegularListGraph graph = bicubic();
+        RegularListGraph graph;
 
-        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
-
-        assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
+        for (int i = 0; i < 20; i++) {
+            graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, 30);
+            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
+            assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
+        }
     }
 
     @Test
@@ -51,29 +60,6 @@ public class ThreeMachinesSchedulerTest {
 
     // TODO
     // get example graphs from generator after implementing generator
-    private RegularListGraph bicubic() {
-        RegularListGraph graph = new RegularListGraph(12, 3);
-        graph.addEdge(0, 1);
-        graph.addEdge(1, 2);
-        graph.addEdge(2, 3);
-        graph.addEdge(3, 4);
-        graph.addEdge(4, 5);
-        graph.addEdge(5, 6);
-        graph.addEdge(6, 7);
-        graph.addEdge(7, 8);
-        graph.addEdge(8, 9);
-        graph.addEdge(9, 10);
-        graph.addEdge(10, 11);
-        graph.addEdge(0, 3);
-        graph.addEdge(0, 7);
-        graph.addEdge(1, 8);
-        graph.addEdge(2, 9);
-        graph.addEdge(4, 11);
-        graph.addEdge(5, 10);
-        graph.addEdge(6, 11);
-
-        return graph;
-    }
 
     private RegularListGraph tricubic() {
         RegularListGraph graph = new RegularListGraph(14, 3);

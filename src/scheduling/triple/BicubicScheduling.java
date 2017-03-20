@@ -1,6 +1,6 @@
 package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
 import static scheduling.triple.Const.*;
@@ -11,13 +11,13 @@ import static scheduling.triple.Const.*;
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines on 2-chromatic cubic graph.
  */
-public class BicubicScheduling extends CubicScheduling {
+class BicubicScheduling extends CubicScheduling {
 
-    public BicubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
+    public BicubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
         super(graph, coloring, speeds);
     }
 
-    public BicubicScheduling(RegularListGraph graph, double[] speeds) {
+    public BicubicScheduling(RegularGraph graph, double[] speeds) {
         super(graph, speeds);
     }
 
