@@ -1,30 +1,23 @@
-package scheduling;
+package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
-import static scheduling.Const.B;
-import static scheduling.Const.C;
+import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
- * <p>
+ *
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines on 2-chromatic cubic graph.
  */
-public class BicubicScheduling extends CubicScheduling {
+class BicubicScheduling extends CubicScheduling {
 
-    /**
-     * Speed indexes in array of speeds.
-     */
-    private static final int FASTEST = 2, MIDDLE = 1, SLOWEST = 0;
-
-    public BicubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
+    public BicubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
         super(graph, coloring, speeds);
-        System.out.println(speeds);
     }
 
-    public BicubicScheduling(RegularListGraph graph, double[] speeds) {
+    public BicubicScheduling(RegularGraph graph, double[] speeds) {
         super(graph, speeds);
     }
 
@@ -39,7 +32,8 @@ public class BicubicScheduling extends CubicScheduling {
 
             int toDecrease = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
             clw.decreaseBy(toDecrease);
-        } else {
+        }
+        else {
             /*
              * Determine how to split one color class of size n / 2
              * evenly between two slower machines.
@@ -47,11 +41,10 @@ public class BicubicScheduling extends CubicScheduling {
             int sizeOfB = (int) Math.ceil((graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
             int sizeOfC = (graph.getVertices() / 2) - sizeOfB;
 
-            double maxTime1 = Math.max(sizeOfB * speeds[MIDDLE], sizeOfC * speeds[SLOWEST]);
-            double maxTime2 = Math.max((sizeOfB - 1) * speeds[MIDDLE], (sizeOfC + 1) * speeds[SLOWEST]);
+            double maxTime1 = Math.max(sizeOfB / speeds[MIDDLE], sizeOfC / speeds[SLOWEST]);
+            double maxTime2 = Math.max((sizeOfB - 1) / speeds[MIDDLE], (sizeOfC + 1) / speeds[SLOWEST]);
 
-            if (maxTime1 < maxTime2) {
-                sizeOfB--;
+            if (maxTime2 < maxTime1) {
                 sizeOfC++;
             }
 
@@ -92,7 +85,7 @@ public class BicubicScheduling extends CubicScheduling {
         /*
          * Calculate possible variants of total processing
          * time depending on how we round up the sizes
-         * of perfect color classes which are real numbers.
+         * of perfect color classes which sizes are real numbers.
          */
         double maxTime1 = Math.max(time3Floor, Math.max(time2Ceil, totalTime - time3Floor - time2Ceil));
         double maxTime2 = Math.max(time3Ceil, Math.max(time2Floor, totalTime - time3Ceil - time2Floor));
@@ -127,10 +120,12 @@ public class BicubicScheduling extends CubicScheduling {
     private void splitBetweenSlowerMachines(int sizeOfC) {
         int index = 0;
 
-        while (sizeOfC-- != 0) {
-            if (coloring.get(index) == B) {
-                coloring.set(index, C);
+        while (sizeOfC > 0) {
+            if (coloring.get(index) == Const.B) {
+                coloring.set(index, Const.C);
+                sizeOfC--;
             }
+            index++;
         }
     }
 }

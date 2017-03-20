@@ -1,7 +1,7 @@
 package graph.util;
 
-import graph.Graph;
-import graph.GraphFactory;
+import graph.RegularGraph;
+import graph.RegularGraphFactory;
 
 import java.util.*;
 
@@ -12,7 +12,7 @@ import java.util.*;
  * A. Steger and N. C. Wormald article available at
  * http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.55.7124&rep=rep1&type=pdf
  */
-public class RegularGraphGenerator<GraphType extends Graph> {
+public class RegularGraphGenerator {
     public enum ALGORITHMS { ALG_1, ALG_2 }
 
     private static final String INVALID_DEGREE = "Vertex degree cannot be less than 1.";
@@ -21,16 +21,6 @@ public class RegularGraphGenerator<GraphType extends Graph> {
 
     private int degree;
     private int verticesNumber;
-    private Class<GraphType> graphClass;
-
-    /**
-     * Class constructor
-     *
-     * @param graphClass used to represent graph, must extend Graph
-     */
-    public RegularGraphGenerator(Class<GraphType> graphClass) {
-        this.graphClass = graphClass;
-    }
 
     /**
      * Build random graph with given parameters.
@@ -39,8 +29,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
      * @param verticesNumber number of vertices
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    public Graph getRandomGraph(int degree, int verticesNumber) throws IllegalArgumentException {
-        return getRandomGraph(degree, verticesNumber, ALGORITHMS.ALG_1);
+    public <G extends RegularGraph> G getRandomGraph(Class<G> clazz, int degree, int verticesNumber) throws IllegalArgumentException {
+        return getRandomGraph(clazz, degree, verticesNumber, ALGORITHMS.ALG_1);
     }
 
     /**
@@ -51,8 +41,9 @@ public class RegularGraphGenerator<GraphType extends Graph> {
      * @param algorithmType which algorithm
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    public Graph getRandomGraph(int degree, int verticesNumber, ALGORITHMS algorithmType) throws IllegalArgumentException {
-        Graph g;
+    public <G extends RegularGraph> G getRandomGraph(Class<G> clazz,
+            int degree, int verticesNumber, ALGORITHMS algorithmType) throws IllegalArgumentException {
+        G g;
 
         if (degree < 1) {
             throw new IllegalArgumentException(INVALID_DEGREE);
@@ -69,10 +60,10 @@ public class RegularGraphGenerator<GraphType extends Graph> {
 
         switch (algorithmType) {
             case ALG_1:
-                g =  this.getGraphA1();
+                g =  this.getGraphA1(clazz);
                 break;
             case ALG_2:
-                g = this.getGraphA2();
+                g = this.getGraphA2(clazz);
                 break;
             default:
                 return null;
@@ -89,8 +80,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
      * @param verticesNumber number of vertices
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    public Graph getRandomBipartiteGraph(int degree, int verticesNumber) throws IllegalArgumentException {
-        Graph g;
+    public <G extends RegularGraph> G  getRandomBipartiteGraph(Class<G> clazz, int degree, int verticesNumber) throws IllegalArgumentException {
+        G g;
 
         if (degree < 1) {
             throw new IllegalArgumentException(INVALID_DEGREE);
@@ -105,16 +96,16 @@ public class RegularGraphGenerator<GraphType extends Graph> {
         this.degree = degree;
         this.verticesNumber = verticesNumber;
 
-        g = this.getBipartiteGraph();
+        g = this.getBipartiteGraph(clazz);
 
         return g;
     }
 
-    private Graph getBipartiteGraph() {
-        Graph g;
+    private <G extends RegularGraph> G getBipartiteGraph(Class<G> clazz) {
+        G g;
         do {
-            g = GraphFactory.getInstance(graphClass, verticesNumber);
-            /**
+            g = RegularGraphFactory.getInstance(clazz, verticesNumber, degree);;
+            /*
              * Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
              * Put points = {1, 2, ..., nd} (points denotes the set of unpaired points.)
              */
@@ -133,7 +124,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
             }
 
 
-            /**
+            /*
              * Repeat the following until no suitable pair can be found:
              * Choose two random points i and j in points,
              * and if they are suitable, pair i with j and delete i and j from points.
@@ -171,7 +162,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                 }
             }
 
-            /**
+            /*
              * Create a graph G with edge from vertex r to vertex s if and only if there is a pair
              * containing points in the r'th and s'th groups. If G is degree-regular, output it, otherwise
              * return to Step 1.
@@ -182,7 +173,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                     pairs.set(pairs.get(a), 0);
                 }
             }
-        } while (!isRegular(g));
+        } while (!g.isRegular());
 
         return g;
     }
@@ -204,8 +195,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     }
 
 
-    private Graph getGraphA1() {
-        Graph g = GraphFactory.getInstance(graphClass, verticesNumber);
+    private <G extends RegularGraph> G getGraphA1(Class<G> graphSubclass) {
+        G g = RegularGraphFactory.getInstance(graphSubclass, verticesNumber, degree);
         do {
             /**
              * Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
@@ -220,7 +211,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                 pairs.add(0);
             }
 
-            /**
+            /*
              * Repeat the following until no suitable pair can be found:
              * Choose two random points i and j in points,
              * and if they are suitable, pair i with j and delete i and j from points.
@@ -256,7 +247,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
                     pairs.set(pairs.get(a), 0);
                 }
             }
-        } while (!isRegular(g));
+        } while (!g.isRegular());
 
         return g;
     }
@@ -282,7 +273,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     }
 
     private boolean areSuitable(int a, int b, List<Integer> pairs) {
-        /**
+        /*
          * First, we define two points to be suitable
          * if they lie in different groups and no currently existing pair
          * contains points in the same two groups.
@@ -311,7 +302,7 @@ public class RegularGraphGenerator<GraphType extends Graph> {
     }
 
     private boolean areBipartiteSuitable(int a, int b, List<Integer> pairs, List<Integer> groupsPartitions) {
-        /**
+        /*
          * First, we define two points to be suitable
          * if they lie in different groups and no currently existing pair
          * contains points in the same two groups.
@@ -344,14 +335,8 @@ public class RegularGraphGenerator<GraphType extends Graph> {
         return true;
     }
 
-    private boolean isRegular(Graph g) {
-
-        return 2 * g.getEdges() == g.getVertices() * g.getNeighboursNumber(0);
-
-    }
-
-    private Graph getGraphA2() {
+    private <G extends RegularGraph> G getGraphA2(Class<G> clazz) {
         //TODO
-        return getGraphA1();
+        return getGraphA1(clazz);
     }
 }

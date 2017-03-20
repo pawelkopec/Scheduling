@@ -1,5 +1,6 @@
-package scheduling;
+package scheduling.triple;
 
+import graph.RegularGraph;
 import graph.RegularListGraph;
 import graph.VertexColoring;
 
@@ -10,9 +11,9 @@ import graph.VertexColoring;
  * jobs for 3 machines on 3-chromatic cubic graph.
  * It delegates scheduling to two possible algorithms.
  */
-public class TricubicScheduling extends CubicScheduling {
+class TricubicScheduling extends CubicScheduling {
 
-    public TricubicScheduling(RegularListGraph graph, VertexColoring coloring, double[] speeds) {
+    public TricubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
         super(graph, coloring, speeds);
     }
 

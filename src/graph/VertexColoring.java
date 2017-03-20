@@ -7,7 +7,7 @@ import java.util.HashMap;
  * Created by Paweł Kopeć on 30.12.16.
  *
  * VertexColoring class provides an interface
- * for assigning colors to graph's vertices
+ * for assigning colors to graphBase's vertices
  * and dividing them into color classes.
  */
 public class VertexColoring extends VertexAssignment {
@@ -55,7 +55,7 @@ public class VertexColoring extends VertexAssignment {
     }
 
     /**
-     * Get number of colors in this graph.
+     * Get number of colors in this graphBase.
      *
      * @return number of colors
      */
@@ -71,6 +71,18 @@ public class VertexColoring extends VertexAssignment {
      */
     public int getNumberOfColored(int color) {
         return colorSizes.containsKey(color) ? colorSizes.get(color) : 0;
+    }
+
+    public boolean isProper() {
+        for (int i = 0; i < graph.getVertices(); i++) {
+            for (Integer neighbour : graph.getNeighbours(i)) {
+                if (colors[i] == colors[neighbour]) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     public int[] getColors() {

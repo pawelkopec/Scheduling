@@ -1,22 +1,21 @@
-package scheduling;
+package scheduling.triple;
 
-import graph.RegularListGraph;
+import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static scheduling.Const.A;
-import static scheduling.Const.B;
+import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
- * <p>
+ *
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines.
  */
-public class TripleScheduling {
+public class ThreeMachinesScheduler {
 
     public static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
     public static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
@@ -24,13 +23,13 @@ public class TripleScheduling {
 
     /**
      * Possible states of incompatibility graph.
-     * <p>
+     *
      * OPTIMAL and SUBOPTIMAL states means that class can
      * give optimal and suboptimal solutions in polynomial time.
-     * <p>
+     *
      * BRUTE_FORCE state means that solution will be optimal.
      * but will require super-polynomial time.
-     * <p>
+     *
      * BRUTE_FORCE_EASY state means the same as above, but graph
      * is so small, that complexity is acceptable.
      */
@@ -40,25 +39,25 @@ public class TripleScheduling {
     public static final int BRUTE_FORCE_EASY = 4;
     public static final int NOT_CHECKED = 5;
 
-    private RegularListGraph graph;
+    private RegularGraph graph;
     private VertexColoring coloring;
     private double[] speeds;
     private int state = NOT_CHECKED;
 
-    public TripleScheduling(RegularListGraph graph, double[] speeds) {
+    public ThreeMachinesScheduler(RegularGraph graph, double[] speeds) {
         if (graph.getDegree() != 3 || !graph.isRegular()) {
             throw new IllegalArgumentException(GRAPH_NOT_CUBIC);
         }
 
         this.graph = graph;
-        this.speeds = speeds;
+        setSpeeds(speeds);
         coloring = new VertexColoring(graph);
     }
 
     /**
-     * Check which algorithm will will be needed
+     * Check which algorithm will be needed
      * for that particular graph.
-     * <p>
+     *
      * Warning: Checking if graph is 2-chromatic
      * requires O(|V|) time.
      */
@@ -67,7 +66,7 @@ public class TripleScheduling {
             state = BRUTE_FORCE_EASY;
         } else if (is2chromatic()) {
             state = OPTIMAL;
-        } else if (speeds[0] > speeds[1] && speeds[1] == speeds[2]) {
+        } else if (speeds[FASTEST] > speeds[MIDDLE] && speeds[MIDDLE] == speeds[SLOWEST]) {
             state = SUBOPTIMAL;
         } else {
             state = BRUTE_FORCE;
@@ -76,7 +75,7 @@ public class TripleScheduling {
 
     /**
      * Apply different scheduling algorithms
-     * depending on the which graph case is considered.
+     * depending on which graph case is considered.
      */
     public VertexColoring findScheduling() {
 
@@ -106,7 +105,7 @@ public class TripleScheduling {
      */
     private boolean is2chromatic() {
         Queue<Integer> queue = new LinkedList<>();
-        int current = 0, currentColor = A, otherColor, noColor = 0, tempColor;
+        int current = 0, currentColor = A, otherColor, tempColor;
 
         queue.add(current);
         coloring.set(current, currentColor);
@@ -118,10 +117,11 @@ public class TripleScheduling {
             for (int neighbour : graph.getNeighbours(current)) {
                 tempColor = coloring.get(neighbour);
 
-                if (tempColor == noColor) {
+                if (tempColor == NO_COLOR) {
                     coloring.set(neighbour, otherColor);
                     queue.add(neighbour);
-                } else if (tempColor == currentColor) {
+                }
+                else if (tempColor == currentColor) {
                     return false;
                 }
             }
@@ -139,11 +139,11 @@ public class TripleScheduling {
     }
 
     private void setSpeeds(double[] speeds) {
-        if(speeds.length != 3) {
+        if (speeds.length != 3) {
             throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
         }
-        for(double speed: speeds) {
-            if(speed <= 0) {
+        for (double speed : speeds) {
+            if (speed <= 0) {
                 throw new IllegalArgumentException(ILLEGAL_SPEED_VALUE);
             }
         }
