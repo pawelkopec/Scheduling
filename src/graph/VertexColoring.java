@@ -12,6 +12,8 @@ import java.util.HashMap;
  */
 public class VertexColoring extends VertexAssignment {
 
+    public static int NO_COLOR = 0;
+
     private int[] colors;
     private HashMap<Integer, Integer> colorSizes;
 

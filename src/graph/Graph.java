@@ -1,6 +1,7 @@
 package graph;
 
 import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * Created by Paweł Kopeć on 17.03.17.
@@ -72,4 +73,48 @@ public interface Graph {
      */
     void validateVertex(int index);
 
+    /**
+     * Check if graph is 2-chromatic via BFS.
+     * Assign colors of color1 and color2 if it is true.
+     *
+     * @return true if graph is 2-chromatic
+     */
+    static boolean isBiparte(Graph graph, VertexColoring coloring, int color1, int color2) {
+        Queue<Integer> queue = new LinkedList<>();
+        int current = 0, currentColor = color1, otherColor, tempColor;
+
+        queue.add(current);
+        coloring.set(current, currentColor);
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+            currentColor = coloring.get(current);
+            otherColor = currentColor == color1 ? color2 : color1;
+
+            for (int neighbour : graph.getNeighbours(current)) {
+                tempColor = coloring.get(neighbour);
+
+                if (tempColor == VertexColoring.NO_COLOR) {
+                    coloring.set(neighbour, otherColor);
+                    queue.add(neighbour);
+                }
+                else if (tempColor == currentColor) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    static boolean isBiparte(Graph graph, int color1, int color2) {
+        return isBiparte(graph, new VertexColoring(graph), 1, 2);
+    }
+
+    static boolean isBiparte(Graph graph, VertexColoring coloring) {
+        return isBiparte(graph, coloring, 1, 2);
+    }
+
+    static boolean isBiparte(Graph graph) {
+        return isBiparte(graph, new VertexColoring(graph));
+    }
 }

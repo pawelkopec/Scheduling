@@ -1,7 +1,6 @@
 package scheduling.triple;
 
 import graph.RegularGraph;
-import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Iterator;
