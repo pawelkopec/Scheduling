@@ -1,11 +1,15 @@
 package scheduling.test;
 
 import graph.RegularListGraph;
+import graph.VertexColoring;
 import graph.util.RegularGraphGenerator;
 import org.junit.Test;
 import scheduling.triple.ThreeMachinesScheduler;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Paweł Kopeć on 05.03.17.
@@ -15,18 +19,20 @@ import static org.junit.Assert.assertEquals;
 public class ThreeMachinesSchedulerTest {
 
     private RegularGraphGenerator generator;
+    private Random random;
 
     public ThreeMachinesSchedulerTest() {
         generator = new RegularGraphGenerator();
+        random = new Random();
     }
 
     @Test
     public void chooseOptimalAlgorithm() {
         RegularListGraph graph;
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 100; i++) {
             graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, 30);
-            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
+            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 7.43});
             assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
         }
     }
@@ -50,17 +56,36 @@ public class ThreeMachinesSchedulerTest {
     }
 
     @Test
-    public void chooseBruteForceEasyAlgorithm() {
-        RegularListGraph graph = smallCubic();
+    public void applyBruteForceEasyAlgorithm() {
+        RegularListGraph graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, 6);
 
         ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
         assertEquals(scheduling.getState(), ThreeMachinesScheduler.BRUTE_FORCE_EASY);
     }
 
-    // TODO
-    // get example graphs from generator after implementing generator
+    @Test
+    public void applyOptimalAlgorithmForOneBigPartition() {
+        RegularListGraph graph;
+        VertexColoring coloring;
 
+        for (int i = 0; i < 100; i++) {
+            graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, (random.nextInt(100) + 100) * 2);
+            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
+            assertTrue(scheduling.findScheduling().isProper());
+        }
+    }
+
+    @Test
+    public void applyOptimalAlgorithmForClw() {
+        RegularListGraph graph;
+        VertexColoring coloring;
+
+        //TODO
+    }
+
+    // TODO
+    // get example graphs from generator after implementing generating tricubic graphs
     private RegularListGraph tricubic() {
         RegularListGraph graph = new RegularListGraph(14, 3);
         graph.addEdge(0, 1);
@@ -84,21 +109,6 @@ public class ThreeMachinesSchedulerTest {
         graph.addEdge(4, 8);
         graph.addEdge(3, 5);
         graph.addEdge(2, 6);
-
-        return graph;
-    }
-
-    private RegularListGraph smallCubic() {
-        RegularListGraph graph = new RegularListGraph(6, 3);
-        graph.addEdge(0, 3);
-        graph.addEdge(0, 4);
-        graph.addEdge(0, 5);
-        graph.addEdge(1, 3);
-        graph.addEdge(1, 4);
-        graph.addEdge(1, 5);
-        graph.addEdge(2, 3);
-        graph.addEdge(2, 4);
-        graph.addEdge(2, 5);
 
         return graph;
     }
