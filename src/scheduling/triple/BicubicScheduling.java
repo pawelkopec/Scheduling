@@ -30,8 +30,8 @@ class BicubicScheduling extends CubicScheduling {
 
             ClwWithConstantB clw = new ClwWithConstantB(graph, coloring);
 
-            int toDecrease = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
-            clw.decreaseBy(toDecrease);
+            int verticesToMove = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
+            clw.moveVertices(verticesToMove);
         }
         else {
             /*

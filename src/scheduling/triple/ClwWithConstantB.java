@@ -10,7 +10,7 @@ import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
- *
+ * <p>
  * Class implementing algorithm for decreasing
  * the width of coloring of cubic graph.
  */
@@ -18,73 +18,71 @@ class ClwWithConstantB {
 
     private RegularGraph graph;
     private VertexColoring coloring;
-    private int toDecrease;
+    private int verticesToMove;
 
     private ComponentSwapper swapper;
+    private X3Y A3B, A3C, B3A, C3A, C3B;
 
-    /**
-     * Index contained by XnY means that this vertex
-     * is in X and is adjacent to n vertices in Y.
-     */
-    private LinkedList<Integer> A3B, A3C, B3A, C3A, C3B;
-
-    private boolean A3BUpTodate, A3CUpTodate, B3AUpTodate, C3AUpTodate, C3BUpTodate;
-
-    public ClwWithConstantB(RegularGraph graph, VertexColoring coloring) {
+    ClwWithConstantB(RegularGraph graph, VertexColoring coloring) {
         this.graph = graph;
         this.coloring = coloring;
 
         swapper = new ComponentSwapper(coloring);
 
-        A3B = new LinkedList<>();
-        C3B = new LinkedList<>();
-        A3C = new LinkedList<>();
+        A3B = new X3Y(A, B);
+        C3B = new X3Y(C, B);
+        A3C = new X3Y(A, C);
+        B3A = new X3Y(B, A);
+        C3A = new X3Y(C, A);
+        C3B = new X3Y(C, B);
     }
 
-    public void decreaseBy(int toDecrease) {
-        this.toDecrease = toDecrease;
+    /**
+     * Decrease the width of coloring by
+     *
+     * @param verticesToMove
+     */
+    void moveVertices(int verticesToMove) {
+        this.verticesToMove = verticesToMove;
 
-        while (toDecrease > 0) {
-            if (!A3BEmpty()) {
-                moveFromA3BToC();
+        while (0 < verticesToMove) {
+            if (moveFromA3BToC()) {
+                System.out.println("from a3b to c");
                 continue;
-            }
-            else if (C3AEmpty()) {
-                toDecrease -= swapper.swapBetween(A, C, toDecrease);
-                continue;
-            }
-            else if (B3AEmpty()) {
-                if(true) { //TODO
-                    //TODO
-                    continue;
-                }
-                else{
-                    makeB3ANotEmpty();
-                }
             }
 
-            if (!A3CEmpty()) {
-                swapWithinA3CAndB3A();
+            if (swapBetweenAAndC()) {
+                System.out.println("a <=> c");
+                return;
+            }
+
+            if (swapBetweenAAndCAndCompensate()) {
+                System.out.println("a <=> c and compensate");
                 continue;
             }
-            else if(true) { //TODO
-                swapAAndBComponentsAndCompensate();
+
+            makeB3ANotEmpty();
+
+            if (swapWithinA3CAndB3A()) {
                 continue;
             }
-            else if (true) { //TODO
+
+            if (swapBetweenAAndBAndMoveToC()) {
+                continue;
+            }
+            verticesToMove--;
+            continue;
+            /*if (true) { //TODO
                 swapWithinA1BAndB3A();
                 continue;
-            }
-            else if(true) { //TODO
+            } else if (true) { //TODO
                 if (true) { //TODO
                     //TODO
                     continue;
-                }
-                else if(true) { //TODO
+                } else if (true) { //TODO
                     //TODO
                     continue;
-                }
-                else if (true) { //TODO
+                } else if (true) { //TODO
                     //TODO
                     continue;
                 }
@@ -96,37 +94,127 @@ class ClwWithConstantB {
             if (pathDisconnectedOnOneSide()) {
                 //TODO
                 continue;
-            }
-            else if (wAdjacentToASubset()) {
+            } else if (wAdjacentToASubset()) {
                 //TODO
                 continue;
             }
 
-            crazySwap();
+            crazySwap();*/
 
         }
     }
 
-    private void moveFromA3BToC() {
-        Iterator<Integer> it = A3B.iterator();
+    /*
+     * The following methods are made only to organize
+     * the steps of an algorithm and make it more readable.
+     *
+     * They are useless if not used in the context of
+     * decreaseBy(int) method.
+     */
 
-        while (0 < toDecrease && it.hasNext()) {
-            coloring.set(it.next(), C);
-            it.remove();
-            toDecrease--;
+    private boolean moveFromA3BToC() {
+        if (A3B.empty()) {
+            return false;
         }
+
+        Iterator<Integer> it = A3B.vertices.iterator();
+        int i;
+        B3A.upToDate = false;
+
+        while (0 < verticesToMove && it.hasNext()) {
+            i = it.next();
+            coloring.set(i, C);
+            it.remove();
+            C3B.vertices.add(i);
+            verticesToMove--;
+        }
+
+        return true;
+    }
+
+    private boolean swapBetweenAAndC() {
+        if (C3A.empty()) {
+            verticesToMove -= swapper.swapBetween(A, C, verticesToMove);
+            A3C.upToDate = false;
+            B3A.upToDate = false;
+            C3A.upToDate = false;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean swapBetweenAAndCAndCompensate(){
+        if (B3A.empty()) {
+            C3B.update();
+            int decreasedBy = swapper.swapBetweenAndCompensate(A, C, C3B.vertices, verticesToMove);
+            if (0 < decreasedBy) {
+                verticesToMove -= decreasedBy;
+                A3B.upToDate = false;
+                A3C.upToDate = false;
+                B3A.upToDate = false;
+                C3B.upToDate = false;
+                C3A.upToDate = false;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean swapBetweenAAndBAndMoveToC() {
+        B3A.update();
+        int decreasedBy = swapper.swapBetweenAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
+        if (0 < decreasedBy) {
+            verticesToMove -= decreasedBy;
+            return true;
+        }
+
+        return false;
     }
 
     private void makeB3ANotEmpty() {
-        //TODO
+        if(coloring.getNumberOfColored(B) == coloring.getNumberOfColored(C)) {
+            for (int i = 0; i < graph.getVertices(); i++) {
+                if (coloring.get(i) == C) {
+                    coloring.set(i, B);
+                }
+                if (coloring.get(i) == B) {
+                    coloring.set(i, C);
+                }
+            }
+        }
+        else {
+            //TODO update B3A + swap
+            C3A.upToDate = false;
+        }
+        A3B.upToDate = false;
+        A3C.upToDate = false;
+        C3B.upToDate = false;
     }
 
-    private void swapWithinA3CAndB3A() {
-        //TODO
-    }
+    private boolean swapWithinA3CAndB3A() {
+        A3C.update();
+        B3A.update();
 
-    private void swapAAndBComponentsAndCompensate() {
-        //TODO
+        if(A3C.vertices.size() == 0 || B3A.vertices.size() == 0) {
+            return false;
+        }
+
+        C3A.update();
+        int x, y;
+        while (0 < A3C.vertices.size() && 0 < B3A.vertices.size() && 0 < verticesToMove) {
+            x = A3C.vertices.poll();
+            y = B3A.vertices.poll();
+            coloring.set(x, B);
+            coloring.set(y, C);
+            C3A.vertices.add(y);
+            verticesToMove--;
+        }
+
+        return true;
     }
 
     private void swapWithinA1BAndB3A() {
@@ -155,53 +243,46 @@ class ClwWithConstantB {
         //TODO
     }
 
-    private boolean A3BEmpty() {
-        if (!A3BUpTodate) {
-            updateX3Y(A3B, A, B);
-            A3BUpTodate = true;
+    /**
+     * If X3Y.vertices contains index n,
+     * it means that vertex n has a color X and
+     * it has 3 neighbours of color Y.
+     */
+    private class X3Y {
+        LinkedList<Integer> vertices = new LinkedList<>();
+
+        private int colorX, colorY;
+
+        private boolean upToDate;
+
+        X3Y(int colorX, int colorY) {
+            this.colorX = colorX;
+            this.colorY = colorY;
         }
 
-        return A3B.size() == 0;
-    }
+        boolean empty() {
+            if (!upToDate) {
+                update();
+                upToDate = true;
+            }
 
-    private boolean A3CEmpty() {
-        if (!A3CUpTodate) {
-            updateX3Y(A3C, A, C);
-            A3CUpTodate = true;
+            return vertices.size() == 0;
         }
 
-        return A3C.size() == 0;
-    }
-
-    private boolean B3AEmpty() {
-        if (!B3AUpTodate) {
-            updateX3Y(B3A, B, C);
-            B3AUpTodate = true;
-        }
-
-        return B3A.size() == 0;
-    }
-
-    private boolean C3AEmpty() {
-        if (!C3AUpTodate) {
-            updateX3Y(C3A, C, A);
-            C3AUpTodate = true;
-        }
-
-        return C3A.size() == 0;
-    }
-
-    private void updateX3Y(LinkedList<Integer> set, int xColor, int yColor) {
-        set.clear();
-        LinkedList<Integer> neighbours;
-        for(int i = 0; i < graph.getVertices(); i++) {
-            if (i == xColor) {
-                neighbours = graph.getNeighbours(i);
-                for (Integer n : neighbours) {
-                    if (coloring.get(n) != yColor) {
-                        continue;
+        void update() {
+            if (!upToDate) {
+                vertices.clear();
+                LinkedList<Integer> neighbours;
+                for (int i = 0; i < graph.getVertices(); i++) {
+                    if (i == colorX) {
+                        neighbours = graph.getNeighbours(i);
+                        for (Integer n : neighbours) {
+                            if (coloring.get(n) != colorY) {
+                                continue;
+                            }
+                            vertices.add(i);
+                        }
                     }
-                    set.push(n);
                 }
             }
         }
