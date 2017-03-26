@@ -10,13 +10,16 @@ import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 05.03.17.
  *
- * Tests for TricubicScheduling class.
+ * Tests for ThreeMachinesScheduling class.
  */
 public class ThreeMachinesSchedulerTest {
+
+    private static final int TEST_NUMBER = 30, MIN_GRAPH_SIZE = 1000, MAX_GRAPH_SIZE = 5000;
 
     private RegularGraphGenerator generator;
     private Random random;
@@ -69,10 +72,10 @@ public class ThreeMachinesSchedulerTest {
         RegularListGraph graph;
         VertexColoring coloring;
 
-        for (int i = 0; i < 100; i++) {
-            graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, (random.nextInt(100) + 100) * 2);
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, randomGraphSize());
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
-            assertTrue(scheduling.findScheduling().isProper());
+            assertCorrectSchedule(scheduling, scheduling.findScheduling());
         }
     }
 
@@ -111,5 +114,18 @@ public class ThreeMachinesSchedulerTest {
         graph.addEdge(2, 6);
 
         return graph;
+    }
+
+    private void assertCorrectSchedule(ThreeMachinesScheduler scheduler, VertexColoring coloring) {
+        int [] division = scheduler.getDivision();
+        assertTrue(coloring.isProper());
+        assertEquals(coloring.getNumberOfColored(A), division[FASTEST]);
+        assertEquals(coloring.getNumberOfColored(B), division[MIDDLE]);
+        assertEquals(coloring.getNumberOfColored(C), division[SLOWEST]);
+
+    }
+
+    private int randomGraphSize() {
+        return random.nextInt(((MAX_GRAPH_SIZE - MIN_GRAPH_SIZE) / 2)) * 2 + MIN_GRAPH_SIZE;
     }
 }
