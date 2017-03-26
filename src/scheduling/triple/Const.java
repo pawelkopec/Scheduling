@@ -15,5 +15,5 @@ public class Const {
     /**
      * Speed indexes in array of speeds.
      */
-    static final int FASTEST = 2, MIDDLE = 1, SLOWEST = 0;
+    public static final int FASTEST = 2, MIDDLE = 1, SLOWEST = 0;
 }
