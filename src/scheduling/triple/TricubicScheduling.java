@@ -25,4 +25,9 @@ class TricubicScheduling extends CubicScheduling {
         //TODO
         return coloring;
     }
+
+    @Override
+    public int[] getDivision() {
+        return new int[0];
+    }
 }

@@ -17,10 +17,11 @@ abstract class CubicScheduling {
 
     protected RegularGraph graph;
     protected VertexColoring coloring;
-    protected double[] speeds;
-    protected double sumOfSpeeds;
+    double[] speeds;
+    double sumOfSpeeds;
+    int []division;
 
-    protected CubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
+    CubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
         if(graph != coloring.getGraph()) {
             throw new IllegalArgumentException(ILLEGAL_COLORING);
         }
@@ -31,9 +32,11 @@ abstract class CubicScheduling {
         this.speeds = speeds;
     }
 
-    public CubicScheduling(RegularGraph graph, double[] speeds) {
+    CubicScheduling(RegularGraph graph, double[] speeds) {
         this(graph, new VertexColoring(graph), speeds);
     }
 
     public abstract VertexColoring findColoring();
+
+    public abstract int[] getDivision();
 }
