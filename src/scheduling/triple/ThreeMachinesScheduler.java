@@ -42,6 +42,7 @@ public class ThreeMachinesScheduler {
     private VertexColoring coloring;
     private double[] speeds;
     private int state = NOT_CHECKED;
+    private CubicScheduling scheduling;
 
     public ThreeMachinesScheduler(RegularGraph graph, double[] speeds) {
         if (graph.getDegree() != 3 || !graph.isRegular()) {
@@ -88,9 +89,12 @@ public class ThreeMachinesScheduler {
                 findBruteForce();
                 break;
             case OPTIMAL:
-                return new BicubicScheduling(graph, coloring, speeds).findColoring();
+                scheduling = new BicubicScheduling(graph, coloring, speeds);
+                return scheduling.findColoring();
             case SUBOPTIMAL:
-                return new TricubicScheduling(graph, coloring, speeds).findColoring();
+                scheduling = new TricubicScheduling(graph, coloring, speeds);
+                return scheduling.findColoring();
+
         }
 
         return coloring;
@@ -124,5 +128,9 @@ public class ThreeMachinesScheduler {
         }
 
         return state;
+    }
+
+    public int [] getDivision() {
+        return scheduling.getDivision();
     }
 }
