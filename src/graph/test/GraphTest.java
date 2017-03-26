@@ -1,7 +1,6 @@
 package graph.test;
 
 
-import graph.BaseGraph;
 import graph.Graph;
 import graph.GraphFactory;
 import org.junit.Before;

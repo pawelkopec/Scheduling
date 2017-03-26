@@ -1,11 +1,10 @@
 package scheduling.triple;
 
+import graph.Graph;
 import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.Queue;
 
 import static scheduling.triple.Const.*;
 
@@ -64,7 +63,7 @@ public class ThreeMachinesScheduler {
     private void checkState() {
         if (graph.getVertices() < 8) {
             state = BRUTE_FORCE_EASY;
-        } else if (is2chromatic()) {
+        } else if (Graph.isBiparte(graph, coloring, A, B)) {
             state = OPTIMAL;
         } else if (speeds[FASTEST] > speeds[MIDDLE] && speeds[MIDDLE] == speeds[SLOWEST]) {
             state = SUBOPTIMAL;
@@ -95,39 +94,6 @@ public class ThreeMachinesScheduler {
         }
 
         return coloring;
-    }
-
-    /**
-     * Check if graph is 2-chromatic via BFS.
-     * Assign colors of numbers 1 and 2 if it is true.
-     *
-     * @return true if graph is 2-chromatic
-     */
-    private boolean is2chromatic() {
-        Queue<Integer> queue = new LinkedList<>();
-        int current = 0, currentColor = A, otherColor, tempColor;
-
-        queue.add(current);
-        coloring.set(current, currentColor);
-        while (!queue.isEmpty()) {
-            current = queue.poll();
-            currentColor = coloring.get(current);
-            otherColor = currentColor == A ? B : A;
-
-            for (int neighbour : graph.getNeighbours(current)) {
-                tempColor = coloring.get(neighbour);
-
-                if (tempColor == NO_COLOR) {
-                    coloring.set(neighbour, otherColor);
-                    queue.add(neighbour);
-                }
-                else if (tempColor == currentColor) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
     }
 
     /**

@@ -15,14 +15,12 @@ import java.util.Queue;
  */
 class ComponentSwapper {
 
-    private Graph graphBase;
+    private Graph graph;
     private VertexColoring coloring;
-    private BitSet checked;
 
-    public ComponentSwapper(VertexColoring coloring) {
+    ComponentSwapper(VertexColoring coloring) {
         this.coloring = coloring;
-        this.graphBase = coloring.getGraph();
-        this.checked = new BitSet(graphBase.getVertices());
+        this.graph = coloring.getGraph();
     }
 
     /**
@@ -34,36 +32,50 @@ class ComponentSwapper {
      * @param toDecrease desired change of coloring  width
      * @return how much width was decreased
      */
-    public int swapBetween(int colorBig, int colorSmall, int toDecrease) {
+    int swapBetween(int colorBig, int colorSmall, int toDecrease) {
+        BitSet checked = new BitSet(graph.getVertices());
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
         int currentColor, sizeDifference;
 
-        for(int i = 0; i < graphBase.getVertices(); i++) {
+        for(int i = 0; i < graph.getVertices(); i++) {
 
-            if (checked.get(i)){
-                continue;
-            }
+            if (!checked.get(i)) {
 
-            currentColor = coloring.get(i);
+                currentColor = coloring.get(i);
 
-            if (currentColor == colorBig || currentColor == colorSmall) {
-                findComponents(i, colorBig, colorSmall, bigComponent, smallComponent);
-                sizeDifference = bigComponent.size() - smallComponent.size();
-                if (0 < sizeDifference && sizeDifference <= toDecrease) {
-                    for (Integer index : bigComponent) {
-                        coloring.set(index, colorSmall);
+                if (currentColor == colorBig || currentColor == colorSmall) {
+                    findComponents(i, colorBig, colorSmall, bigComponent, smallComponent, checked);
+                    sizeDifference = bigComponent.size() - smallComponent.size();
+                    if (0 < sizeDifference && sizeDifference <= toDecrease) {
+                        for (Integer index : bigComponent) {
+                            coloring.set(index, colorSmall);
+                        }
+                        for (Integer index : smallComponent) {
+                            coloring.set(index, colorBig);
+                        }
+
+                        checked.clear();
+
+                        return sizeDifference;
                     }
-                    for (Integer index : smallComponent) {
-                        coloring.set(index, colorBig);
-                    }
-
-                    checked.clear();
-
-                    return sizeDifference;
                 }
             }
         }
 
+        return 0;
+    }
+
+    int swapBetweenAndCompensate(int colorBig, int colorSmall,
+                                 LinkedList<Integer> compensator,
+                                 int toDecrease) {
+        //TODO
+        return 0;
+    }
+
+    public int swapBetweenAndMoveToOther(int colorBig, int colorSmall, int colorOther,
+                                         LinkedList<Integer> compensator,
+                                         int toDecrease) {
+        //TODO
         return 0;
     }
 
@@ -77,7 +89,10 @@ class ComponentSwapper {
      * @param bigComponent list of indexes to fill
      * @param smallComponent list of indexes to fill
      */
-    private void findComponents(int current, int colorBig, int colorSmall, LinkedList<Integer> bigComponent, LinkedList<Integer> smallComponent) {
+    private void findComponents(int current, int colorBig, int colorSmall,
+                                LinkedList<Integer> bigComponent,
+                                LinkedList<Integer> smallComponent,
+                                BitSet checked) {
         Queue<Integer> queue = new LinkedList<>();
         int currentColor, otherColor;
 
@@ -98,7 +113,7 @@ class ComponentSwapper {
                 smallComponent.add(current);
             }
 
-            for (Integer neighbour : graphBase.getNeighbours(current)) {
+            for (Integer neighbour : graph.getNeighbours(current)) {
                 if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
                     queue.add(neighbour);
                 }
