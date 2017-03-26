@@ -3,6 +3,7 @@ package scheduling.triple;
 import graph.RegularGraph;
 import graph.VertexColoring;
 
+import static java.lang.Math.*;
 import static scheduling.triple.Const.*;
 
 /**
@@ -25,7 +26,7 @@ class BicubicScheduling extends CubicScheduling {
         if (speeds[FASTEST] < speeds[SLOWEST] + speeds[MIDDLE]) {
             //TODO check sheet
 
-            int[] division = getOptimalDivision();
+            findOptimalDivision();
             splitBetweenSlowerMachines(division[SLOWEST]);
 
             ClwWithConstantB clw = new ClwWithConstantB(graph, coloring);
@@ -34,21 +35,8 @@ class BicubicScheduling extends CubicScheduling {
             clw.moveVertices(verticesToMove);
         }
         else {
-            /*
-             * Determine how to split one color class of size n / 2
-             * evenly between two slower machines.
-             */
-            int sizeOfB = (int) Math.ceil((graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
-            int sizeOfC = (graph.getVertices() / 2) - sizeOfB;
-
-            double maxTime1 = Math.max(sizeOfB / speeds[MIDDLE], sizeOfC / speeds[SLOWEST]);
-            double maxTime2 = Math.max((sizeOfB - 1) / speeds[MIDDLE], (sizeOfC + 1) / speeds[SLOWEST]);
-
-            if (maxTime2 < maxTime1) {
-                sizeOfC++;
-            }
-
-            splitBetweenSlowerMachines(sizeOfC);
+            findOptimalDivision2();
+            splitBetweenSlowerMachines(division[SLOWEST]);
         }
 
         return coloring;
@@ -57,10 +45,8 @@ class BicubicScheduling extends CubicScheduling {
     /**
      * Check how to round up optimal sizes of color classes
      * to integers to obtain minimal processing time.
-     *
-     * @return sizes of color sizes
      */
-    private int[] getOptimalDivision() {
+    private void findOptimalDivision() {
         int n = graph.getVertices();
 
         /*
@@ -69,46 +55,65 @@ class BicubicScheduling extends CubicScheduling {
          */
         double[] nFloat = new double[3];
         for (int i = 0; i < speeds.length; i++) {
-            nFloat[i] = n * speeds[i] / sumOfSpeeds;
+            nFloat[i] = (double) n * speeds[i] / sumOfSpeeds;
         }
 
         /*
          * Calculate intermediate results to simplify
          * calculations.
          */
-        double time2Floor = Math.floor(nFloat[1]) / speeds[MIDDLE];
-        double time2Ceil = Math.ceil(nFloat[1]) / speeds[MIDDLE];
-        double time3Floor = Math.floor(nFloat[2]) / speeds[FASTEST];
-        double time3Ceil = Math.ceil(nFloat[2]) / speeds[FASTEST];
-        double totalTime = n / sumOfSpeeds;
+        double timeMiddleFloor = floor(nFloat[MIDDLE]) / speeds[MIDDLE];
+        double timeMiddleCeil = ceil(nFloat[MIDDLE]) / speeds[MIDDLE];
+        double timeFastestFloor = floor(nFloat[FASTEST]) / speeds[FASTEST];
+        double timeFastestCeil = ceil(nFloat[FASTEST]) / speeds[FASTEST];
+        double timeSlowest1 = ((double) n - floor(nFloat[FASTEST]) - ceil(nFloat[MIDDLE])) / speeds[SLOWEST];
+        double timeSlowest2 = ((double) n - ceil(nFloat[FASTEST]) - floor(nFloat[MIDDLE])) / speeds[SLOWEST];
+        double timeSlowest3 = ((double) n - ceil(nFloat[FASTEST]) - ceil(nFloat[MIDDLE])) / speeds[SLOWEST];
 
         /*
          * Calculate possible variants of total processing
          * time depending on how we round up the sizes
          * of perfect color classes which sizes are real numbers.
          */
-        double maxTime1 = Math.max(time3Floor, Math.max(time2Ceil, totalTime - time3Floor - time2Ceil));
-        double maxTime2 = Math.max(time3Ceil, Math.max(time2Floor, totalTime - time3Ceil - time2Floor));
-        double maxTime3 = Math.max(time3Ceil, Math.max(time2Ceil, totalTime - time3Ceil - time2Ceil));
+        double maxTime1 = max(timeFastestFloor, max(timeMiddleCeil, timeSlowest1));
+        double maxTime2 = max(timeFastestCeil, max(timeMiddleFloor, timeSlowest2));
+        double maxTime3 = max(timeFastestCeil, max(timeMiddleCeil, timeSlowest3));
 
-        double minTime = Math.min(maxTime1, Math.min(maxTime2, maxTime3));
+        double minTime = min(maxTime1, min(maxTime2, maxTime3));
 
-        int[] division = new int[3];
+        division = new int[3];
 
         if (minTime == maxTime1) {
-            division[2] = (int) Math.floor(nFloat[2]);
-            division[1] = (int) Math.ceil(nFloat[1]);
+            division[FASTEST] = (int) floor(nFloat[FASTEST]);
+            division[MIDDLE] = (int) ceil(nFloat[MIDDLE]);
         } else if (minTime == maxTime2) {
-            division[2] = (int) Math.ceil(nFloat[FASTEST]);
-            division[1] = (int) Math.floor(nFloat[MIDDLE]);
+            division[FASTEST] = (int) ceil(nFloat[FASTEST]);
+            division[MIDDLE] = (int) floor(nFloat[MIDDLE]);
         } else {
-            division[2] = (int) Math.ceil(nFloat[FASTEST]);
-            division[1] = (int) Math.ceil(nFloat[MIDDLE]);
+            division[FASTEST] = (int) ceil(nFloat[FASTEST]);
+            division[MIDDLE] = (int) ceil(nFloat[MIDDLE]);
         }
 
         division[SLOWEST] = n - division[MIDDLE] - division[FASTEST];
+    }
 
-        return division;
+    /**
+     * Determine how to split one color class of size n / 2
+     * evenly between two slower machines.
+     */
+    private void findOptimalDivision2() {
+        division = new int[3];
+        division[FASTEST] = graph.getVertices() / 2;
+        division[MIDDLE] = (int) ceil((double)(graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
+        division[SLOWEST] = (graph.getVertices() / 2) - division[MIDDLE];
+
+        double maxTime1 = max((double) division[MIDDLE] / speeds[MIDDLE], (double) division[SLOWEST] / speeds[SLOWEST]);
+        double maxTime2 = max(((double) division[MIDDLE] - 1.) / speeds[MIDDLE], ((double) division[SLOWEST] + 1.) / speeds[SLOWEST]);
+
+        if (maxTime2 < maxTime1) {
+            division[SLOWEST]++;
+            division[MIDDLE]--;
+        }
     }
 
     /**
@@ -120,12 +125,17 @@ class BicubicScheduling extends CubicScheduling {
     private void splitBetweenSlowerMachines(int sizeOfC) {
         int index = 0;
 
-        while (sizeOfC > 0) {
+        while (0 < sizeOfC) {
             if (coloring.get(index) == Const.B) {
                 coloring.set(index, Const.C);
                 sizeOfC--;
             }
             index++;
         }
+    }
+
+    @Override
+    public int[] getDivision() {
+        return division;
     }
 }
