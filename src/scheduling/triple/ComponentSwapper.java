@@ -35,7 +35,7 @@ class ComponentSwapper {
     int swapBetween(int colorBig, int colorSmall, int verticesToMove, LinkedList<Integer> compensator) {
         BitSet checked = new BitSet(graph.getVertices());
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
-        int currentColor, sizeDifference, toCompensate, verticesMoved = 0;
+        int currentColor, sizeDifference, toCompensate, verticesMovedTotal = 0, verticesMoved;
 
         for(int i = 0; i < graph.getVertices(); i++) {
 
@@ -50,6 +50,7 @@ class ComponentSwapper {
                         toCompensate = sizeDifference - verticesToMove;
                         toCompensate = 0 < toCompensate ? toCompensate : 0;
                         verticesMoved = sizeDifference - toCompensate;
+                        verticesMovedTotal += verticesMoved;
                         verticesToMove -= verticesMoved;
 
                         swapComponents(bigComponent, smallComponent, colorBig, colorSmall);
@@ -59,7 +60,7 @@ class ComponentSwapper {
             }
         }
 
-        return verticesMoved;
+        return verticesMovedTotal;
     }
 
     void swapBetweenWithoutDecreasing(int colorBig, int colorSmall, LinkedList<Integer> compensator) {
@@ -146,10 +147,8 @@ class ComponentSwapper {
     }
 
     private void compensate(LinkedList<Integer> compensator, int color, int n) {
-        int index;
-        for (int i = 0; i < n; i++) {
-            index = compensator.poll();
-            coloring.set(index, color);
+        for (int i = 0; i < n; i++) {;
+            coloring.set(compensator.poll(), color);
         }
     }
 }
