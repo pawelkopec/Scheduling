@@ -36,30 +36,44 @@ class ClwWithConstantB {
         C3B = new X3Y(C, B);
     }
 
+    void tmp() {
+        System.out.print("Zostało do przeniesienia: " + verticesToMove);
+        System.out.println("|A3B| = " + A3B.getSize());
+        System.out.println("|A3C| = " + A3C.getSize());
+        System.out.println("|B3A| = " + B3A.getSize());
+        System.out.println("|C3A| = " + C3A.getSize());
+        System.out.println("|C3B| = " + C3B.getSize());
+        System.out.println("------------------------------------");
+    }
+
     /**
      * Decrease the width of coloring by
      *
-     * @param verticesToMove
+     * @param desiredVerticesToMove
      */
-    void moveVertices(int verticesToMove) {
-        this.verticesToMove = verticesToMove;
+    void moveVertices(int desiredVerticesToMove) {
+        this.verticesToMove = desiredVerticesToMove;
 
         while (0 < verticesToMove) {
             if (moveFromA3BToC()) {
+                tmp();
                 continue;
             }
 
             if (swapBetweenAAndC()) {
-                return;
+                tmp();
+                continue;
             }
 
             makeB3ANotEmpty();
 
             if (swapWithinA3CAndB3A()) {
+                tmp();
                 continue;
             }
 
             if (swapBetweenAAndBAndMoveToC()) {
+                tmp();
                 continue;
             }
             return;
