@@ -1,6 +1,7 @@
 package graph.util;
 
 import graph.Graph;
+import graph.RegularGraph;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,28 +10,7 @@ import java.util.Random;
 /**
  * Created by Robert Stancel on 07.03.17.
  */
-public class D3RegularGraphGenerator<GraphType extends Graph> {
-
-    private Class<GraphType> graphClass;
-    private RegularGraphGenerator<GraphType> generator;
-    /**
-     *
-     * @param graphClass used to represent graph, must extend Graph
-     */
-    public D3RegularGraphGenerator(Class<GraphType> graphClass) {
-        this.graphClass = graphClass;
-        this.generator = new RegularGraphGenerator<>(graphClass);
-    }
-
-    /**
-     *
-     * @param verticesNumber number of vertices
-     * @return graph with given parameters
-     * @throws IllegalArgumentException if graph from given parameters cannot be constructed
-     */
-    public Graph getRandomGraph(int verticesNumber) throws IllegalArgumentException {
-        return generator.getRandomGraph(3, verticesNumber);
-    }
+public class D3RegularGraphGenerator extends RegularGraphGenerator {
 
     /**
      *
@@ -39,56 +19,24 @@ public class D3RegularGraphGenerator<GraphType extends Graph> {
      * @return graph with given parameters
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    public Graph getRandomGraph(int verticesNumber, int chromaticNumber) throws IllegalArgumentException {
-        Graph g;
+    public <G extends RegularGraph> G getRandomGraph(Class<G> clazz, int verticesNumber, int chromaticNumber) throws IllegalArgumentException {
+        G g;
 
         switch (chromaticNumber) {
             case 2:
-                g = generator.getRandomBipartiteGraph(3, verticesNumber);
-
-                break;
+                return getRandomBipartiteGraph(clazz, 3, verticesNumber);
             case 3:
-                g = generator.getRandomGraph(3, verticesNumber);
+                g = getRandomGraph(clazz, 3, verticesNumber);
                 LinkedList<LinkedList<Integer>> partitions  = new LinkedList<>();
                 partitions.push(new LinkedList<>());
                 partitions.push(new LinkedList<>());
                 if (isBipartite(g, partitions)) {
                     makeTripartite(g, partitions);
                 }
-                break;
+                return g;
             default:
-                g = generator.getRandomGraph(3, verticesNumber);
-                break;
+                return getRandomGraph(clazz, 3, verticesNumber);
         }
-
-
-        return g;
-    }
-
-    private boolean isBipartite(Graph g) {
-        int[] verticesColors = new int[g.getVertices()];
-        for (int i = 0; i < g.getVertices(); i++) {
-            verticesColors[i] = -1;
-        }
-
-        verticesColors[0] = 1;
-
-        LinkedList<Integer> queue = new LinkedList<>();
-        queue.push(0);
-        int u;
-        while (!queue.isEmpty()) {
-            u = queue.pop();
-            for (int v: g.getNeighbours(u)) {
-                if (verticesColors[v] ==  -1) {
-                    verticesColors[v] = 1 - verticesColors[u];
-                    queue.push(v);
-                }
-                else if (verticesColors[v] == verticesColors[u]) {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     private boolean isBipartite(Graph g, LinkedList<LinkedList<Integer>> partitions) {
