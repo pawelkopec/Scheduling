@@ -29,10 +29,40 @@ class ComponentSwapper {
      *
      * @param colorBig color of bigger color class
      * @param colorSmall color of smaller color class
-     * @param toDecrease desired change of coloring  width
+     * @param verticesToMove desired change of coloring  width
      * @return how much width was decreased
      */
-    int swapBetween(int colorBig, int colorSmall, int toDecrease) {
+    int swapBetween(int colorBig, int colorSmall, int verticesToMove, LinkedList<Integer> compensator) {
+        BitSet checked = new BitSet(graph.getVertices());
+        LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
+        int currentColor, sizeDifference, toCompensate, verticesMoved = 0;
+
+        for(int i = 0; i < graph.getVertices(); i++) {
+
+            if (!checked.get(i) && 0 < verticesToMove) {
+
+                currentColor = coloring.get(i);
+
+                if (currentColor == colorBig || currentColor == colorSmall) {
+                    findComponents(i, colorBig, colorSmall, bigComponent, smallComponent, checked);
+                    sizeDifference = bigComponent.size() - smallComponent.size();
+                    if (0 < sizeDifference && sizeDifference <= verticesToMove + compensator.size()) {
+                        toCompensate = sizeDifference - verticesToMove;
+                        toCompensate = 0 < toCompensate ? toCompensate : 0;
+                        verticesMoved = sizeDifference - toCompensate;
+                        verticesToMove -= verticesMoved;
+
+                        swapComponents(bigComponent, smallComponent, colorBig, colorSmall);
+                        compensate(compensator, colorBig, toCompensate);
+                    }
+                }
+            }
+        }
+
+        return verticesMoved;
+    }
+
+    void swapBetweenWithoutDecreasing(int colorBig, int colorSmall, LinkedList<Integer> compensator) {
         BitSet checked = new BitSet(graph.getVertices());
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
         int currentColor, sizeDifference;
@@ -46,30 +76,15 @@ class ComponentSwapper {
                 if (currentColor == colorBig || currentColor == colorSmall) {
                     findComponents(i, colorBig, colorSmall, bigComponent, smallComponent, checked);
                     sizeDifference = bigComponent.size() - smallComponent.size();
-                    if (0 < sizeDifference && sizeDifference <= toDecrease) {
-                        for (Integer index : bigComponent) {
-                            coloring.set(index, colorSmall);
-                        }
-                        for (Integer index : smallComponent) {
-                            coloring.set(index, colorBig);
-                        }
+                    if (0 < sizeDifference && sizeDifference <= compensator.size()) {
+                        swapComponents(bigComponent, smallComponent, colorBig, colorSmall);
+                        compensate(compensator, colorBig, sizeDifference);
 
-                        checked.clear();
-
-                        return sizeDifference;
+                        return;
                     }
                 }
             }
         }
-
-        return 0;
-    }
-
-    int swapBetweenAndCompensate(int colorBig, int colorSmall,
-                                 LinkedList<Integer> compensator,
-                                 int toDecrease) {
-        //TODO
-        return 0;
     }
 
     public int swapBetweenAndMoveToOther(int colorBig, int colorSmall, int colorOther,
@@ -118,6 +133,23 @@ class ComponentSwapper {
                     queue.add(neighbour);
                 }
             }
+        }
+    }
+
+    private void swapComponents(LinkedList<Integer> x, LinkedList<Integer> y, int colorX, int colorY) {
+        for (Integer i : x) {
+            coloring.set(i, colorY);
+        }
+        for (Integer i : y) {
+            coloring.set(i, colorX);
+        }
+    }
+
+    private void compensate(LinkedList<Integer> compensator, int color, int n) {
+        int index;
+        for (int i = 0; i < n; i++) {
+            index = compensator.poll();
+            coloring.set(index, color);
         }
     }
 }

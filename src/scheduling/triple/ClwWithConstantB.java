@@ -30,7 +30,6 @@ class ClwWithConstantB {
         swapper = new ComponentSwapper(coloring);
 
         A3B = new X3Y(A, B);
-        C3B = new X3Y(C, B);
         A3C = new X3Y(A, C);
         B3A = new X3Y(B, A);
         C3A = new X3Y(C, A);
@@ -47,18 +46,11 @@ class ClwWithConstantB {
 
         while (0 < verticesToMove) {
             if (moveFromA3BToC()) {
-                System.out.println("from a3b to c");
                 continue;
             }
 
             if (swapBetweenAAndC()) {
-                System.out.println("a <=> c");
                 return;
-            }
-
-            if (swapBetweenAAndCAndCompensate()) {
-                System.out.println("a <=> c and compensate");
-                continue;
             }
 
             makeB3ANotEmpty();
@@ -70,8 +62,7 @@ class ClwWithConstantB {
             if (swapBetweenAAndBAndMoveToC()) {
                 continue;
             }
-            verticesToMove--;
-            continue;
+            return;
             /*if (true) { //TODO
                 swapWithinA1BAndB3A();
                 continue;
@@ -117,48 +108,25 @@ class ClwWithConstantB {
             return false;
         }
 
-        Iterator<Integer> it = A3B.vertices.iterator();
-        int i;
-        B3A.upToDate = false;
-
-        while (0 < verticesToMove && it.hasNext()) {
-            i = it.next();
-            coloring.set(i, C);
-            it.remove();
-            C3B.vertices.add(i);
+        while (0 < verticesToMove && 0 < A3B.getSize()) {
+            coloring.set(A3B.vertices.poll(), C);
             verticesToMove--;
         }
+
+        C3B.upToDate = false;
 
         return true;
     }
 
     private boolean swapBetweenAAndC() {
-        if (C3A.empty()) {
-            verticesToMove -= swapper.swapBetween(A, C, verticesToMove);
+        if (1 < verticesToMove || C3A.empty() || !C3B.empty()) {
+            verticesToMove -= swapper.swapBetween(A, C, verticesToMove, C3B.vertices);
             A3C.upToDate = false;
+            A3B.upToDate = false;
             B3A.upToDate = false;
             C3A.upToDate = false;
 
             return true;
-        }
-
-        return false;
-    }
-
-    private boolean swapBetweenAAndCAndCompensate(){
-        if (B3A.empty()) {
-            C3B.update();
-            int decreasedBy = swapper.swapBetweenAndCompensate(A, C, C3B.vertices, verticesToMove);
-            if (0 < decreasedBy) {
-                verticesToMove -= decreasedBy;
-                A3B.upToDate = false;
-                A3C.upToDate = false;
-                B3A.upToDate = false;
-                C3B.upToDate = false;
-                C3A.upToDate = false;
-
-                return true;
-            }
         }
 
         return false;
@@ -176,41 +144,22 @@ class ClwWithConstantB {
     }
 
     private void makeB3ANotEmpty() {
-        if(coloring.getNumberOfColored(B) == coloring.getNumberOfColored(C)) {
-            for (int i = 0; i < graph.getVertices(); i++) {
-                if (coloring.get(i) == C) {
-                    coloring.set(i, B);
-                }
-                if (coloring.get(i) == B) {
-                    coloring.set(i, C);
-                }
-            }
-        }
-        else {
-            //TODO update B3A + swap
-            C3A.upToDate = false;
-        }
+        C3B.update();
+        swapper.swapBetweenWithoutDecreasing(B, C, C3B.vertices);
+
         A3B.upToDate = false;
         A3C.upToDate = false;
-        C3B.upToDate = false;
+        B3A.upToDate = false;
+        C3A.upToDate = false;
     }
 
     private boolean swapWithinA3CAndB3A() {
-        A3C.update();
-        B3A.update();
-
-        if(A3C.vertices.size() == 0 || B3A.vertices.size() == 0) {
-            return false;
-        }
-
-        C3A.update();
         int x, y;
-        while (0 < A3C.vertices.size() && 0 < B3A.vertices.size() && 0 < verticesToMove) {
+        while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
             x = A3C.vertices.poll();
             y = B3A.vertices.poll();
             coloring.set(x, B);
             coloring.set(y, C);
-            C3A.vertices.add(y);
             verticesToMove--;
         }
 
@@ -261,12 +210,12 @@ class ClwWithConstantB {
         }
 
         boolean empty() {
-            if (!upToDate) {
-                update();
-                upToDate = true;
-            }
+            return getSize() == 0;
+        }
 
-            return vertices.size() == 0;
+        int getSize() {
+            update();
+            return vertices.size();
         }
 
         void update() {
