@@ -37,7 +37,7 @@ class ClwWithConstantB {
     }
 
     void tmp() {
-        System.out.print("Zostało do przeniesienia: " + verticesToMove);
+        System.out.println("Zostało do przeniesienia: " + verticesToMove);
         System.out.println("|A3B| = " + A3B.getSize());
         System.out.println("|A3C| = " + A3C.getSize());
         System.out.println("|B3A| = " + B3A.getSize());
@@ -55,6 +55,7 @@ class ClwWithConstantB {
         this.verticesToMove = desiredVerticesToMove;
 
         while (0 < verticesToMove) {
+            tmp();
             if (moveFromA3BToC()) {
                 tmp();
                 continue;
@@ -158,13 +159,13 @@ class ClwWithConstantB {
     }
 
     private void makeB3ANotEmpty() {
-        C3B.update();
-        swapper.swapBetweenWithoutDecreasing(B, C, C3B.vertices);
+        C3A.update();
+        swapper.swapBetweenWithoutDecreasing(B, C, C3A.vertices);
 
         A3B.upToDate = false;
         A3C.upToDate = false;
         B3A.upToDate = false;
-        C3A.upToDate = false;
+        C3B.upToDate = false;
     }
 
     private boolean swapWithinA3CAndB3A() {
@@ -235,18 +236,23 @@ class ClwWithConstantB {
         void update() {
             if (!upToDate) {
                 vertices.clear();
-                LinkedList<Integer> neighbours;
+                int neighboursWithOtherColor;
                 for (int i = 0; i < graph.getVertices(); i++) {
-                    if (i == colorX) {
-                        neighbours = graph.getNeighbours(i);
-                        for (Integer n : neighbours) {
-                            if (coloring.get(n) != colorY) {
-                                continue;
+                    if (coloring.get(i) == colorX) {
+                        neighboursWithOtherColor = 0;
+                        for (Integer n : graph.getNeighbours(i)) {
+                            if (coloring.get(n) == colorY) {
+                                neighboursWithOtherColor++;
                             }
+                        }
+
+                        if (neighboursWithOtherColor == 3) {
                             vertices.add(i);
                         }
                     }
                 }
+
+                upToDate = true;
             }
         }
     }
