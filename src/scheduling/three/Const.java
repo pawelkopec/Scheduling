@@ -1,4 +1,4 @@
-package scheduling.triple;
+package scheduling.three;
 
 /**
  * Created by Paweł Kopeć on 05.03.17.

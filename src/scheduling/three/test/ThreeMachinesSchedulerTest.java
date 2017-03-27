@@ -1,16 +1,16 @@
-package scheduling.test;
+package scheduling.three.test;
 
 import graph.RegularListGraph;
 import graph.VertexColoring;
 import graph.util.RegularGraphGenerator;
 import org.junit.Test;
-import scheduling.triple.ThreeMachinesScheduler;
+import scheduling.three.Const;
+import scheduling.three.ThreeMachinesScheduler;
 
 import java.util.Random;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 05.03.17.
@@ -119,9 +119,9 @@ public class ThreeMachinesSchedulerTest {
     private void assertCorrectSchedule(ThreeMachinesScheduler scheduler, VertexColoring coloring) {
         int [] division = scheduler.getDivision();
         assertTrue(coloring.isProper());
-        assertEquals(coloring.getNumberOfColored(A), division[FASTEST]);
-        assertEquals(coloring.getNumberOfColored(B), division[MIDDLE]);
-        assertEquals(coloring.getNumberOfColored(C), division[SLOWEST]);
+        assertEquals(coloring.getNumberOfColored(Const.A), division[Const.FASTEST]);
+        assertEquals(coloring.getNumberOfColored(Const.B), division[Const.MIDDLE]);
+        assertEquals(coloring.getNumberOfColored(Const.C), division[Const.SLOWEST]);
 
     }
 

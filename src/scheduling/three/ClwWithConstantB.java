@@ -1,12 +1,9 @@
-package scheduling.triple;
+package scheduling.three;
 
 import graph.RegularGraph;
 import graph.VertexColoring;
 
-import java.util.Iterator;
 import java.util.LinkedList;
-
-import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
@@ -29,11 +26,11 @@ class ClwWithConstantB {
 
         swapper = new ComponentSwapper(coloring);
 
-        A3B = new X3Y(A, B);
-        A3C = new X3Y(A, C);
-        B3A = new X3Y(B, A);
-        C3A = new X3Y(C, A);
-        C3B = new X3Y(C, B);
+        A3B = new X3Y(Const.A, Const.B);
+        A3C = new X3Y(Const.A, Const.C);
+        B3A = new X3Y(Const.B, Const.A);
+        C3A = new X3Y(Const.C, Const.A);
+        C3B = new X3Y(Const.C, Const.B);
     }
 
     void tmp() {
@@ -70,7 +67,7 @@ class ClwWithConstantB {
 
             if (swapWithinA3CAndB3A()) {
                 tmp();
-                continue;
+                return;
             }
 
             if (swapBetweenAAndBAndMoveToC()) {
@@ -124,10 +121,11 @@ class ClwWithConstantB {
         }
 
         while (0 < verticesToMove && 0 < A3B.getSize()) {
-            coloring.set(A3B.vertices.poll(), C);
+            coloring.set(A3B.vertices.poll(), Const.C);
             verticesToMove--;
         }
 
+        B3A.upToDate = false;
         C3B.upToDate = false;
 
         return true;
@@ -135,7 +133,7 @@ class ClwWithConstantB {
 
     private boolean swapBetweenAAndC() {
         if (1 < verticesToMove || C3A.empty() || !C3B.empty()) {
-            verticesToMove -= swapper.swapBetween(A, C, verticesToMove, C3B.vertices);
+            verticesToMove -= swapper.swapBetween(Const.A, Const.C, verticesToMove, C3B.vertices);
             A3C.upToDate = false;
             A3B.upToDate = false;
             B3A.upToDate = false;
@@ -149,7 +147,7 @@ class ClwWithConstantB {
 
     private boolean swapBetweenAAndBAndMoveToC() {
         B3A.update();
-        int decreasedBy = swapper.swapBetweenAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
+        int decreasedBy = swapper.swapBetweenAndMoveToOther(Const.A, Const.B, Const.C, B3A.vertices, verticesToMove);
         if (0 < decreasedBy) {
             verticesToMove -= decreasedBy;
             return true;
@@ -159,22 +157,29 @@ class ClwWithConstantB {
     }
 
     private void makeB3ANotEmpty() {
-        C3A.update();
-        swapper.swapBetweenWithoutDecreasing(B, C, C3A.vertices);
+        if (B3A.empty()) {
+            C3A.update();
+            swapper.swapBetweenWithoutDecreasing(Const.B, Const.C, C3A.vertices);
 
-        A3B.upToDate = false;
-        A3C.upToDate = false;
-        B3A.upToDate = false;
-        C3B.upToDate = false;
+            A3B.upToDate = false;
+            A3C.upToDate = false;
+            B3A.upToDate = false;
+            C3A.upToDate = false;
+            C3B.upToDate = false;
+        }
     }
 
     private boolean swapWithinA3CAndB3A() {
+        if (A3C.getSize() == 0 || B3A.getSize() == 0) {
+            return false;
+        }
+
         int x, y;
         while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
             x = A3C.vertices.poll();
             y = B3A.vertices.poll();
-            coloring.set(x, B);
-            coloring.set(y, C);
+            coloring.set(x, Const.B);
+            coloring.set(y, Const.C);
             verticesToMove--;
         }
 
@@ -185,7 +190,7 @@ class ClwWithConstantB {
         //TODO
     }
 
-    private void leaveOnlyPathsInAAndBSubstets() {
+    private void leaveOnlyPathsInAAndBSubsets() {
         //TODO
     }
 

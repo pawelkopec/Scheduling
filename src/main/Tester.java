@@ -26,11 +26,11 @@ public class Tester {
     public void runClassTest(Class classTest) {
         Result result = JUnitCore.runClasses(classTest);
 
+        logger.accept("Result of testing " + classTest.getName() +
+                (result.wasSuccessful() ? " positive" : " negative"));
+
         for (Failure failure : result.getFailures()) {
             logger.accept("    " + failure.toString());
         }
-
-        logger.accept("Result of testing " + classTest.getName() +
-                (result.wasSuccessful() ? " positive" : " negative"));
     }
 }

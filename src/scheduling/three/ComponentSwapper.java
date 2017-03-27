@@ -1,4 +1,4 @@
-package scheduling.triple;
+package scheduling.three;
 
 import graph.Graph;
 import graph.VertexColoring;
@@ -41,6 +41,7 @@ class ComponentSwapper {
 
             if (!checked.get(i) && 0 < verticesToMove) {
 
+                checked.set(i);
                 currentColor = coloring.get(i);
 
                 if (currentColor == colorBig || currentColor == colorSmall) {
@@ -55,6 +56,9 @@ class ComponentSwapper {
                         swapComponents(bigComponent, smallComponent, colorBig, colorSmall);
                         compensate(compensator, colorBig, toCompensate);
                     }
+
+                    bigComponent.clear();
+                    smallComponent.clear();
                 }
             }
         }
@@ -87,7 +91,7 @@ class ComponentSwapper {
         }
     }
 
-    public int swapBetweenAndMoveToOther(int colorBig, int colorSmall, int colorOther,
+    int swapBetweenAndMoveToOther(int colorBig, int colorSmall, int colorOther,
                                          LinkedList<Integer> compensator,
                                          int toDecrease) {
         //TODO
@@ -115,7 +119,6 @@ class ComponentSwapper {
 
         while (!queue.isEmpty()) {
             current = queue.poll();
-            checked.set(current);
 
             currentColor = coloring.get(current);
 
@@ -132,6 +135,7 @@ class ComponentSwapper {
                 if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
                     queue.add(neighbour);
                 }
+                checked.set(neighbour);
             }
         }
     }
@@ -146,7 +150,7 @@ class ComponentSwapper {
     }
 
     private void compensate(LinkedList<Integer> compensator, int color, int n) {
-        for (int i = 0; i < n; i++) {;
+        for (int i = 0; i < n; i++) {
             coloring.set(compensator.poll(), color);
         }
     }

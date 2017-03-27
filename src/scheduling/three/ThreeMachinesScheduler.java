@@ -1,12 +1,10 @@
-package scheduling.triple;
+package scheduling.three;
 
 import graph.Graph;
 import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
-
-import static scheduling.triple.Const.*;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
@@ -16,9 +14,9 @@ import static scheduling.triple.Const.*;
  */
 public class ThreeMachinesScheduler {
 
-    public static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
-    public static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
-    public static final String GRAPH_NOT_CUBIC = "Algorithm is applied only to cubic graphs.";
+    private static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
+    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
+    private static final String GRAPH_NOT_CUBIC = "Algorithm is applied only to cubic graphs.";
 
     /**
      * Possible states of incompatibility graph.
@@ -64,9 +62,9 @@ public class ThreeMachinesScheduler {
     private void checkState() {
         if (graph.getVertices() < 8) {
             state = BRUTE_FORCE_EASY;
-        } else if (Graph.isBiparte(graph, coloring, A, B)) {
+        } else if (Graph.isBiparte(graph, coloring, Const.A, Const.B)) {
             state = OPTIMAL;
-        } else if (speeds[FASTEST] > speeds[MIDDLE] && speeds[MIDDLE] == speeds[SLOWEST]) {
+        } else if (speeds[Const.FASTEST] > speeds[Const.MIDDLE] && speeds[Const.MIDDLE] == speeds[Const.SLOWEST]) {
             state = SUBOPTIMAL;
         } else {
             state = BRUTE_FORCE;
