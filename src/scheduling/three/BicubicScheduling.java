@@ -4,6 +4,7 @@ import graph.RegularGraph;
 import graph.VertexColoring;
 
 import static java.lang.Math.*;
+import static scheduling.three.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
@@ -22,20 +23,18 @@ class BicubicScheduling extends CubicScheduling {
     }
 
     public VertexColoring findColoring() {
-        if (speeds[Const.FASTEST] < speeds[Const.SLOWEST] + speeds[Const.MIDDLE]) {
-            //TODO check sheet
-
+        if (speeds[FASTEST] < speeds[SLOWEST] + speeds[MIDDLE]) {
             findOptimalDivision();
-            splitBetweenSlowerMachines(division[Const.SLOWEST]);
+            splitBetweenSlowerMachines((graph.getVertices() / 2) - division[MIDDLE]);
 
             ClwWithConstantB clw = new ClwWithConstantB(graph, coloring);
 
-            int verticesToMove = division[Const.SLOWEST] - (graph.getVertices() / 2 - division[Const.MIDDLE]);
+            int verticesToMove = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
             clw.moveVertices(verticesToMove);
         }
         else {
             findOptimalDivision2();
-            splitBetweenSlowerMachines(division[Const.SLOWEST]);
+            splitBetweenSlowerMachines(division[SLOWEST]);
         }
 
         return coloring;
@@ -61,13 +60,13 @@ class BicubicScheduling extends CubicScheduling {
          * Calculate intermediate results to simplify
          * calculations.
          */
-        double timeMiddleFloor = floor(nFloat[Const.MIDDLE]) / speeds[Const.MIDDLE];
-        double timeMiddleCeil = ceil(nFloat[Const.MIDDLE]) / speeds[Const.MIDDLE];
-        double timeFastestFloor = floor(nFloat[Const.FASTEST]) / speeds[Const.FASTEST];
-        double timeFastestCeil = ceil(nFloat[Const.FASTEST]) / speeds[Const.FASTEST];
-        double timeSlowest1 = ((double) n - floor(nFloat[Const.FASTEST]) - ceil(nFloat[Const.MIDDLE])) / speeds[Const.SLOWEST];
-        double timeSlowest2 = ((double) n - ceil(nFloat[Const.FASTEST]) - floor(nFloat[Const.MIDDLE])) / speeds[Const.SLOWEST];
-        double timeSlowest3 = ((double) n - ceil(nFloat[Const.FASTEST]) - ceil(nFloat[Const.MIDDLE])) / speeds[Const.SLOWEST];
+        double timeMiddleFloor = floor(nFloat[MIDDLE]) / speeds[MIDDLE];
+        double timeMiddleCeil = ceil(nFloat[MIDDLE]) / speeds[MIDDLE];
+        double timeFastestFloor = floor(nFloat[FASTEST]) / speeds[FASTEST];
+        double timeFastestCeil = ceil(nFloat[FASTEST]) / speeds[FASTEST];
+        double timeSlowest1 = ((double) n - floor(nFloat[FASTEST]) - ceil(nFloat[MIDDLE])) / speeds[SLOWEST];
+        double timeSlowest2 = ((double) n - ceil(nFloat[FASTEST]) - floor(nFloat[MIDDLE])) / speeds[SLOWEST];
+        double timeSlowest3 = ((double) n - ceil(nFloat[FASTEST]) - ceil(nFloat[MIDDLE])) / speeds[SLOWEST];
 
         /*
          * Calculate possible variants of total processing
@@ -83,17 +82,17 @@ class BicubicScheduling extends CubicScheduling {
         division = new int[3];
 
         if (minTime == maxTime1) {
-            division[Const.FASTEST] = (int) floor(nFloat[Const.FASTEST]);
-            division[Const.MIDDLE] = (int) ceil(nFloat[Const.MIDDLE]);
+            division[FASTEST] = (int) floor(nFloat[FASTEST]);
+            division[MIDDLE] = (int) ceil(nFloat[MIDDLE]);
         } else if (minTime == maxTime2) {
-            division[Const.FASTEST] = (int) ceil(nFloat[Const.FASTEST]);
-            division[Const.MIDDLE] = (int) floor(nFloat[Const.MIDDLE]);
+            division[FASTEST] = (int) ceil(nFloat[FASTEST]);
+            division[MIDDLE] = (int) floor(nFloat[MIDDLE]);
         } else {
-            division[Const.FASTEST] = (int) ceil(nFloat[Const.FASTEST]);
-            division[Const.MIDDLE] = (int) ceil(nFloat[Const.MIDDLE]);
+            division[FASTEST] = (int) ceil(nFloat[FASTEST]);
+            division[MIDDLE] = (int) ceil(nFloat[MIDDLE]);
         }
 
-        division[Const.SLOWEST] = n - division[Const.MIDDLE] - division[Const.FASTEST];
+        division[SLOWEST] = n - division[MIDDLE] - division[FASTEST];
     }
 
     /**
@@ -102,16 +101,16 @@ class BicubicScheduling extends CubicScheduling {
      */
     private void findOptimalDivision2() {
         division = new int[3];
-        division[Const.FASTEST] = graph.getVertices() / 2;
-        division[Const.MIDDLE] = (int) ceil((double)(graph.getVertices() / 2) * speeds[Const.MIDDLE] / (speeds[Const.MIDDLE] + speeds[Const.SLOWEST]));
-        division[Const.SLOWEST] = (graph.getVertices() / 2) - division[Const.MIDDLE];
+        division[FASTEST] = graph.getVertices() / 2;
+        division[MIDDLE] = (int) ceil((double)(graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
+        division[SLOWEST] = (graph.getVertices() / 2) - division[MIDDLE];
 
-        double maxTime1 = max((double) division[Const.MIDDLE] / speeds[Const.MIDDLE], (double) division[Const.SLOWEST] / speeds[Const.SLOWEST]);
-        double maxTime2 = max(((double) division[Const.MIDDLE] - 1.) / speeds[Const.MIDDLE], ((double) division[Const.SLOWEST] + 1.) / speeds[Const.SLOWEST]);
+        double maxTime1 = max((double) division[MIDDLE] / speeds[MIDDLE], (double) division[SLOWEST] / speeds[SLOWEST]);
+        double maxTime2 = max(((double) division[MIDDLE] - 1.) / speeds[MIDDLE], ((double) division[SLOWEST] + 1.) / speeds[SLOWEST]);
 
         if (maxTime2 < maxTime1) {
-            division[Const.SLOWEST]++;
-            division[Const.MIDDLE]--;
+            division[SLOWEST]++;
+            division[MIDDLE]--;
         }
     }
 
@@ -125,8 +124,8 @@ class BicubicScheduling extends CubicScheduling {
         int index = 0;
 
         while (0 < sizeOfC) {
-            if (coloring.get(index) == Const.B) {
-                coloring.set(index, Const.C);
+            if (coloring.get(index) == B) {
+                coloring.set(index, C);
                 sizeOfC--;
             }
             index++;

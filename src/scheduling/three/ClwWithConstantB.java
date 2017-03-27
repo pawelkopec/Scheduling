@@ -3,8 +3,10 @@ package scheduling.three;
 import graph.RegularGraph;
 import graph.VertexColoring;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
+import static junit.framework.TestCase.assertTrue;
 import static scheduling.three.Const.A;
 import static scheduling.three.Const.B;
 import static scheduling.three.Const.C;
@@ -38,12 +40,16 @@ class ClwWithConstantB {
     }
 
     void tmp() {
+        int [] colors = new int []{coloring.getNumberOfColored(A), coloring.getNumberOfColored(B), coloring.getNumberOfColored(C)};
         System.out.println("Zostało do przeniesienia: " + verticesToMove);
+        System.out.println("");
         System.out.println("|A3B| = " + A3B.getSize());
         System.out.println("|A3C| = " + A3C.getSize());
         System.out.println("|B3A| = " + B3A.getSize());
         System.out.println("|C3A| = " + C3A.getSize());
         System.out.println("|C3B| = " + C3B.getSize());
+        System.out.println("");
+        System.out.println("Kolory :" + Arrays.toString(colors));
         System.out.println("------------------------------------");
     }
 
@@ -54,15 +60,17 @@ class ClwWithConstantB {
      */
     void moveVertices(int desiredVerticesToMove) {
         this.verticesToMove = desiredVerticesToMove;
+        tmp();
 
         while (0 < verticesToMove) {
-            tmp();
             if (moveFromA3BToC()) {
+                System.out.println("c <= a3b");
                 tmp();
                 continue;
             }
 
             if (swapBetweenAAndC()) {
+                System.out.println("a <=> c");
                 tmp();
                 continue;
             }
@@ -70,11 +78,13 @@ class ClwWithConstantB {
             makeB3ANotEmpty();
 
             if (swapWithinA3CAndB3A()) {
+                System.out.println("b <= a3c, c <= b3a");
                 tmp();
-                return;
+                continue;
             }
 
             if (swapBetweenAAndBAndMoveToC()) {
+                System.out.println("a <=> b, c <= b3a");
                 tmp();
                 continue;
             }
@@ -150,33 +160,18 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean swapBetweenAAndC() {
-        if (1 < verticesToMove || C3A.empty() || !C3B.empty()) {
-            verticesToMove -= swapper.swapBetween(A, C, verticesToMove, C3B.vertices);
-            A3C.upToDate = false;
-            A3B.upToDate = false;
-            B3A.upToDate = false;
-            C3A.upToDate = false;
+        assertTrue(A3B.empty());
+        if (C3A.empty() || (!C3B.empty() && B3A.empty())) {
+            int verticesMoved = swapper.swapBetween(A, C, verticesToMove, C3B.vertices);
+            if (0 < verticesMoved) {
+                verticesToMove -= verticesMoved;
+                A3C.upToDate = false;
+                A3B.upToDate = false;
+                B3A.upToDate = false;
+                C3A.upToDate = false;
 
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * First swap colors of components in G(A, B) subgraph
-     * to make A smaller and B bigger. Then move vertices
-     * from B3A - B'3A' to C in order to restore previous size
-     * of B and decrease the width.
-     *
-     * @return true if width was decreased
-     */
-    private boolean swapBetweenAAndBAndMoveToC() {
-        B3A.update();
-        int decreasedBy = swapper.swapBetweenAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
-        if (0 < decreasedBy) {
-            verticesToMove -= decreasedBy;
-            return true;
+                return true;
+            }
         }
 
         return false;
@@ -199,6 +194,7 @@ class ClwWithConstantB {
             C3A.upToDate = false;
             C3B.upToDate = false;
         }
+        assertTrue(!B3A.empty());
     }
 
     private boolean swapWithinA3CAndB3A() {
@@ -206,16 +202,34 @@ class ClwWithConstantB {
             return false;
         }
 
-        int x, y;
         while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
-            x = A3C.vertices.poll();
-            y = B3A.vertices.poll();
-            coloring.set(x, B);
-            coloring.set(y, C);
+            coloring.set(A3C.vertices.poll(), B);
+            coloring.set(B3A.vertices.poll(), C);
             verticesToMove--;
         }
 
+        C3A.upToDate = false;
+
         return true;
+    }
+
+    /**
+     * First swap colors of components in G(A, B) subgraph
+     * to make A smaller and B bigger. Then move vertices
+     * from B3A - B'3A' to C in order to restore previous size
+     * of B and decrease the width.
+     *
+     * @return true if width was decreased
+     */
+    private boolean swapBetweenAAndBAndMoveToC() {
+        B3A.update();
+        int decreasedBy = swapper.swapBetweenAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
+        if (0 < decreasedBy) {
+            verticesToMove -= decreasedBy;
+            return true;
+        }
+
+        return false;
     }
 
     private void swapWithinA1BAndB3A() {
