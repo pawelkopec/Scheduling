@@ -5,6 +5,10 @@ import graph.VertexColoring;
 
 import java.util.LinkedList;
 
+import static scheduling.three.Const.A;
+import static scheduling.three.Const.B;
+import static scheduling.three.Const.C;
+
 /**
  * Created by Paweł Kopeć on 02.03.17.
  * <p>
@@ -26,11 +30,11 @@ class ClwWithConstantB {
 
         swapper = new ComponentSwapper(coloring);
 
-        A3B = new X3Y(Const.A, Const.B);
-        A3C = new X3Y(Const.A, Const.C);
-        B3A = new X3Y(Const.B, Const.A);
-        C3A = new X3Y(Const.C, Const.A);
-        C3B = new X3Y(Const.C, Const.B);
+        A3B = new X3Y(A, B);
+        A3C = new X3Y(A, C);
+        B3A = new X3Y(B, A);
+        C3A = new X3Y(C, A);
+        C3B = new X3Y(C, B);
     }
 
     void tmp() {
@@ -115,13 +119,19 @@ class ClwWithConstantB {
      * decreaseBy(int) method.
      */
 
+    /**.
+     * Decrease the coloring by simply moving all vertices
+     * in A3B to C.
+     *
+     * @return true if width was decreased
+     */
     private boolean moveFromA3BToC() {
         if (A3B.empty()) {
             return false;
         }
 
         while (0 < verticesToMove && 0 < A3B.getSize()) {
-            coloring.set(A3B.vertices.poll(), Const.C);
+            coloring.set(A3B.vertices.poll(), C);
             verticesToMove--;
         }
 
@@ -131,9 +141,17 @@ class ClwWithConstantB {
         return true;
     }
 
+    /**
+     * Decrease the coloring by swapping colors of components
+     * in G(A, C) subgraph. If verticesToMove < |A'| - |C'|,
+     * then compensate too big differences in sizes by moving
+     * appropriate amount of vertices from C3B back to A.
+     *
+     * @return true if width was decreased
+     */
     private boolean swapBetweenAAndC() {
         if (1 < verticesToMove || C3A.empty() || !C3B.empty()) {
-            verticesToMove -= swapper.swapBetween(Const.A, Const.C, verticesToMove, C3B.vertices);
+            verticesToMove -= swapper.swapBetween(A, C, verticesToMove, C3B.vertices);
             A3C.upToDate = false;
             A3B.upToDate = false;
             B3A.upToDate = false;
@@ -145,9 +163,17 @@ class ClwWithConstantB {
         return false;
     }
 
+    /**
+     * First swap colors of components in G(A, B) subgraph
+     * to make A smaller and B bigger. Then move vertices
+     * from B3A - B'3A' to C in order to restore previous size
+     * of B and decrease the width.
+     *
+     * @return true if width was decreased
+     */
     private boolean swapBetweenAAndBAndMoveToC() {
         B3A.update();
-        int decreasedBy = swapper.swapBetweenAndMoveToOther(Const.A, Const.B, Const.C, B3A.vertices, verticesToMove);
+        int decreasedBy = swapper.swapBetweenAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
         if (0 < decreasedBy) {
             verticesToMove -= decreasedBy;
             return true;
@@ -156,10 +182,16 @@ class ClwWithConstantB {
         return false;
     }
 
+    /**
+     * If B3A is empty make it not empty. First swap colors
+     * of components in G(A, B) subgraph. Then move vertices
+     * from C3A to B in order to restore previous size
+     * of B. Now vertices moved from C3A are in B3A.
+     */
     private void makeB3ANotEmpty() {
         if (B3A.empty()) {
             C3A.update();
-            swapper.swapBetweenWithoutDecreasing(Const.B, Const.C, C3A.vertices);
+            swapper.swapBetweenWithoutDecreasing(B, C, C3A.vertices);
 
             A3B.upToDate = false;
             A3C.upToDate = false;
@@ -178,8 +210,8 @@ class ClwWithConstantB {
         while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
             x = A3C.vertices.poll();
             y = B3A.vertices.poll();
-            coloring.set(x, Const.B);
-            coloring.set(y, Const.C);
+            coloring.set(x, B);
+            coloring.set(y, C);
             verticesToMove--;
         }
 
