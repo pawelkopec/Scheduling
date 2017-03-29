@@ -18,8 +18,6 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
     public RegularListGraph(int verticesNumber, int degree) {
         super(verticesNumber);
         setDegree(degree);
-
-        this.degree = degree;
     }
 
     public RegularListGraph(InputStream in, int degree) {
@@ -67,6 +65,8 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
         if(degree < 0 || verticesNumber <= degree || (verticesNumber * degree) % 2 != 0) {
             throw new IllegalArgumentException(CANNOT_BE_REGULAR);
         }
+
+        this.degree = degree;
     }
 
     public static RegularGraph getInstance(int verticesNumber, int degree) {

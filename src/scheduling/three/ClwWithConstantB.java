@@ -161,8 +161,8 @@ class ClwWithConstantB {
      */
     private boolean swapBetweenAAndC() {
         assertTrue(A3B.empty());
-        if (C3A.empty() || (!C3B.empty() && B3A.empty())) {
-            int verticesMoved = swapper.swapBetween(A, C, verticesToMove, C3B.vertices);
+        if (1 < verticesToMove || C3A.empty() || (!C3B.empty() && B3A.empty())) {
+            int verticesMoved = swapper.swap(A, C, verticesToMove, C3B.vertices);
             if (0 < verticesMoved) {
                 verticesToMove -= verticesMoved;
                 A3C.upToDate = false;
@@ -186,7 +186,7 @@ class ClwWithConstantB {
     private void makeB3ANotEmpty() {
         if (B3A.empty()) {
             C3A.update();
-            swapper.swapBetweenWithoutDecreasing(B, C, C3A.vertices);
+            swapper.swapWithoutDecreasing(B, C, C3A.vertices);
 
             A3B.upToDate = false;
             A3C.upToDate = false;
@@ -223,9 +223,13 @@ class ClwWithConstantB {
      */
     private boolean swapBetweenAAndBAndMoveToC() {
         B3A.update();
-        int decreasedBy = swapper.swapBetweenAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
+        int decreasedBy = swapper.swapAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
         if (0 < decreasedBy) {
             verticesToMove -= decreasedBy;
+            A3B.upToDate = false;
+            B3A.upToDate = false;
+            C3A.upToDate = false;
+
             return true;
         }
 
