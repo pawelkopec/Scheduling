@@ -28,6 +28,7 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
 
     public RegularListGraph(String string, int degree) {
         super(string);
+        setDegree(degree);
     }
 
     public RegularListGraph(BaseGraph other, int degree) {
