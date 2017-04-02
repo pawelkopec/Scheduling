@@ -100,6 +100,10 @@ class ComponentSwapper {
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>(), toRemoveFromCompensator = new LinkedList<>();
         int currentColor, sizeDifference = 0;
 
+        /*
+         * Rewrite compensator as bit array for
+         * checking value in constant time.
+         */
         for(Integer i : compensator) {
             compensatorArray.set(i);
         }
@@ -200,10 +204,14 @@ class ComponentSwapper {
      * @param color that vertices will now have
      * @param n number of vertices to change color
      */
-    private void changeColor(LinkedList<Integer> vertices, int color, int n) {
-        for (int i = 0; i < n; i++) {
+    int changeColor(LinkedList<Integer> vertices, int color, int n) {
+        int changed = 0;
+        for (int i = 0; 0 < vertices.size() && changed < n; i++) {
             coloring.set(vertices.poll(), color);
+            changed++;
         }
+
+        return changed;
     }
 
     private void changeColor(LinkedList<Integer> vertices, int color) {
@@ -222,7 +230,7 @@ class ComponentSwapper {
         for (int i = 0; i < vertices.size() && 0 < n; i++) {
             if (vertices.get(i)) {
                 coloring.set(i, color);
-                n++;
+                n--;
             }
         }
     }

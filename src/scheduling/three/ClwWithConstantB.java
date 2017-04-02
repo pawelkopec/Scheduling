@@ -140,10 +140,7 @@ class ClwWithConstantB {
             return false;
         }
 
-        while (0 < verticesToMove && 0 < A3B.getSize()) {
-            coloring.set(A3B.vertices.poll(), C);
-            verticesToMove--;
-        }
+        verticesToMove -= swapper.changeColor(A3B.vertices, C, verticesToMove);
 
         B3A.upToDate = false;
         C3B.upToDate = false;
