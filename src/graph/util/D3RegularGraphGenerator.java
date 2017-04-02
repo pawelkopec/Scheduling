@@ -19,12 +19,13 @@ public class D3RegularGraphGenerator extends RegularGraphGenerator {
      * @return graph with given parameters
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    public <G extends RegularGraph> G getRandomGraph(Class<G> clazz, int verticesNumber, int chromaticNumber) throws IllegalArgumentException {
+
+    public <G extends Graph> G getRandomGraph(Class<G> clazz, int verticesNumber, int chromaticNumber) throws IllegalArgumentException {
         G g;
 
         switch (chromaticNumber) {
             case 2:
-                return getRandomBipartiteGraph(clazz, 3, verticesNumber);
+                return BipartiteRegularGraphGenerator.getInstance().getRandomGraph(clazz, 3, verticesNumber);
             case 3:
                 g = getRandomGraph(clazz, 3, verticesNumber);
                 LinkedList<LinkedList<Integer>> partitions  = new LinkedList<>();
