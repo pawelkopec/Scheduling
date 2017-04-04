@@ -14,12 +14,8 @@ import static scheduling.three.Const.*;
  */
 class BicubicScheduling extends CubicScheduling {
 
-    public BicubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
-        super(graph, coloring, speeds);
-    }
-
-    public BicubicScheduling(RegularGraph graph, double[] speeds) {
-        super(graph, speeds);
+    BicubicScheduling(VertexColoring coloring, double[] speeds) {
+        super(coloring, speeds);
     }
 
     public VertexColoring findColoring() {
@@ -27,7 +23,7 @@ class BicubicScheduling extends CubicScheduling {
             findOptimalDivision();
             splitBetweenSlowerMachines((graph.getVertices() / 2) - division[MIDDLE]);
 
-            ClwWithConstantB clw = new ClwWithConstantB(graph, coloring);
+            ClwWithConstantB clw = new ClwWithConstantB(coloring);
 
             int verticesToMove = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
             clw.moveVertices(verticesToMove);

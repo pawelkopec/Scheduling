@@ -1,5 +1,6 @@
 package scheduling.three;
 
+import graph.Graph;
 import graph.RegularGraph;
 import graph.VertexColoring;
 
@@ -7,9 +8,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 
 import static junit.framework.TestCase.assertTrue;
-import static scheduling.three.Const.A;
-import static scheduling.three.Const.B;
-import static scheduling.three.Const.C;
+import static scheduling.three.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
@@ -19,15 +18,13 @@ import static scheduling.three.Const.C;
  */
 class ClwWithConstantB {
 
-    private RegularGraph graph;
     private VertexColoring coloring;
     private int verticesToMove;
 
     private ComponentSwapper swapper;
     private X3Y A3B, A3C, B3A, C3A, C3B;
 
-    ClwWithConstantB(RegularGraph graph, VertexColoring coloring) {
-        this.graph = graph;
+    ClwWithConstantB(VertexColoring coloring) {
         this.coloring = coloring;
 
         swapper = new ComponentSwapper(coloring);
@@ -40,7 +37,7 @@ class ClwWithConstantB {
     }
 
     void tmp() {
-        int [] colors = new int []{coloring.getNumberOfColored(A), coloring.getNumberOfColored(B), coloring.getNumberOfColored(C)};
+        int[] colors = new int[]{coloring.getNumberOfColored(A), coloring.getNumberOfColored(B), coloring.getNumberOfColored(C)};
         System.out.println("Zostało do przeniesienia: " + verticesToMove);
         System.out.println("");
         System.out.println("|A3B| = " + A3B.getSize());
@@ -130,7 +127,8 @@ class ClwWithConstantB {
      * decreaseBy(int) method.
      */
 
-    /**.
+    /**
+     * .
      * Decrease the coloring by simply moving all vertices
      * from A3B to C.
      *

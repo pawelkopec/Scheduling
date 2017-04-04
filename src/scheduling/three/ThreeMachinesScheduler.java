@@ -87,7 +87,7 @@ public class ThreeMachinesScheduler {
                 findBruteForce();
                 break;
             case OPTIMAL:
-                scheduling = new BicubicScheduling(graph, coloring, speeds);
+                scheduling = new BicubicScheduling(coloring, speeds);
                 return scheduling.findColoring();
             case SUBOPTIMAL:
                 scheduling = new TricubicScheduling(graph, coloring, speeds);
