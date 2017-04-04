@@ -191,5 +191,14 @@ public abstract class BaseGraph implements Graph {
         }
     }
 
+    /**
+     * Check if this graphs' vertices have the same degree
+     *
+     * @param degree degree of each vertex
+     */
+    public boolean isRegular(int degree) {
+        return degree * verticesNumber == 2 * edgesNumber;
+    }
+
     abstract public String toString();
 }
