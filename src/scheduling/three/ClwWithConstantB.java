@@ -32,11 +32,11 @@ class ClwWithConstantB {
 
         swapper = new ComponentSwapper(coloring);
 
-        A3B = new X3Y(A, B);
-        A3C = new X3Y(A, C);
-        B3A = new X3Y(B, A);
-        C3A = new X3Y(C, A);
-        C3B = new X3Y(C, B);
+        A3B = new X3Y(coloring, A, B);
+        A3C = new X3Y(coloring, A, C);
+        B3A = new X3Y(coloring, B, A);
+        C3A = new X3Y(coloring, C, A);
+        C3B = new X3Y(coloring, C, B);
     }
 
     void tmp() {
@@ -54,9 +54,10 @@ class ClwWithConstantB {
     }
 
     /**
-     * Decrease the width of coloring by
+     * Decrease the width of coloring by given number
+     * without changing the size of middle color class.
      *
-     * @param desiredVerticesToMove
+     * @param desiredVerticesToMove from biggest color class to smallest
      */
     void moveVertices(int desiredVerticesToMove) {
         this.verticesToMove = desiredVerticesToMove;
@@ -131,7 +132,7 @@ class ClwWithConstantB {
 
     /**.
      * Decrease the coloring by simply moving all vertices
-     * in A3B to C.
+     * from A3B to C.
      *
      * @return true if width was decreased
      */
@@ -140,16 +141,16 @@ class ClwWithConstantB {
             return false;
         }
 
-        verticesToMove -= swapper.changeColor(A3B.vertices, C, verticesToMove);
+        verticesToMove -= swapper.changeColor(A3B.getVertices(), C, verticesToMove);
 
-        B3A.upToDate = false;
-        C3B.upToDate = false;
+        B3A.setForUpdate();
+        C3B.setForUpdate();
 
         return true;
     }
 
     /**
-     * Decrease the coloring by swapping colors of components
+     * Try to decrease the coloring by swapping colors of components
      * in G(A, C) subgraph. If verticesToMove < |A'| - |C'|,
      * then compensate too big differences in sizes by moving
      * appropriate amount of vertices from C3B back to A.
@@ -159,13 +160,13 @@ class ClwWithConstantB {
     private boolean swapBetweenAAndC() {
         assertTrue(A3B.empty());
         if (1 < verticesToMove || C3A.empty() || (!C3B.empty() && B3A.empty())) {
-            int verticesMoved = swapper.swap(A, C, verticesToMove, C3B.vertices);
+            int verticesMoved = swapper.swap(A, C, verticesToMove, C3B.getVertices());
             if (0 < verticesMoved) {
                 verticesToMove -= verticesMoved;
-                A3C.upToDate = false;
-                A3B.upToDate = false;
-                B3A.upToDate = false;
-                C3A.upToDate = false;
+                A3C.setForUpdate();
+                A3B.setForUpdate();
+                B3A.setForUpdate();
+                C3A.setForUpdate();
 
                 return true;
             }
@@ -182,30 +183,38 @@ class ClwWithConstantB {
      */
     private void makeB3ANotEmpty() {
         if (B3A.empty()) {
-            C3A.update();
-            swapper.swapWithoutDecreasing(B, C, C3A.vertices);
+            swapper.swapWithoutDecreasing(B, C, C3A.getVertices());
 
-            A3B.upToDate = false;
-            A3C.upToDate = false;
-            B3A.upToDate = false;
-            C3A.upToDate = false;
-            C3B.upToDate = false;
+            A3B.setForUpdate();
+            A3C.setForUpdate();
+            B3A.setForUpdate();
+            C3A.setForUpdate();
+            C3B.setForUpdate();
         }
         assertTrue(!B3A.empty());
     }
 
+    /**
+     * For every x in A3C that has a pair as y in B3A
+     * move x to B and then move y to C to restore
+     * previous size of B and decrease width of coloring.
+     *
+     * @return true if width was decreased
+     */
     private boolean swapWithinA3CAndB3A() {
         if (A3C.getSize() == 0 || B3A.getSize() == 0) {
             return false;
         }
 
+        LinkedList<Integer> A3CVertices = A3C.getVertices(), B3AVertices = B3A.getVertices();
+
         while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
-            coloring.set(A3C.vertices.poll(), B);
-            coloring.set(B3A.vertices.poll(), C);
+            coloring.set(A3CVertices.poll(), B);
+            coloring.set(B3AVertices.poll(), C);
             verticesToMove--;
         }
 
-        C3A.upToDate = false;
+        C3A.setForUpdate();
 
         return true;
     }
@@ -219,93 +228,16 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean swapBetweenAAndBAndMoveToC() {
-        B3A.update();
-        int decreasedBy = swapper.swapAndMoveToOther(A, B, C, B3A.vertices, verticesToMove);
+        int decreasedBy = swapper.swapAndMoveToOther(A, B, C, B3A.getVertices(), verticesToMove);
         if (0 < decreasedBy) {
             verticesToMove -= decreasedBy;
-            A3B.upToDate = false;
-            B3A.upToDate = false;
-            C3A.upToDate = false;
+            A3B.setForUpdate();
+            B3A.setForUpdate();
+            C3A.setForUpdate();
 
             return true;
         }
 
         return false;
-    }
-
-    private void swapWithinA1BAndB3A() {
-        //TODO
-    }
-
-    private void leaveOnlyPathsInAAndBSubsets() {
-        //TODO
-    }
-
-    private void findProperPath() {
-        //TODO
-    }
-
-    private boolean pathDisconnectedOnOneSide() {
-        //TODO
-        return false;
-    }
-
-    private boolean wAdjacentToASubset() {
-        //TODO
-        return false;
-    }
-
-    private void crazySwap() {
-        //TODO
-    }
-
-    /**
-     * If X3Y.vertices contains index n,
-     * it means that vertex n has a color X and
-     * it has 3 neighbours of color Y.
-     */
-    private class X3Y {
-        LinkedList<Integer> vertices = new LinkedList<>();
-
-        private int colorX, colorY;
-
-        private boolean upToDate;
-
-        X3Y(int colorX, int colorY) {
-            this.colorX = colorX;
-            this.colorY = colorY;
-        }
-
-        boolean empty() {
-            return getSize() == 0;
-        }
-
-        int getSize() {
-            update();
-            return vertices.size();
-        }
-
-        void update() {
-            if (!upToDate) {
-                vertices.clear();
-                int neighboursWithOtherColor;
-                for (int i = 0; i < graph.getVertices(); i++) {
-                    if (coloring.get(i) == colorX) {
-                        neighboursWithOtherColor = 0;
-                        for (Integer n : graph.getNeighbours(i)) {
-                            if (coloring.get(n) == colorY) {
-                                neighboursWithOtherColor++;
-                            }
-                        }
-
-                        if (neighboursWithOtherColor == 3) {
-                            vertices.add(i);
-                        }
-                    }
-                }
-
-                upToDate = true;
-            }
-        }
     }
 }
