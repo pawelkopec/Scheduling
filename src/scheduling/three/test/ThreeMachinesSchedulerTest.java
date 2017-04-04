@@ -2,7 +2,7 @@ package scheduling.three.test;
 
 import graph.RegularListGraph;
 import graph.VertexColoring;
-import graph.util.RegularGraphGenerator;
+import graph.util.BipartiteRegularGraphGenerator;
 import org.junit.Test;
 import scheduling.three.Const;
 import scheduling.three.ThreeMachinesScheduler;
@@ -21,11 +21,11 @@ public class ThreeMachinesSchedulerTest {
 
     private static final int TEST_NUMBER = 30, MIN_GRAPH_SIZE = 1000, MAX_GRAPH_SIZE = 5000;
 
-    private RegularGraphGenerator generator;
+    private BipartiteRegularGraphGenerator bicubicGenerator;
     private Random random;
 
     public ThreeMachinesSchedulerTest() {
-        generator = new RegularGraphGenerator();
+        bicubicGenerator = BipartiteRegularGraphGenerator.getInstance();
         random = new Random();
     }
 
@@ -34,7 +34,7 @@ public class ThreeMachinesSchedulerTest {
         RegularListGraph graph;
 
         for (int i = 0; i < 100; i++) {
-            graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, 30);
+            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 300, 3);
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 7.43});
             assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
         }
@@ -60,7 +60,7 @@ public class ThreeMachinesSchedulerTest {
 
     @Test
     public void applyBruteForceEasyAlgorithm() {
-        RegularListGraph graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, 6);
+        RegularListGraph graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 6, 3);
 
         ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
@@ -73,7 +73,7 @@ public class ThreeMachinesSchedulerTest {
         VertexColoring coloring;
 
         for (int i = 0; i < TEST_NUMBER; i++) {
-            graph = generator.getRandomBipartiteGraph(RegularListGraph.class, 3, randomGraphSize());
+            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
             assertCorrectSchedule(scheduling, scheduling.findScheduling());
         }

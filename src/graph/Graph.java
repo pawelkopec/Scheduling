@@ -74,6 +74,13 @@ public interface Graph {
     void validateVertex(int index);
 
     /**
+     * Check if this graphs' vertices have the same degree
+     *
+     * @param degree degree of each vertex
+     */
+    boolean isRegular(int degree);
+
+    /**
      * Check if graph is 2-chromatic via BFS.
      * Assign colors of color1 and color2 if it is true.
      *
