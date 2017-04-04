@@ -35,7 +35,9 @@ public class ThreeMachinesSchedulerTest {
 
         for (int i = 0; i < 100; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 30, 3);
+            System.out.println(i+" "+graph.isRegular(3));
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 7.43});
+            System.out.println(i+" "+graph.isRegular(3));
             assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
         }
     }
@@ -60,7 +62,7 @@ public class ThreeMachinesSchedulerTest {
 
     @Test
     public void applyBruteForceEasyAlgorithm() {
-        RegularListGraph graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 3, 6);
+        RegularListGraph graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 6, 3);
 
         ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
@@ -73,7 +75,7 @@ public class ThreeMachinesSchedulerTest {
         VertexColoring coloring;
 
         for (int i = 0; i < TEST_NUMBER; i++) {
-            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 3, randomGraphSize());
+            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
             assertCorrectSchedule(scheduling, scheduling.findScheduling());
         }
