@@ -3,7 +3,6 @@ package graph;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.NoSuchElementException;
 
 /**
  * Created by Paweł Kopeć on 23.12.16.
@@ -11,9 +10,9 @@ import java.util.NoSuchElementException;
  * Implementation of graph data structure
  * based on adjacency lists.
  */
-public class ListGraph extends Graph {
+public class ListGraph extends BaseGraph {
 
-    private ArrayList<LinkedList<Integer>> neighbourList;
+    protected ArrayList<LinkedList<Integer>> neighbourList;
 
     public ListGraph() {
         super();
@@ -29,6 +28,10 @@ public class ListGraph extends Graph {
 
     public ListGraph(String string) {
         super(string);
+    }
+
+    public ListGraph(BaseGraph other) {
+        super(other);
     }
 
     @Override
@@ -58,6 +61,8 @@ public class ListGraph extends Graph {
         edgesNumber--;
     }
 
+    // TODO
+    // change to forEachNeighbourDo()
     @Override
     public LinkedList<Integer> getNeighbours(int index) {
         validateVertex(index);
