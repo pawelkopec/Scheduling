@@ -73,7 +73,11 @@ class ClwWithConstantB {
                 continue;
             }
 
-            makeB3ANotEmpty();
+            if (makeB3ANotEmpty()) {
+                System.out.println("b3a filled");
+                tmp();
+                continue;
+            }
 
             if (swapWithinA3CAndB3A()) {
                 System.out.println("b <= a3c, c <= b3a");
@@ -174,12 +178,15 @@ class ClwWithConstantB {
     }
 
     /**
+     *
      * If B3A is empty make it not empty. First swap colors
      * of components in G(A, B) subgraph. Then move vertices
      * from C3A to B in order to restore previous size
      * of B. Now vertices moved from C3A are in B3A.
+     *
+     * @return true if the coloring was changed
      */
-    private void makeB3ANotEmpty() {
+    private boolean makeB3ANotEmpty() {
         if (B3A.empty()) {
             swapper.swapWithoutDecreasing(B, C, C3A.getVertices());
 
@@ -188,8 +195,12 @@ class ClwWithConstantB {
             B3A.setForUpdate();
             C3A.setForUpdate();
             C3B.setForUpdate();
+
+            return true;
         }
         assertTrue(!B3A.empty());
+
+        return false;
     }
 
     /**
