@@ -41,7 +41,7 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
 
     @Override
     protected void validateEdge(int from, int to) {
-        if(neighbourList.get(from).size() >= 3 || neighbourList.get(to).size() >= 3) {
+        if(neighbourList.get(from).size() >= degree || neighbourList.get(to).size() >= degree) {
             throw new IllegalArgumentException(TOO_MANY_NEIGHBOURS);
         }
         super.validateEdge(from, to);
