@@ -84,8 +84,9 @@ public class RegularGraphGenerator {
     }
 
     protected <G extends RegularGraph> G getGraphA1(Class<G> clazz, int verticesNumber, int degree) {
-        G g = RegularGraphFactory.getInstance(clazz, verticesNumber, degree);
+        G g;
         do {
+            g = RegularGraphFactory.getInstance(clazz, verticesNumber, degree);
             /*
              * Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
              * Put points = {1, 2, ..., nd} (points denotes the set of unpaired points.)
