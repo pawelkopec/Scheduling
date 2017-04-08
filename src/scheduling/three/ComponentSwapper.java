@@ -207,7 +207,7 @@ class ComponentSwapper {
             return decreasedBy;
         }
 
-        decreasedBy = moveCommonNeighbours(compensator);
+        decreasedBy = moveCommonNeighbours(small3Big, compensator, verticesToMove);
         if (0 < decreasedBy) {
             return decreasedBy;
         }
@@ -253,9 +253,39 @@ class ComponentSwapper {
         return sizeDifference;
     }
 
-    private int moveCommonNeighbours(BooleanArray compensator) {
+    private int moveCommonNeighbours(LinkedList<Integer> small3Big,
+                                     BooleanArray compensator, int verticesToMove) {
         //TODO
-        return 0;
+        Graph graph = coloring.getGraph();
+        int verticesMoved = 0, neighboursInBig;
+        for (Integer i : small3Big) {
+            if (0 < verticesToMove) {
+                for (Integer j: graph.getNeighbours(i)) {
+                    neighboursInBig = 0;
+                    for (Integer k: graph.getNeighbours(j)) {
+                        if (coloring.get(k) == colorSmall) {
+                            neighboursInBig++;
+                        }
+                    }
+
+                    if(neighboursInBig == 1) {
+                        coloring.set(i, colorOther);
+                        coloring.set(j, colorBig);
+                        compensator.set(i, false);
+
+                        verticesMoved++;
+                        verticesToMove--;
+
+                        break;
+                    }
+                }
+            }
+            else {
+                break;
+            }
+        }
+
+        return verticesMoved;
     }
 
     private boolean moveCommonAndTwoSpare() {
