@@ -22,7 +22,7 @@ class ComponentSwapper {
      * Store colors as object field to avoid passing
      * huge amount of arguments to private methods.
      */
-    int colorBig, colorSmall, colorOther;
+    private int colorBig, colorSmall, colorOther;
 
     ComponentSwapper(VertexColoring coloring) {
         this.coloring = coloring;
@@ -42,6 +42,7 @@ class ComponentSwapper {
     int swap(int colorBig, int colorSmall, int verticesToMove, LinkedList<Integer> compensator) {
         this.colorBig = colorBig;
         this.colorSmall = colorSmall;
+
         BitSet checked = new BitSet(graph.getVertices());
 
         int currentColor, verticesMoved, verticesMovedTogether = 0;
@@ -170,7 +171,7 @@ class ComponentSwapper {
         //TODO otherCompensator for compensating common neighbours
         BitSet checked = new BitSet(graph.getVertices());
         BooleanArray compensatorArray = vertexListToArray(compensator);
-        LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>(), toRemoveFromCompensator = new LinkedList<>();
+        LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
         int currentColor, verticesMovedTotal = 0, verticesMoved;
 
         for (int i = 0; i < graph.getVertices() && 0 < verticesToMove; i++) {
@@ -181,14 +182,12 @@ class ComponentSwapper {
                 if (currentColor == colorBig || currentColor == colorSmall) {
                     findComponents(i, bigComponent, smallComponent, checked);
 
-                    //TODO arguments
                     verticesMoved = useComponentsToDecrease(bigComponent, smallComponent, compensatorArray, verticesToMove);
                     verticesMovedTotal += verticesMoved;
                     verticesToMove -= verticesMoved;
 
                     bigComponent.clear();
                     smallComponent.clear();
-                    toRemoveFromCompensator.clear();
                 }
             }
         }
@@ -217,8 +216,8 @@ class ComponentSwapper {
                                    LinkedList<Integer> smallComponent,
                                    BooleanArray compensator, int verticesToMove) {
         //TODO
-        /*int sizeDifference = bigComponent.size() - smallComponent.size();
-        if (0 < sizeDifference && sizeDifference <= verticesToMove && sizeDifference <= compensatorSize) {
+        int sizeDifference = bigComponent.size() - smallComponent.size();
+        if (0 < sizeDifference && sizeDifference <= verticesToMove && sizeDifference <= compensator.getCount()) {
             LinkedList<Integer> toRemoveFromCompensator = new LinkedList<>();
             for (Integer i : smallComponent) {
                 if (X3Y.hasAllNeighboursInY(i, colorBig, coloring)) {
@@ -226,25 +225,37 @@ class ComponentSwapper {
                 }
             }
 
-            if (sizeDifference <= compensator.size() - toRemoveFromCompensator.size()) {
+            if (sizeDifference <= compensator.getCount() - toRemoveFromCompensator.size()) {
+                /*
+                 * Remove newly forbidden vertices
+                 * from compensator.
+                 */
                 for (Integer i : toRemoveFromCompensator) {
                     compensator.set(i, false);
                 }
 
-                changeColor(bigComponent, colorSmall);
-                changeColor(smallComponent, colorBig);
+                /*
+                 * Compensate swap that will take place
+                 * in a moment using updated compensator.
+                 */
                 changeColor(compensator, colorOther, sizeDifference);
 
+                /*
+                 * Update compensator with vertices newly
+                 * added to small color class.
+                 */
                 for (Integer i : bigComponent) {
                     if (X3Y.hasAllNeighboursInY(i, colorSmall, coloring)) {
-                        toRemoveFromCompensator.add(i);
+                        compensator.set(i);
                     }
                 }
+
+                changeColor(bigComponent, colorSmall);
+                changeColor(smallComponent, colorBig);
             }
         }
 
-        return sizeDifference;*/
-        return 0;
+        return sizeDifference;
     }
 
     private int moveCommonNeighbours() {
@@ -326,6 +337,18 @@ class ComponentSwapper {
 
     private void changeColor(LinkedList<Integer> vertices, int color) {
         changeColor(vertices, color, vertices.size());
+    }
+
+    private int changeColorWithoutPolling(LinkedList<Integer> vertices, int color, int n) {
+        int changed = 0;
+        for (Integer i : vertices) {
+            coloring.set(i, color);
+            if(n <= ++changed) {
+                break;
+            }
+        }
+
+        return changed;
     }
 
     /**
