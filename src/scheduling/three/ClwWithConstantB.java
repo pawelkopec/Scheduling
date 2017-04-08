@@ -1,7 +1,5 @@
 package scheduling.three;
 
-import graph.Graph;
-import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
@@ -73,7 +71,11 @@ class ClwWithConstantB {
                 continue;
             }
 
-            makeB3ANotEmpty();
+            if (makeB3ANotEmpty()) {
+                System.out.println("b3a filled");
+                tmp();
+                continue;
+            }
 
             if (swapWithinA3CAndB3A()) {
                 System.out.println("b <= a3c, c <= b3a");
@@ -179,7 +181,7 @@ class ClwWithConstantB {
      * from C3A to B in order to restore previous size
      * of B. Now vertices moved from C3A are in B3A.
      */
-    private void makeB3ANotEmpty() {
+    private boolean makeB3ANotEmpty() {
         if (B3A.empty()) {
             swapper.swapWithoutDecreasing(B, C, C3A.getVertices());
 
@@ -188,8 +190,11 @@ class ClwWithConstantB {
             B3A.setForUpdate();
             C3A.setForUpdate();
             C3B.setForUpdate();
+
+            return true;
         }
-        assertTrue(!B3A.empty());
+
+        return false;
     }
 
     /**
@@ -226,7 +231,7 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean swapBetweenAAndBAndMoveToC() {
-        int decreasedBy = swapper.swapAndMoveToOther(A, B, C, B3A.getVertices(), verticesToMove);
+        int decreasedBy = swapper.swapAndMoveUntilDecreased(A, B, C, B3A.getVertices(), verticesToMove);
         if (0 < decreasedBy) {
             verticesToMove -= decreasedBy;
             A3B.setForUpdate();
