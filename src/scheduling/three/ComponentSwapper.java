@@ -199,12 +199,15 @@ class ComponentSwapper {
                                         LinkedList<Integer> smallComponent,
                                         BooleanArray compensator, int verticesToMove) {
         //TODO arguments
-        int decreasedBy = swapAndMoveToOther(bigComponent, smallComponent, compensator, verticesToMove);
+        LinkedList<Integer> small3Big = getFrom3To(smallComponent, colorBig);
+        int decreasedBy = swapAndMoveToOther(bigComponent, smallComponent,
+                small3Big, compensator, verticesToMove);
+
         if (0 < decreasedBy) {
             return decreasedBy;
         }
 
-        decreasedBy = moveCommonNeighbours();
+        decreasedBy = moveCommonNeighbours(compensator);
         if (0 < decreasedBy) {
             return decreasedBy;
         }
@@ -214,17 +217,11 @@ class ComponentSwapper {
 
     private int swapAndMoveToOther(LinkedList<Integer> bigComponent,
                                    LinkedList<Integer> smallComponent,
+                                   LinkedList<Integer> toRemoveFromCompensator,
                                    BooleanArray compensator, int verticesToMove) {
         //TODO
         int sizeDifference = bigComponent.size() - smallComponent.size();
         if (0 < sizeDifference && sizeDifference <= verticesToMove && sizeDifference <= compensator.getCount()) {
-            LinkedList<Integer> toRemoveFromCompensator = new LinkedList<>();
-            for (Integer i : smallComponent) {
-                if (X3Y.hasAllNeighboursInY(i, colorBig, coloring)) {
-                    toRemoveFromCompensator.add(i);
-                }
-            }
-
             if (sizeDifference <= compensator.getCount() - toRemoveFromCompensator.size()) {
                 /*
                  * Remove newly forbidden vertices
@@ -244,10 +241,8 @@ class ComponentSwapper {
                  * Update compensator with vertices newly
                  * added to small color class.
                  */
-                for (Integer i : bigComponent) {
-                    if (X3Y.hasAllNeighboursInY(i, colorSmall, coloring)) {
-                        compensator.set(i);
-                    }
+                for (Integer i : getFrom3To(bigComponent, colorSmall)) {
+                    compensator.set(i);
                 }
 
                 changeColor(bigComponent, colorSmall);
@@ -258,7 +253,7 @@ class ComponentSwapper {
         return sizeDifference;
     }
 
-    private int moveCommonNeighbours() {
+    private int moveCommonNeighbours(BooleanArray compensator) {
         //TODO
         return 0;
     }
@@ -382,5 +377,16 @@ class ComponentSwapper {
         }
 
         return booleanArray;
+    }
+
+    private LinkedList<Integer> getFrom3To(LinkedList<Integer> fromComponent, int toColor) {
+        LinkedList<Integer> big3Small = new LinkedList<>();
+        for (Integer i : fromComponent) {
+            if (X3Y.hasAllNeighboursInY(i, toColor, coloring)) {
+                big3Small.add(i);
+            }
+        }
+
+        return big3Small;
     }
 }
