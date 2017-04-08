@@ -18,6 +18,12 @@ class ComponentSwapper {
     private Graph graph;
     private VertexColoring coloring;
 
+    /**
+     * Store colors as object field to avoid passing
+     * huge amount of arguments to private methods.
+     */
+    int colorBig, colorSmall, colorOther;
+
     ComponentSwapper(VertexColoring coloring) {
         this.coloring = coloring;
         this.graph = coloring.getGraph();
@@ -34,6 +40,8 @@ class ComponentSwapper {
      * @return how much the width was decreased
      */
     int swap(int colorBig, int colorSmall, int verticesToMove, LinkedList<Integer> compensator) {
+        this.colorBig = colorBig;
+        this.colorSmall = colorSmall;
         BitSet checked = new BitSet(graph.getVertices());
 
         int currentColor, verticesMoved, verticesMovedTogether = 0;
@@ -44,7 +52,7 @@ class ComponentSwapper {
                 currentColor = coloring.get(i);
 
                 if (currentColor == colorBig || currentColor == colorSmall) {
-                    verticesMoved = swapWithCompensating(i, colorBig, colorSmall, checked, compensator, verticesToMove);
+                    verticesMoved = swapWithCompensating(i, checked, compensator, verticesToMove);
                     verticesMovedTogether += verticesMoved;
                     verticesToMove -= verticesMoved;
                 }
@@ -61,16 +69,14 @@ class ComponentSwapper {
      * compensate it by moving vertices from compensator to smaller class.
      *
      * @param currentIndex   of starting point of finding color classes
-     * @param colorBig       color of bigger color class
-     * @param colorSmall     color of smaller color class
      * @param checked        BitSet of vertices not in use
      * @param compensator    list of vertices that can be used to compensate
      * @param verticesToMove desired maximum difference of size of color classes
      * @return how many vertices were moved
      */
-    private int swapWithCompensating(int currentIndex, int colorBig, int colorSmall, BitSet checked, LinkedList<Integer> compensator, int verticesToMove) {
+    private int swapWithCompensating(int currentIndex, BitSet checked, LinkedList<Integer> compensator, int verticesToMove) {
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
-        findComponents(currentIndex, colorBig, colorSmall, bigComponent, smallComponent, checked);
+        findComponents(currentIndex, bigComponent, smallComponent, checked);
 
         int sizeDifference = bigComponent.size() - smallComponent.size(), verticesMoved = 0;
 
@@ -98,6 +104,8 @@ class ComponentSwapper {
      * @param compensator list of vertices used to compensate
      */
     void swapWithoutDecreasing(int colorBig, int colorSmall, LinkedList<Integer> compensator) {
+        this.colorBig = colorBig;
+        this.colorSmall = colorSmall;
         BitSet checked = new BitSet(graph.getVertices());
         int currentColor;
 
@@ -106,7 +114,7 @@ class ComponentSwapper {
                 currentColor = coloring.get(i);
 
                 if (currentColor == colorBig || currentColor == colorSmall) {
-                    if (swapAndRestore(i, colorBig, colorSmall, checked, compensator)) {
+                    if (swapAndRestore(i, checked, compensator)) {
                         return;
                     }
                 }
@@ -120,15 +128,13 @@ class ComponentSwapper {
      * classes by moving vertices from compensator to smaller color class.
      *
      * @param currentIndex of starting point of finding color classes
-     * @param colorBig     color of bigger color class
-     * @param colorSmall   color of smaller color class
      * @param checked      BitSet of vertices not in use
      * @param compensator  list of vertices that can be used to compensate
      * @return true if swapping took place
      */
-    private boolean swapAndRestore(int currentIndex, int colorBig, int colorSmall, BitSet checked, LinkedList<Integer> compensator) {
+    private boolean swapAndRestore(int currentIndex, BitSet checked, LinkedList<Integer> compensator) {
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
-        findComponents(currentIndex, colorBig, colorSmall, bigComponent, smallComponent, checked);
+        findComponents(currentIndex, bigComponent, smallComponent, checked);
 
         int sizeDifference = bigComponent.size() - smallComponent.size();
 
@@ -157,8 +163,13 @@ class ComponentSwapper {
      * @return how much the width was decreased
      */
     int swapAndMoveUntilDecreased(int colorBig, int colorSmall, int colorOther, LinkedList<Integer> compensator, int verticesToMove) {
+        this.colorBig = colorBig;
+        this.colorSmall = colorSmall;
+        this.colorOther = colorOther;
+
         //TODO otherCompensator for compensating common neighbours
-        BitSet checked = new BitSet(graph.getVertices()), compensatorArray = listToBitSet(compensator);
+        BitSet checked = new BitSet(graph.getVertices());
+        BooleanArray compensatorArray = vertexListToArray(compensator);
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>(), toRemoveFromCompensator = new LinkedList<>();
         int currentColor, verticesMovedTotal = 0, verticesMoved;
 
@@ -168,10 +179,10 @@ class ComponentSwapper {
                 currentColor = coloring.get(i);
 
                 if (currentColor == colorBig || currentColor == colorSmall) {
-                    findComponents(i, colorBig, colorSmall, bigComponent, smallComponent, checked);
+                    findComponents(i, bigComponent, smallComponent, checked);
 
                     //TODO arguments
-                    verticesMoved = useComponentsToDecrease();
+                    verticesMoved = useComponentsToDecrease(bigComponent, smallComponent, compensatorArray, verticesToMove);
                     verticesMovedTotal += verticesMoved;
                     verticesToMove -= verticesMoved;
 
@@ -185,9 +196,11 @@ class ComponentSwapper {
         return verticesMovedTotal;
     }
 
-    private int useComponentsToDecrease() {
+    private int useComponentsToDecrease(LinkedList<Integer> bigComponent,
+                                        LinkedList<Integer> smallComponent,
+                                        BooleanArray compensator, int verticesToMove) {
         //TODO arguments
-        int decreasedBy = swapAndMoveToOther();
+        int decreasedBy = swapAndMoveToOther(bigComponent, smallComponent, compensator, verticesToMove);
         if (0 < decreasedBy) {
             return decreasedBy;
         }
@@ -200,8 +213,9 @@ class ComponentSwapper {
         return reduceToPathsAndSwap();
     }
 
-    private int swapAndMoveToOther(/*int colorBig, int colorSmall, int colorOther, int compensatorSize, BitSet compensator,
-                                          LinkedList<Integer> bigComponent, LinkedList<Integer> smallComponent, int verticesToMove*/) {
+    private int swapAndMoveToOther(LinkedList<Integer> bigComponent,
+                                   LinkedList<Integer> smallComponent,
+                                   BooleanArray compensator, int verticesToMove) {
         //TODO
         /*int sizeDifference = bigComponent.size() - smallComponent.size();
         if (0 < sizeDifference && sizeDifference <= verticesToMove && sizeDifference <= compensatorSize) {
@@ -259,15 +273,11 @@ class ComponentSwapper {
      * current index.
      *
      * @param current        index to start with
-     * @param colorBig       color of bigger color class
-     * @param colorSmall     color of smaller color class
      * @param bigComponent   container of indexes to fill
      * @param smallComponent container of indexes to fill
      */
-    private void findComponents(int current, int colorBig, int colorSmall,
-                                LinkedList<Integer> bigComponent,
-                                LinkedList<Integer> smallComponent,
-                                BitSet checked) {
+    private void findComponents(int current, LinkedList<Integer> bigComponent,
+                                LinkedList<Integer> smallComponent, BitSet checked) {
         Queue<Integer> queue = new LinkedList<>();
         int currentColor, otherColor;
 
@@ -339,15 +349,15 @@ class ComponentSwapper {
      * Set all the bits representing vertices in list to 1.
      *
      * @param list of vertices to put in BitSet
-     * @return BitSet representing list
+     * @return BooleanArray representing list
      */
-    private BitSet listToBitSet(LinkedList<Integer> list) {
-        BitSet bitSet = new BitSet(graph.getVertices());
+    private BooleanArray vertexListToArray(LinkedList<Integer> list) {
+        BooleanArray booleanArray = new BooleanArray(graph.getVertices());
 
         for (Integer i : list) {
-            bitSet.set(i);
+            booleanArray.set(i);
         }
 
-        return bitSet;
+        return booleanArray;
     }
 }
