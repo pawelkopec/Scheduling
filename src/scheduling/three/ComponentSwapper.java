@@ -402,18 +402,6 @@ class ComponentSwapper {
         changeColor(vertices, color, vertices.size());
     }
 
-    private int changeColorWithoutPolling(LinkedList<Integer> vertices, int color, int n) {
-        int changed = 0;
-        for (Integer i : vertices) {
-            coloring.set(i, color);
-            if(n <= ++changed) {
-                break;
-            }
-        }
-
-        return changed;
-    }
-
     /**
      * Change n vertices that have 1 assigned in the bit set
      * to a given color.
