@@ -3,7 +3,6 @@ package scheduling.three;
 import graph.VertexColoring;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 
 import static junit.framework.TestCase.assertTrue;
 import static scheduling.three.Const.*;
@@ -88,35 +87,6 @@ class ClwWithConstantB {
                 tmp();
                 continue;
             }
-            return;
-            /*if (true) { //TODO
-                swapWithinA1BAndB3A();
-                continue;
-            } else if (true) { //TODO
-                if (true) { //TODO
-                    //TODO
-                    continue;
-                } else if (true) { //TODO
-                    //TODO
-                    continue;
-                } else if (true) { //TODO
-                    //TODO
-                    continue;
-                }
-            }
-
-            leaveOnlyPathsInAAndBSubstets();
-            findProperPath();
-
-            if (pathDisconnectedOnOneSide()) {
-                //TODO
-                continue;
-            } else if (wAdjacentToASubset()) {
-                //TODO
-                continue;
-            }
-
-            crazySwap();*/
 
         }
     }
@@ -180,6 +150,8 @@ class ClwWithConstantB {
      * of components in G(A, B) subgraph. Then move vertices
      * from C3A to B in order to restore previous size
      * of B. Now vertices moved from C3A are in B3A.
+     *
+     * @return true if any changes were made
      */
     private boolean makeB3ANotEmpty() {
         if (B3A.empty()) {
@@ -209,13 +181,11 @@ class ClwWithConstantB {
             return false;
         }
 
-        LinkedList<Integer> A3CVertices = A3C.getVertices(), B3AVertices = B3A.getVertices();
+        int toDecrease = Math.min(verticesToMove, Math.min(A3C.getSize(), B3A.getSize()));
 
-        while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
-            coloring.set(A3CVertices.poll(), B);
-            coloring.set(B3AVertices.poll(), C);
-            verticesToMove--;
-        }
+        swapper.changeColor(A3C.getVertices(), B, toDecrease);
+        swapper.changeColor(B3A.getVertices(), C, toDecrease);
+        verticesToMove -= toDecrease;
 
         C3A.setForUpdate();
 
