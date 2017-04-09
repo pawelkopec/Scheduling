@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ThreeMachinesSchedulerTest {
 
-    private static final int TEST_NUMBER = 30, MIN_GRAPH_SIZE = 1000, MAX_GRAPH_SIZE = 5000;
+    private static final int TEST_NUMBER = 300, MIN_GRAPH_SIZE = 1000, MAX_GRAPH_SIZE = 5000;
 
     private BipartiteRegularGraphGenerator bicubicGenerator;
     private Random random;
@@ -84,7 +84,7 @@ public class ThreeMachinesSchedulerTest {
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
-            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 414.3, 201.43});
+            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
             assertCorrectSchedule(scheduling, scheduling.findScheduling());
         }
     }
