@@ -207,6 +207,11 @@ class ComponentSwapper {
             return decreasedBy;
         }
 
+        decreasedBy = moveNeighbour(small3Big, compensator, verticesToMove);
+        if (0 < decreasedBy) {
+            return decreasedBy;
+        }
+
         decreasedBy = moveCommonNeighbours(small3Big, compensator, verticesToMove);
         if (0 < decreasedBy) {
             return decreasedBy;
@@ -253,8 +258,8 @@ class ComponentSwapper {
         return sizeDifference;
     }
 
-    private int moveCommonNeighbours(LinkedList<Integer> small3Big,
-                                     BooleanArray compensator, int verticesToMove) {
+    private int moveNeighbour(LinkedList<Integer> small3Big,
+                              BooleanArray compensator, int verticesToMove) {
         //TODO
         Graph graph = coloring.getGraph();
         int verticesMoved = 0, neighboursInBig;
@@ -288,12 +293,45 @@ class ComponentSwapper {
         return verticesMoved;
     }
 
-    private boolean moveCommonAndTwoSpare() {
+    private int moveCommonNeighbours(LinkedList<Integer> small3Big,
+                                     BooleanArray compensator, int verticesToMove) {
         //TODO
-        return false;
+        Graph graph = coloring.getGraph();
+        int verticesMoved = 0, other = 0;
+        boolean isCommonNeighbour;
+        for (Integer i : small3Big) {
+            if (0 < verticesToMove) {
+                for (Integer j: graph.getNeighbours(i)) {
+                    isCommonNeighbour = false;
+                    for (Integer k: graph.getNeighbours(j)) {
+                        if (X3Y.hasAllNeighboursInY(k, colorBig, coloring)) {
+                            isCommonNeighbour = true;
+                            other = k;
+                            break;
+                        }
+                    }
+
+                    if (isCommonNeighbour) {
+                        //TODO arguments
+                        if (moveCommonAndSpare(i, other, j)) {
+                            compensator.set(i, false);
+                            verticesMoved++;
+                            verticesToMove--;
+                        }
+
+                        break;
+                    }
+                }
+            }
+            else {
+                break;
+            }
+        }
+
+        return verticesMoved;
     }
 
-    private boolean moveCommonAndThreeSpare() {
+    private boolean moveCommonAndSpare(int x, int y, int z) {
         //TODO
         return false;
     }
