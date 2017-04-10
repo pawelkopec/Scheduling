@@ -75,7 +75,9 @@ class ComponentSwapper {
      * @param verticesToMove desired maximum difference of size of color classes
      * @return how many vertices were moved
      */
-    private int swapWithCompensating(int currentIndex, BitSet checked, LinkedList<Integer> compensator, int verticesToMove) {
+    private int swapWithCompensating(int currentIndex, BitSet checked,
+                                     LinkedList<Integer> compensator, int verticesToMove) {
+
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
         findComponents(currentIndex, bigComponent, smallComponent, checked);
 
@@ -107,6 +109,7 @@ class ComponentSwapper {
     void swapWithoutDecreasing(int colorBig, int colorSmall, LinkedList<Integer> compensator) {
         this.colorBig = colorBig;
         this.colorSmall = colorSmall;
+
         BitSet checked = new BitSet(graph.getVertices());
         int currentColor;
 
@@ -163,7 +166,8 @@ class ComponentSwapper {
      * @param verticesToMove desired change of the coloring width
      * @return how much the width was decreased
      */
-    int swapAndMoveUntilDecreased(int colorBig, int colorSmall, int colorOther, LinkedList<Integer> compensator, int verticesToMove) {
+    int swapAndMoveUntilDecreased(int colorBig, int colorSmall, int colorOther,
+                                  LinkedList<Integer> compensator, int verticesToMove) {
         this.colorBig = colorBig;
         this.colorSmall = colorSmall;
         this.colorOther = colorOther;
@@ -182,7 +186,8 @@ class ComponentSwapper {
                 if (currentColor == colorBig || currentColor == colorSmall) {
                     findComponents(i, bigComponent, smallComponent, checked);
 
-                    verticesMoved = useComponentsToDecrease(bigComponent, smallComponent, compensatorArray, verticesToMove);
+                    verticesMoved = useComponentsToDecrease(bigComponent, smallComponent,
+                            compensatorArray, verticesToMove);
                     verticesMovedTotal += verticesMoved;
                     verticesToMove -= verticesMoved;
 
@@ -233,7 +238,9 @@ class ComponentSwapper {
                                    BooleanArray compensator, int verticesToMove) {
         //TODO
         int sizeDifference = bigComponent.size() - smallComponent.size();
-        if (0 < sizeDifference && sizeDifference <= verticesToMove && sizeDifference <= compensator.getCount()) {
+
+        if (0 < sizeDifference && sizeDifference <= verticesToMove &&
+                sizeDifference <= compensator.getCount()) {
             if (sizeDifference <= compensator.getCount() - toRemoveFromCompensator.size()) {
                 /*
                  * Remove newly forbidden vertices
@@ -269,6 +276,7 @@ class ComponentSwapper {
                                    BooleanArray compensator, int verticesToMove) {
         //TODO
         int verticesMoved = 0;
+
         for (Integer vertex : small3Big) {
             if (0 < verticesToMove) {
                 for (Integer neighbour: graph.getNeighbours(vertex)) {
@@ -355,6 +363,7 @@ class ComponentSwapper {
      */
     private void findComponents(int current, LinkedList<Integer> bigComponent,
                                 LinkedList<Integer> smallComponent, BitSet checked) {
+
         Queue<Integer> queue = new LinkedList<>();
         int currentColor, otherColor;
 
@@ -393,6 +402,7 @@ class ComponentSwapper {
      */
     int changeColor(LinkedList<Integer> vertices, int color, int n) {
         int changed = 0;
+
         for (int i = 0; 0 < vertices.size() && changed < n; i++) {
             coloring.set(vertices.poll(), color);
             changed++;
@@ -440,6 +450,7 @@ class ComponentSwapper {
 
     private LinkedList<Integer> getFrom3To(LinkedList<Integer> fromComponent, int toColor) {
         LinkedList<Integer> big3Small = new LinkedList<>();
+
         for (Integer i : fromComponent) {
             if (X3Y.has3NeighboursInY(i, toColor, coloring)) {
                 big3Small.add(i);
