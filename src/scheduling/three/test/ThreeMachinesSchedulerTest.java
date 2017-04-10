@@ -25,7 +25,7 @@ public class ThreeMachinesSchedulerTest {
     private Random random;
 
     public ThreeMachinesSchedulerTest() {
-        bicubicGenerator = BipartiteRegularGraphGenerator.getInstance();
+        bicubicGenerator = new BipartiteRegularGraphGenerator();
         random = new Random();
     }
 
