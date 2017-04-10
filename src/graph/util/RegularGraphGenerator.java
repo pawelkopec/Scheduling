@@ -3,10 +3,7 @@ package graph.util;
 import graph.RegularGraph;
 import graph.RegularGraphFactory;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by Robert Stancel on 04.01.17.
@@ -22,15 +19,6 @@ public class RegularGraphGenerator {
     private static final String INVALID_VERTICES_NUMBER = "Number of vertices cannot be less than 0.";
     private static final String INVALID_VERTICES_DEGREE = "Number of vertices times degree must be even.";
     private static final String INVALID_DEGREE_CEILING = "Degree must be at least 1 less than number of vertices";
-
-    private static RegularGraphGenerator instance = new RegularGraphGenerator();
-
-    protected RegularGraphGenerator() {}
-
-    /**
-     * Get singleton class instance
-     */
-    public static RegularGraphGenerator getInstance() { return instance; }
 
     /**
      * Build random graph with given parameters.
@@ -105,25 +93,23 @@ public class RegularGraphGenerator {
              * Choose two random points i and j in points,
              * and if they are suitable, pair i with j and delete i and j from points.
              */
-            int i, j, iIndex, jIndex;
+            Integer i, j;
             while (existsSuitable(points, pairs, verticesNumber, degree)) {
-                iIndex = rand.nextInt(points.size());
-                jIndex = rand.nextInt(points.size());
-                i = points.get(iIndex);
-                j = points.get(jIndex);
+                i = getFirstPoint(rand, points, pairs, verticesNumber, degree);
+                j = getSecondPoint(rand, points, pairs, verticesNumber, degree);
+                System.out.print("v: " + getPointGroup(i, verticesNumber) + ", u: " + getPointGroup(j, verticesNumber));
                 if (areSuitable(i, j, pairs, verticesNumber, degree)) {
+                    System.out.print(" are suitable.");
                     pairs.set(i, j);
                     pairs.set(j, i);
-                    if (iIndex > jIndex) {
-                        points.remove(iIndex);
-                        points.remove(jIndex);
-                    }
-                    else {
-                        points.remove(jIndex);
-                        points.remove(iIndex);
-                    }
+                    points.remove(i);
+                    points.remove(j);
                 }
+
+                System.out.println();
             }
+
+            System.out.println("Suitable doesn't exist.");
 
             /*
              * Create a graph G with edge from vertex r to vertex s if and only if there is a pair
@@ -140,6 +126,17 @@ public class RegularGraphGenerator {
 
         return g;
     }
+
+    protected Integer getFirstPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
+        return points.get(rand.nextInt(points.size()));
+    }
+
+    protected Integer getSecondPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
+        return points.get(rand.nextInt(points.size()));
+    }
+
+
+
 
     protected boolean existsSuitable(List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
         if (points.size() == 0) {
