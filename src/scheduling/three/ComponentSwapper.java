@@ -269,13 +269,13 @@ class ComponentSwapper {
                                    BooleanArray compensator, int verticesToMove) {
         //TODO
         int verticesMoved = 0;
-        for (Integer i : small3Big) {
+        for (Integer vertex : small3Big) {
             if (0 < verticesToMove) {
-                for (Integer j: graph.getNeighbours(i)) {
-                    if(X3Y.getNeighboursInY(j, colorSmall, coloring) == 1) {
-                        coloring.set(i, colorOther);
-                        coloring.set(j, colorBig);
-                        compensator.set(i, false);
+                for (Integer neighbour: graph.getNeighbours(vertex)) {
+                    if(X3Y.getNeighboursInY(neighbour, colorSmall, coloring) == 1) {
+                        coloring.set(vertex, colorOther);
+                        coloring.set(neighbour, colorSmall);
+                        compensator.set(vertex, false);
 
                         verticesMoved++;
                         verticesToMove--;
