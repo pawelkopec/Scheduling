@@ -71,9 +71,12 @@ public class RegularGraphGenerator {
 
     }
 
+    protected void startLoop() {};
+
     protected <G extends RegularGraph> G getGraphA1(Class<G> clazz, int verticesNumber, int degree) {
         G g;
         do {
+            startLoop();
             g = RegularGraphFactory.getInstance(clazz, verticesNumber, degree);
             /*
              * Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
@@ -93,11 +96,13 @@ public class RegularGraphGenerator {
              * Choose two random points i and j in points,
              * and if they are suitable, pair i with j and delete i and j from points.
              */
+            int k = 0;
             Integer i, j;
             while (existsSuitable(points, pairs, verticesNumber, degree)) {
                 i = getFirstPoint(rand, points, pairs, verticesNumber, degree);
                 j = getSecondPoint(rand, points, pairs, verticesNumber, degree);
                 if (areSuitable(i, j, pairs, verticesNumber, degree)) {
+                    setSuitable(i, j, points, pairs, verticesNumber, degree);
                     pairs.set(i, j);
                     pairs.set(j, i);
                     points.remove(i);
@@ -105,6 +110,7 @@ public class RegularGraphGenerator {
                 }
 
             }
+
 
             /*
              * Create a graph G with edge from vertex r to vertex s if and only if there is a pair
@@ -120,6 +126,11 @@ public class RegularGraphGenerator {
         } while (!g.isRegular(degree));
 
         return g;
+    }
+
+
+    protected void setSuitable(Integer i, Integer j, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
+
     }
 
     protected Integer getFirstPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
