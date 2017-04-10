@@ -8,25 +8,25 @@ import java.util.Arrays;
 
 /**
  * Created by Paweł Kopeć on 28.12.16.
- *
+ * <p>
  * Class for implementing scheduling of unit-length
  * jobs for 3 machines.
  */
 public class ThreeMachinesScheduler {
 
     private static final String ILLEGAL_SPEED_VALUE = "Processing speed must be positive.";
-    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds.";
+    private static final String ILLEGAL_SPEED_NUM = "Algorithm is designed for 3 processing speeds, %d given.";
     private static final String GRAPH_NOT_CUBIC = "Algorithm is applied only to cubic graphs.";
 
     /**
      * Possible states of incompatibility graph.
-     *
+     * <p>
      * OPTIMAL and SUBOPTIMAL states means that class can
      * give optimal and suboptimal solutions in polynomial time.
-     *
+     * <p>
      * BRUTE_FORCE state means that solution will be optimal.
      * but will require super-polynomial time.
-     *
+     * <p>
      * BRUTE_FORCE_EASY state means the same as above, but graph
      * is so small, that complexity is acceptable.
      */
@@ -34,7 +34,7 @@ public class ThreeMachinesScheduler {
     public static final int SUBOPTIMAL = 2;
     public static final int BRUTE_FORCE = 3;
     public static final int BRUTE_FORCE_EASY = 4;
-    public static final int NOT_CHECKED = 5;
+    private static final int NOT_CHECKED = 5;
 
     private RegularGraph graph;
     private VertexColoring coloring;
@@ -55,7 +55,7 @@ public class ThreeMachinesScheduler {
     /**
      * Check which algorithm will be needed
      * for that particular graph.
-     *
+     * <p>
      * Warning: Checking if graph is 2-chromatic
      * requires O(|V|) time.
      */
@@ -87,8 +87,7 @@ public class ThreeMachinesScheduler {
                 findBruteForce();
                 break;
             case OPTIMAL:
-                scheduling = new BicubicScheduling(graph, coloring, speeds);
-                return scheduling.findColoring();
+                return new BicubicScheduling(coloring, speeds).findColoring();
             case SUBOPTIMAL:
                 scheduling = new TricubicScheduling(graph, coloring, speeds);
                 return scheduling.findColoring();
@@ -108,7 +107,7 @@ public class ThreeMachinesScheduler {
 
     private void setSpeeds(double[] speeds) {
         if (speeds.length != 3) {
-            throw new IllegalArgumentException(ILLEGAL_SPEED_NUM + ' ' + speeds.length + " given.");
+            throw new IllegalArgumentException(String.format(ILLEGAL_SPEED_NUM, speeds.length));
         }
         for (double speed : speeds) {
             if (speed <= 0) {
@@ -128,7 +127,7 @@ public class ThreeMachinesScheduler {
         return state;
     }
 
-    public int [] getDivision() {
+    public int[] getDivision() {
         return scheduling.getDivision();
     }
 }

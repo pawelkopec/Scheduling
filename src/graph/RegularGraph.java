@@ -8,11 +8,6 @@ package graph;
  */
 public interface RegularGraph extends Graph {
 
-    static RegularGraph getInstance(int verticesNumber, int degree) {
-        System.out.println("O huj chodzi");
-        return null;
-    }
-
     int getDegree();
 
     boolean isRegular();

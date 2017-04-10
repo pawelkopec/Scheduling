@@ -6,7 +6,7 @@ import java.util.LinkedList;
 
 /**
  * Created by Paweł Kopeć on 23.12.16.
- *
+ * <p>
  * Implementation of graph data structure
  * based on adjacency lists.
  */
@@ -38,7 +38,7 @@ public class ListGraph extends BaseGraph {
     protected void initContainers(int verticesNumber, int edgesNumber) {
         neighbourList = new ArrayList<>(verticesNumber);
 
-        for(int i = 0; i < verticesNumber; i++) {
+        for (int i = 0; i < verticesNumber; i++) {
             neighbourList.add(new LinkedList<>());
         }
     }
@@ -53,7 +53,7 @@ public class ListGraph extends BaseGraph {
 
     @Override
     public void removeEdge(int from, int to) {
-        if(!hasEdge(from, to)) {
+        if (!hasEdge(from, to)) {
             throw new IllegalArgumentException(NO_SUCH_EDGE);
         }
         neighbourList.get(from).removeFirstOccurrence(to);
@@ -61,8 +61,6 @@ public class ListGraph extends BaseGraph {
         edgesNumber--;
     }
 
-    // TODO
-    // change to forEachNeighbourDo()
     @Override
     public LinkedList<Integer> getNeighbours(int index) {
         validateVertex(index);
@@ -93,7 +91,7 @@ public class ListGraph extends BaseGraph {
         str.append(edgesNumber).append(" ");
 
         int from = 0, to;
-        for(LinkedList<Integer> neighbours : neighbourList) {
+        for (LinkedList<Integer> neighbours : neighbourList) {
             for (Integer neighbour : neighbours) {
                 to = neighbour;
                 if (from < to) {

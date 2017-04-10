@@ -6,20 +6,11 @@ import java.util.LinkedList;
 
 /**
  * Created by Paweł Kopeć on 23.12.16.
- *
+ * <p>
  * Implementation of graph data structure
  * based on adjacency matrix.
- *
- * TODO
- * 1. Think of data structure for adjacency matrix
- * based on bit operations, not integers.
- * Update - Java BitSet will do.
- * 2. Get rid of redundancies in adjacency matrix
  */
 public class MatrixGraph extends BaseGraph {
-
-    private static final boolean CONNECTED = true;
-    private static final boolean DISCONNECTED = false;
 
     private BitSet adjacencyMatrix;
     private int[] neighbourNumbers;
@@ -46,7 +37,7 @@ public class MatrixGraph extends BaseGraph {
 
     @Override
     protected void initContainers(int verticesNumber, int edgesNumber) {
-        adjacencyMatrix = new BitSet(verticesNumber*verticesNumber);
+        adjacencyMatrix = new BitSet(verticesNumber * verticesNumber);
         neighbourNumbers = new int[verticesNumber];
     }
 
@@ -64,7 +55,7 @@ public class MatrixGraph extends BaseGraph {
 
     @Override
     public void removeEdge(int from, int to) {
-        if(!hasEdge(from, to)) {
+        if (!hasEdge(from, to)) {
             throw new IllegalArgumentException(NO_SUCH_EDGE);
         }
         adjacencyMatrix.clear(from * verticesNumber + to);
@@ -80,8 +71,8 @@ public class MatrixGraph extends BaseGraph {
         validateVertex(index);
 
         LinkedList<Integer> neighbours = new LinkedList<>();
-        for(int i = 0; i < verticesNumber; i++) {
-            if(adjacencyMatrix.get(index * verticesNumber + i) ) {
+        for (int i = 0; i < verticesNumber; i++) {
+            if (adjacencyMatrix.get(index * verticesNumber + i)) {
                 neighbours.add(i);
             }
         }
@@ -110,8 +101,8 @@ public class MatrixGraph extends BaseGraph {
         StringBuilder str = new StringBuilder("").append(verticesNumber).append(" ");
         str.append(edgesNumber).append(" ");
 
-        for(int i = 0; i < verticesNumber; i++) {
-            for(int j = i + 1; j < verticesNumber; j++) {
+        for (int i = 0; i < verticesNumber; i++) {
+            for (int j = i + 1; j < verticesNumber; j++) {
                 if (adjacencyMatrix.get(i * verticesNumber + j)) {
                     str.append(i).append(" ").append(j).append(" ");
                 }

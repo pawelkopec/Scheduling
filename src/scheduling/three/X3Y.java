@@ -69,13 +69,20 @@ class X3Y {
         }
     }
 
-    static boolean hasAllNeighboursInY(int index, int colorY, VertexColoring coloring) {
+    static int getNeighboursInY(int index, int colorY, VertexColoring coloring) {
+        int neighboursCount = 0;
         for (Integer n : coloring.getGraph().getNeighbours(index)) {
-            if (coloring.get(n) != colorY) {
-                return false;
+            if (coloring.get(n) == colorY) {
+                neighboursCount++;
             }
         }
 
-        return true;
+        return neighboursCount;
     }
+
+    static boolean has3NeighboursInY(int index, int colorY, VertexColoring coloring) {
+        return getNeighboursInY(index, colorY, coloring) == 3;
+    }
+
+
 }
