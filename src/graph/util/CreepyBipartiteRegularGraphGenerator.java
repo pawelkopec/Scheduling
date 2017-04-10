@@ -1,5 +1,7 @@
 package graph.util;
 
+import graph.RegularGraph;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -14,6 +16,10 @@ public class CreepyBipartiteRegularGraphGenerator extends RegularGraphGenerator 
     private int thirdPartitionSize = 0;
     private int firstPoint;
     private int secondPoint;
+    private int d2; //Number of vertices from first partition which must have 2 edges with second partition
+    private int d3; //Number of vertices from first partition which must have 2 edges with third partition
+    private int currd2; //Number of vertices from first partition which actually have 2 edges with second partition
+    private int currd3; //Number of vertices from first partition which actually have 2 edges with third partition
 
     protected int getGroupPartition(int group) {
         if (group < firstPartitionSize) {
@@ -36,12 +42,28 @@ public class CreepyBipartiteRegularGraphGenerator extends RegularGraphGenerator 
     }
 
     @Override
+    public <G extends RegularGraph> G getRandomGraph(Class<G> clazz, int verticesNumber, int degree, ALGORITHMS algorithm) throws IllegalArgumentException {
+        d2 = secondPartitionSize*3-verticesNumber/2;
+        d3 = thirdPartitionSize*3-verticesNumber/2;
+
+        return super.getRandomGraph(clazz, verticesNumber, degree, algorithm);
+    }
+
+    @Override
+    protected void startLoop() {
+        currd2 = 0;
+        currd3 = 0;
+    }
+
+    @Override
     protected boolean areSuitable(int a, int b, List<Integer> pairs, int verticesNumber, int degree) {
         int aGroup = getPointGroup(a, verticesNumber);
         int bGroup = getPointGroup(b, verticesNumber);
         int aGroupPartition = getGroupPartition(aGroup);
         int bGroupPartition = getGroupPartition(bGroup);
         List<Integer> aGroupConnections, bGroupConnections;
+        aGroupConnections = getGroupConnections(pairs, aGroup, verticesNumber, degree);
+        bGroupConnections = getGroupConnections(pairs, bGroup, verticesNumber, degree);
 
         if (aGroupPartition == bGroupPartition) {
             return false;
@@ -53,19 +75,52 @@ public class CreepyBipartiteRegularGraphGenerator extends RegularGraphGenerator 
         }
 
         if (aGroupPartition == 1) {
-            aGroupConnections = getGroupConnections(pairs, aGroup, verticesNumber, degree);
             if (aGroupConnections.stream().filter(group -> getGroupPartition(group) == bGroupPartition).count() == 2) {
+                return false;
+            }
+
+            if (bGroupPartition == 3 && aGroupConnections.stream().filter(group -> getGroupPartition(group) == 3).count() == 1 && currd3 == d3) {
+                return false;
+            }
+
+            if (bGroupPartition == 2 && aGroupConnections.stream().filter(group -> getGroupPartition(group) == 2).count() == 1 && currd2 == d2) {
                 return false;
             }
         }
         else {
-            bGroupConnections = getGroupConnections(pairs, bGroup, verticesNumber, degree);
             if (bGroupConnections.stream().filter(group -> getGroupPartition(group) == aGroupPartition).count() == 2) {
+                return false;
+            }
+
+            if (aGroupPartition == 3 && currd3 == d3) {
+                return false;
+            }
+
+            if (aGroupPartition == 2 && currd2 == d2) {
                 return false;
             }
         }
 
         return super.areSuitable(a, b, pairs, verticesNumber, degree);
+    }
+
+    @Override
+    protected void setSuitable(Integer i, Integer j, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
+        int aGroup = getPointGroup(i, verticesNumber);
+        int bGroup = getPointGroup(j, verticesNumber);
+        int aGroupPartition = getGroupPartition(aGroup);
+        int bGroupPartition = getGroupPartition(bGroup);
+        List<Integer> aGroupConnections, bGroupConnections;
+        aGroupConnections = getGroupConnections(pairs, aGroup, verticesNumber, degree);
+        bGroupConnections = getGroupConnections(pairs, bGroup, verticesNumber, degree);
+
+        if (bGroupPartition == 2 && aGroupConnections.stream().filter(group -> getGroupPartition(group) == 2).count() == 1) {
+            currd2++;
+        }
+
+        if (bGroupPartition == 3 && aGroupConnections.stream().filter(group -> getGroupPartition(group) == 3).count() == 1) {
+            currd3++;
+        }
     }
 
     @Override
@@ -75,12 +130,15 @@ public class CreepyBipartiteRegularGraphGenerator extends RegularGraphGenerator 
                 filter(point -> getGroupPartition(getPointGroup(point, verticesNumber)) == 1).
                 collect(Collectors.toList());
         firstPoint = firstPartitionPoints.get(rand.nextInt(firstPartitionPoints.size()));
-        return firstPoint = points.get(rand.nextInt(points.size()));
+        return firstPoint;
     }
 
     @Override
     protected Integer getSecondPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
-        int firstPointGroupPartition = getGroupPartition(getPointGroup(firstPoint, verticesNumber));
+        int firstPointGroup = getPointGroup(firstPoint, verticesNumber);
+        List<Integer> firstPointGroupConnections = getGroupConnections(pairs, firstPointGroup, verticesNumber, degree);
+        int firstPointGroupPartition = getGroupPartition(firstPointGroup);
+
         List<Integer> otherPoints = points.stream().
                 filter(point -> getGroupPartition(getPointGroup(point, verticesNumber)) != firstPointGroupPartition).
                 collect(Collectors.toList());
