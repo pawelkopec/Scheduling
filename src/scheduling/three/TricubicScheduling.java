@@ -13,7 +13,7 @@ import graph.VertexColoring;
  */
 class TricubicScheduling extends CubicScheduling {
 
-    TricubicScheduling(Graph graph, VertexColoring coloring, double[] speeds) {
+    TricubicScheduling(VertexColoring coloring, double[] speeds) {
         super(coloring, speeds);
     }
 

@@ -18,7 +18,7 @@ abstract class CubicScheduling {
     protected VertexColoring coloring;
     double[] speeds;
     double sumOfSpeeds;
-    int[] division;
+    int[] division = new int[3];
 
     CubicScheduling(VertexColoring coloring, double[] speeds) {
         if (coloring == null) {
