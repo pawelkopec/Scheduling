@@ -10,14 +10,6 @@ import java.util.List;
 public class BipartiteRegularGraphGenerator extends RegularGraphGenerator {
     private static final String INVALID_DEGREE_CEIL = "Number of vertices must be at least two times greater than degree.";
 
-    private static BipartiteRegularGraphGenerator instance = new BipartiteRegularGraphGenerator();
-
-    public static BipartiteRegularGraphGenerator getInstance() {
-        return instance;
-    }
-
-    protected BipartiteRegularGraphGenerator() {}
-
     @Override
     public <G extends RegularGraph> G getRandomGraph(Class<G> clazz,
                                                      int verticesNumber, int degree, ALGORITHMS algorithms) throws IllegalArgumentException {

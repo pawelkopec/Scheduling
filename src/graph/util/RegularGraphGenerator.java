@@ -97,19 +97,14 @@ public class RegularGraphGenerator {
             while (existsSuitable(points, pairs, verticesNumber, degree)) {
                 i = getFirstPoint(rand, points, pairs, verticesNumber, degree);
                 j = getSecondPoint(rand, points, pairs, verticesNumber, degree);
-                System.out.print("v: " + getPointGroup(i, verticesNumber) + ", u: " + getPointGroup(j, verticesNumber));
                 if (areSuitable(i, j, pairs, verticesNumber, degree)) {
-                    System.out.print(" are suitable.");
                     pairs.set(i, j);
                     pairs.set(j, i);
                     points.remove(i);
                     points.remove(j);
                 }
 
-                System.out.println();
             }
-
-            System.out.println("Suitable doesn't exist.");
 
             /*
              * Create a graph G with edge from vertex r to vertex s if and only if there is a pair
