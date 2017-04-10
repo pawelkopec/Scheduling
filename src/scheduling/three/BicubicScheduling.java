@@ -75,8 +75,6 @@ class BicubicScheduling extends CubicScheduling {
 
         double minTime = min(maxTime1, min(maxTime2, maxTime3));
 
-        division = new int[3];
-
         if (minTime == maxTime1) {
             division[FASTEST] = (int) floor(nFloat[FASTEST]);
             division[MIDDLE] = (int) ceil(nFloat[MIDDLE]);
@@ -96,7 +94,6 @@ class BicubicScheduling extends CubicScheduling {
      * evenly between two slower machines.
      */
     private void findOptimalDivision2() {
-        division = new int[3];
         division[FASTEST] = graph.getVertices() / 2;
         division[MIDDLE] = (int) ceil((double)(graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
         division[SLOWEST] = (graph.getVertices() / 2) - division[MIDDLE];
