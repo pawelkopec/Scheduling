@@ -65,14 +65,17 @@ public abstract class BaseGraph implements Graph {
      * @param scanner to read data from
      * @throws IllegalArgumentException if graph from given parameters cannot be constructed
      */
-    private void scan(Scanner scanner) throws IllegalArgumentException {
-        verticesNumber = scanner.nextInt();
-        if(verticesNumber < 0) {
+    protected void scan(Scanner scanner) throws IllegalArgumentException {
+        int verticesNumber = scanner.nextInt();
+
+        if(validateVerticesNumber(verticesNumber)) {
             throw new IllegalArgumentException(INVALID_VERTEX_NUM);
         }
+        this.verticesNumber = verticesNumber;
 
         int edgesNumber = scanner.nextInt();
-        if(edgesNumber < 0) {
+
+        if(validateEdgesNumber(edgesNumber)) {
             throw new IllegalArgumentException(INVALID_EDGE_NUM);
         }
         initContainers(verticesNumber, edgesNumber);
@@ -189,6 +192,28 @@ public abstract class BaseGraph implements Graph {
         catch (IllegalArgumentException e) {
             throw new IllegalArgumentException(INVALID_EDGE);
         }
+    }
+
+    /**
+     * Check if graph of given vertices number
+     * can be constructed.
+     *
+     * @param verticesNumber to be used in constructor
+     * @return true if value is valid
+     */
+    protected boolean validateVerticesNumber(int verticesNumber) {
+        return verticesNumber < 1;
+    }
+
+    /**
+     * Check if graph of given edges number
+     * can be constructed.
+     *
+     * @param edgesNumber to be used in constructor
+     * @return true if value is valid
+     */
+    protected boolean validateEdgesNumber(int edgesNumber) {
+        return edgesNumber < 1;
     }
 
     /**

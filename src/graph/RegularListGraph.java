@@ -1,6 +1,7 @@
 package graph;
 
 import java.io.InputStream;
+import java.util.Scanner;
 
 /**
  * Created by Paweł Kopeć on 19.02.17.
@@ -24,9 +25,13 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
         super(in);
     }
 
+    //TODO get rid of this horrible solution when i have time
     public RegularListGraph(String string, int degree) {
-        super(string);
-        setDegree(degree);
+        if (!validateDegree(degree)) {
+            throw new IllegalArgumentException(CANNOT_BE_REGULAR);
+        }
+        this.degree = degree;
+        scan(new Scanner(string));
     }
 
     public RegularListGraph(BaseGraph other, int degree) {
@@ -62,15 +67,26 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
     }
 
     private void setDegree(int degree) {
-        if(degree < 0 || verticesNumber <= degree || (verticesNumber * degree) % 2 != 0) {
+        if(!validateDegreeAndVerticesNumber(verticesNumber, degree)) {
             throw new IllegalArgumentException(CANNOT_BE_REGULAR);
         }
 
         this.degree = degree;
     }
 
-    public static RegularGraph getInstance(int verticesNumber, int degree) {
-        return new RegularListGraph(verticesNumber, degree);
+    @Override
+    protected boolean validateVerticesNumber(int verticesNumber) {
+        return super.validateVerticesNumber(verticesNumber);
+    }
+
+    protected boolean validateDegree(int degree) {
+        return 0 < degree;
+    }
+
+    private boolean validateDegreeAndVerticesNumber(int verticesNumber, int degree) {
+        return  validateDegree(degree) &&
+                degree < verticesNumber &&
+                (verticesNumber * degree) % 2 == 0;
     }
 
     public int getDegree() {
