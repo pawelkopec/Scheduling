@@ -297,14 +297,20 @@ class ComponentSwapper {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
-        int verticesMoved = 0;
+        int x, y, verticesMoved = 0;
+
         while (true) {
             withCommonNeigh = findSmall3BigWithCommonNeigh(potentialWithCommonNeigh);
             if (withCommonNeigh == null) {
                 break;
             }
 
+            x = withCommonNeigh[0];
+            y = withCommonNeigh[1];
 
+            if (countCommonNeigh(x, y) == 3) {
+                //TODO change with w from C3A
+            }
             //TODO
         }
 
@@ -441,5 +447,18 @@ class ComponentSwapper {
         }
 
         return big3Small;
+    }
+
+    private int countCommonNeigh(int x, int y) {
+        LinkedList<Integer> xNeigh = graph.getNeighbours(x);
+        int count = 0;
+
+        for (Integer neighbour : graph.getNeighbours(y)) {
+            if (xNeigh.contains(neighbour)) {
+                count++;
+            }
+        }
+
+        return count;
     }
 }
