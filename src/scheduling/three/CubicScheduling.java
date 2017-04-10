@@ -1,39 +1,34 @@
 package scheduling.three;
 
+import graph.Graph;
 import graph.RegularGraph;
 import graph.VertexColoring;
 
-import java.util.Arrays;
-
 /**
  * Created by Paweł Kopeć on 02.03.17.
- *
+ * <p>
  * Base class for finding coloring of
  * cubic incompatibility graphs.
  */
 abstract class CubicScheduling {
 
-    private static final String ILLEGAL_COLORING = "Coloring must have reference to the same graph.";
+    private static final String NULL_COLORING = "Coloring cannot be null.";
 
-    protected RegularGraph graph;
+    protected Graph graph;
     protected VertexColoring coloring;
     double[] speeds;
     double sumOfSpeeds;
-    int []division;
+    int[] division = new int[3];
 
-    CubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
-        if(graph != coloring.getGraph()) {
-            throw new IllegalArgumentException(ILLEGAL_COLORING);
+    CubicScheduling(VertexColoring coloring, double[] speeds) {
+        if (coloring == null) {
+            throw new IllegalArgumentException(NULL_COLORING);
         }
 
-        this.graph = graph;
+        this.graph = coloring.getGraph();
         this.coloring = coloring;
-        for(double i : speeds) sumOfSpeeds += i;
+        for (double i : speeds) sumOfSpeeds += i;
         this.speeds = speeds;
-    }
-
-    CubicScheduling(RegularGraph graph, double[] speeds) {
-        this(graph, new VertexColoring(graph), speeds);
     }
 
     public abstract VertexColoring findColoring();

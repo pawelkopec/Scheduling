@@ -14,12 +14,8 @@ import static scheduling.three.Const.*;
  */
 class BicubicScheduling extends CubicScheduling {
 
-    public BicubicScheduling(RegularGraph graph, VertexColoring coloring, double[] speeds) {
-        super(graph, coloring, speeds);
-    }
-
-    public BicubicScheduling(RegularGraph graph, double[] speeds) {
-        super(graph, speeds);
+    BicubicScheduling(VertexColoring coloring, double[] speeds) {
+        super(coloring, speeds);
     }
 
     public VertexColoring findColoring() {
@@ -27,7 +23,7 @@ class BicubicScheduling extends CubicScheduling {
             findOptimalDivision();
             splitBetweenSlowerMachines((graph.getVertices() / 2) - division[MIDDLE]);
 
-            ClwWithConstantB clw = new ClwWithConstantB(graph, coloring);
+            ClwWithConstantB clw = new ClwWithConstantB(coloring);
 
             int verticesToMove = division[SLOWEST] - (graph.getVertices() / 2 - division[MIDDLE]);
             clw.moveVertices(verticesToMove);
@@ -79,8 +75,6 @@ class BicubicScheduling extends CubicScheduling {
 
         double minTime = min(maxTime1, min(maxTime2, maxTime3));
 
-        division = new int[3];
-
         if (minTime == maxTime1) {
             division[FASTEST] = (int) floor(nFloat[FASTEST]);
             division[MIDDLE] = (int) ceil(nFloat[MIDDLE]);
@@ -100,7 +94,6 @@ class BicubicScheduling extends CubicScheduling {
      * evenly between two slower machines.
      */
     private void findOptimalDivision2() {
-        division = new int[3];
         division[FASTEST] = graph.getVertices() / 2;
         division[MIDDLE] = (int) ceil((double)(graph.getVertices() / 2) * speeds[MIDDLE] / (speeds[MIDDLE] + speeds[SLOWEST]));
         division[SLOWEST] = (graph.getVertices() / 2) - division[MIDDLE];

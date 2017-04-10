@@ -1,15 +1,11 @@
 package scheduling.three;
 
-import graph.RegularGraph;
 import graph.VertexColoring;
 
 import java.util.Arrays;
-import java.util.LinkedList;
 
 import static junit.framework.TestCase.assertTrue;
-import static scheduling.three.Const.A;
-import static scheduling.three.Const.B;
-import static scheduling.three.Const.C;
+import static scheduling.three.Const.*;
 
 /**
  * Created by Paweł Kopeć on 02.03.17.
@@ -19,15 +15,13 @@ import static scheduling.three.Const.C;
  */
 class ClwWithConstantB {
 
-    private RegularGraph graph;
     private VertexColoring coloring;
     private int verticesToMove;
 
     private ComponentSwapper swapper;
     private X3Y A3B, A3C, B3A, C3A, C3B;
 
-    ClwWithConstantB(RegularGraph graph, VertexColoring coloring) {
-        this.graph = graph;
+    ClwWithConstantB(VertexColoring coloring) {
         this.coloring = coloring;
 
         swapper = new ComponentSwapper(coloring);
@@ -40,7 +34,7 @@ class ClwWithConstantB {
     }
 
     void tmp() {
-        int [] colors = new int []{coloring.getNumberOfColored(A), coloring.getNumberOfColored(B), coloring.getNumberOfColored(C)};
+        int[] colors = new int[]{coloring.getNumberOfColored(A), coloring.getNumberOfColored(B), coloring.getNumberOfColored(C)};
         System.out.println("Zostało do przeniesienia: " + verticesToMove);
         System.out.println("");
         System.out.println("|A3B| = " + A3B.getSize());
@@ -76,7 +70,11 @@ class ClwWithConstantB {
                 continue;
             }
 
-            makeB3ANotEmpty();
+            if (makeB3ANotEmpty()) {
+                System.out.println("b3a filled");
+                tmp();
+                continue;
+            }
 
             if (swapWithinA3CAndB3A()) {
                 System.out.println("b <= a3c, c <= b3a");
@@ -89,35 +87,6 @@ class ClwWithConstantB {
                 tmp();
                 continue;
             }
-            return;
-            /*if (true) { //TODO
-                swapWithinA1BAndB3A();
-                continue;
-            } else if (true) { //TODO
-                if (true) { //TODO
-                    //TODO
-                    continue;
-                } else if (true) { //TODO
-                    //TODO
-                    continue;
-                } else if (true) { //TODO
-                    //TODO
-                    continue;
-                }
-            }
-
-            leaveOnlyPathsInAAndBSubstets();
-            findProperPath();
-
-            if (pathDisconnectedOnOneSide()) {
-                //TODO
-                continue;
-            } else if (wAdjacentToASubset()) {
-                //TODO
-                continue;
-            }
-
-            crazySwap();*/
 
         }
     }
@@ -130,7 +99,8 @@ class ClwWithConstantB {
      * decreaseBy(int) method.
      */
 
-    /**.
+    /**
+     * .
      * Decrease the coloring by simply moving all vertices
      * from A3B to C.
      *
@@ -180,8 +150,10 @@ class ClwWithConstantB {
      * of components in G(A, B) subgraph. Then move vertices
      * from C3A to B in order to restore previous size
      * of B. Now vertices moved from C3A are in B3A.
+     *
+     * @return true if any changes were made
      */
-    private void makeB3ANotEmpty() {
+    private boolean makeB3ANotEmpty() {
         if (B3A.empty()) {
             swapper.swapWithoutDecreasing(B, C, C3A.getVertices());
 
@@ -190,8 +162,11 @@ class ClwWithConstantB {
             B3A.setForUpdate();
             C3A.setForUpdate();
             C3B.setForUpdate();
+
+            return true;
         }
-        assertTrue(!B3A.empty());
+
+        return false;
     }
 
     /**
@@ -206,13 +181,11 @@ class ClwWithConstantB {
             return false;
         }
 
-        LinkedList<Integer> A3CVertices = A3C.getVertices(), B3AVertices = B3A.getVertices();
+        int toDecrease = Math.min(verticesToMove, Math.min(A3C.getSize(), B3A.getSize()));
 
-        while (0 < A3C.getSize() && 0 < B3A.getSize() && 0 < verticesToMove) {
-            coloring.set(A3CVertices.poll(), B);
-            coloring.set(B3AVertices.poll(), C);
-            verticesToMove--;
-        }
+        swapper.changeColor(A3C.getVertices(), B, toDecrease);
+        swapper.changeColor(B3A.getVertices(), C, toDecrease);
+        verticesToMove -= toDecrease;
 
         C3A.setForUpdate();
 
@@ -228,7 +201,7 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean swapBetweenAAndBAndMoveToC() {
-        int decreasedBy = swapper.swapAndMoveToOther(A, B, C, B3A.getVertices(), verticesToMove);
+        int decreasedBy = swapper.swapAndMoveUntilDecreased(A, B, C, B3A.getVertices(), verticesToMove);
         if (0 < decreasedBy) {
             verticesToMove -= decreasedBy;
             A3B.setForUpdate();

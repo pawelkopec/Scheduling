@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ThreeMachinesSchedulerTest {
 
-    private static final int TEST_NUMBER = 30, MIN_GRAPH_SIZE = 1000, MAX_GRAPH_SIZE = 5000;
+    private static final int TEST_NUMBER = 300, MIN_GRAPH_SIZE = 1000, MAX_GRAPH_SIZE = 5000;
 
     private BipartiteRegularGraphGenerator bicubicGenerator;
     private Random random;
@@ -33,8 +33,8 @@ public class ThreeMachinesSchedulerTest {
     public void chooseOptimalAlgorithm() {
         RegularListGraph graph;
 
-        for (int i = 0; i < 100; i++) {
-            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 30, 3);
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 300, 3);
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 7.43});
             assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
         }
@@ -70,7 +70,6 @@ public class ThreeMachinesSchedulerTest {
     @Test
     public void applyOptimalAlgorithmForOneBigPartition() {
         RegularListGraph graph;
-        VertexColoring coloring;
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
@@ -82,9 +81,12 @@ public class ThreeMachinesSchedulerTest {
     @Test
     public void applyOptimalAlgorithmForClw() {
         RegularListGraph graph;
-        VertexColoring coloring;
 
-        //TODO
+        for (int i = 0; i < TEST_NUMBER; i++) {
+            graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
+            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
+            assertCorrectSchedule(scheduling, scheduling.findScheduling());
+        }
     }
 
     // TODO
