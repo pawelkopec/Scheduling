@@ -266,9 +266,9 @@ class ComponentSwapper {
 
                 changeColor(bigComponent, colorSmall);
                 changeColor(smallComponent, colorBig);
-            }
 
-            return sizeDifference;
+                return sizeDifference;
+            }
         }
 
         return 0;
