@@ -89,6 +89,14 @@ public class ThreeMachinesSchedulerTest {
         }
     }
 
+    @Test
+    public void applyOptimalAlgorithmForClwForSwappingWhenABComponentsCannotBeSwapped() {
+        RegularListGraph graph = new RegularListGraph("10 15 0 5 0 1 0 7 1 8 1 2 2 5 2 9 3 8 3 4 3 6 4 5 4 7 6 9 6 7 8 9", 3);
+
+        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
+        assertCorrectSchedule(scheduling, scheduling.findScheduling());
+    }
+
     // TODO
     // get example graphs from generator after implementing generating tricubic graphs
     private RegularListGraph tricubic() {
@@ -118,7 +126,7 @@ public class ThreeMachinesSchedulerTest {
         return graph;
     }
 
-    private void assertCorrectSchedule(ThreeMachinesScheduler scheduler, VertexColoring coloring) {
+    public static void assertCorrectSchedule(ThreeMachinesScheduler scheduler, VertexColoring coloring) {
         int [] division = scheduler.getDivision();
         assertTrue(coloring.isProper());
         assertEquals(coloring.getNumberOfColored(Const.A), division[Const.FASTEST]);
