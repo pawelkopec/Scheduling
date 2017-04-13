@@ -334,7 +334,9 @@ class ComponentSwapper {
             vertex = small3Big.poll();
             for (Integer neighbour : graph.getNeighbours(vertex)) {
                 for (Integer otherVertex : graph.getNeighbours(neighbour)) {
-                    if (X3Y.has3NeighboursInY(otherVertex, colorBig, coloring)) {
+                    if (X3Y.has3NeighboursInY(otherVertex, colorBig, coloring) &&
+                            coloring.get(otherVertex) == colorSmall &&
+                            otherVertex != vertex) {
                         return new int[]{vertex ,otherVertex};
                     }
                 }
