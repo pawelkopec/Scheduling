@@ -306,7 +306,7 @@ class ComponentSwapper {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
-        int x, y, verticesMoved = 0;
+        int x, y, w, verticesMoved = 0;
 
         while (true) {
             withCommonNeigh = findSmall3BigWithCommonNeigh(potentialWithCommonNeigh);
@@ -320,7 +320,9 @@ class ComponentSwapper {
             if (countCommonNeigh(x, y) == 3) {
                 //TODO change with w from C3A
             }
-            //TODO
+
+            w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
+            //TODO swapping x, y, w
         }
 
         return verticesMoved;

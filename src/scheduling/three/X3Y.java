@@ -13,6 +13,8 @@ import java.util.LinkedList;
  * It is updated lazily. User can specify if the set needs to be updated
  */
 class X3Y {
+    private static final int NO_VERTEX = -1;
+
     private Graph graph;
     private VertexColoring coloring;
     private LinkedList<Integer> vertices = new LinkedList<>();
@@ -67,6 +69,16 @@ class X3Y {
 
             upToDate = true;
         }
+    }
+
+    static int findOneInX3Y(int colorX, int colorY, VertexColoring coloring) {
+        for (int i = 0; i < coloring.getGraph().getVertices(); i++) {
+            if (coloring.get(i) == colorX && has3NeighboursInY(i, colorY, coloring)) {
+                return i;
+            }
+        }
+
+        return NO_VERTEX;
     }
 
     static int getNeighboursInY(int index, int colorY, VertexColoring coloring) {
