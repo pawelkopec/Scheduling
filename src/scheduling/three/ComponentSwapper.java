@@ -276,7 +276,6 @@ class ComponentSwapper {
 
     private int moveSoleNeighbours(LinkedList<Integer> small3Big,
                                    BooleanArray compensator, int verticesToMove) {
-        //TODO
         int verticesMoved = 0;
 
         for (Integer vertex : small3Big) {
@@ -393,6 +392,60 @@ class ComponentSwapper {
                 checked.set(neighbour);
             }
         }
+    }
+
+    private LinkedList<Integer> findPathInReduced(int current, BitSet checked) {
+        //TODO
+        Queue<Integer> queue = new LinkedList<>();
+        LinkedList<Integer> path = new LinkedList<>();
+        int currentColor, otherColor, neighbourInSmall3Big;
+        boolean notInPath;
+
+        queue.add(current);
+
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+            currentColor = coloring.get(current);
+
+            notInPath = false;
+
+            if (currentColor == colorBig) {
+                otherColor = colorSmall;
+                neighbourInSmall3Big = 0;
+
+                for (Integer neighbour : graph.getNeighbours(current)) {
+                    if (coloring.get(neighbour) == colorOther &&
+                        X3Y.has3NeighboursInY(neighbour, currentColor, coloring)) {
+
+                        if (0 < neighbourInSmall3Big++) {
+                            notInPath = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                otherColor = colorBig;
+
+                if (X3Y.has3NeighboursInY(current, otherColor, coloring)) {
+                    notInPath = true;
+                }
+            }
+
+            if (notInPath) {
+                continue;
+            }
+
+            path.add(current);
+
+            for (Integer neighbour : graph.getNeighbours(current)) {
+                if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
+                    queue.add(neighbour);
+                }
+                checked.set(neighbour);
+            }
+        }
+
+        return path;
     }
 
     /**
