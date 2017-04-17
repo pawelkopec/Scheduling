@@ -174,7 +174,6 @@ class ComponentSwapper {
         this.colorSmall = colorSmall;
         this.colorOther = colorOther;
 
-        //TODO otherCompensator for compensating common neighbours
         BitSet checked = new BitSet(graph.getVertices());
         BooleanArray compensatorArray = vertexListToArray(compensator);
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
