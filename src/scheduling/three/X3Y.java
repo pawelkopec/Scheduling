@@ -5,6 +5,8 @@ import graph.VertexColoring;
 
 import java.util.LinkedList;
 
+import static scheduling.three.Const.NO_VERTEX;
+
 /**
  * Created by vivace on 04.04.17.
  * <p>
@@ -13,7 +15,6 @@ import java.util.LinkedList;
  * It is updated lazily. User can specify if the set needs to be updated
  */
 class X3Y {
-    public static final int NO_VERTEX = -1;
 
     private Graph graph;
     private VertexColoring coloring;

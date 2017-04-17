@@ -16,4 +16,9 @@ public class Const {
      * Speed indexes in array of speeds.
      */
     public static final int FASTEST = 2, MIDDLE = 1, SLOWEST = 0;
+
+    /**
+     * Constant indicating that desired vertex was not found.
+     */
+    public static final int NO_VERTEX = -1;
 }

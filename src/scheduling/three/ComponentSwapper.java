@@ -7,6 +7,8 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static scheduling.three.Const.NO_VERTEX;
+
 /**
  * Created by Paweł Kopeć on 15.03.17.
  * <p>
@@ -307,7 +309,7 @@ class ComponentSwapper {
         int x, y, tmp;
         int w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
 
-        if (w == X3Y.NO_VERTEX) {
+        if (w == NO_VERTEX) {
             return false;
         }
 
