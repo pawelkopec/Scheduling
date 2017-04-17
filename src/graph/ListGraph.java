@@ -75,7 +75,7 @@ public class ListGraph extends BaseGraph {
 
     @Override
     public boolean hasEdge(int from, int to) {
-        validateEdge(from, to);
+        super.validateEdge(from, to);
         return neighbourList.get(from).contains(to);
     }
 
