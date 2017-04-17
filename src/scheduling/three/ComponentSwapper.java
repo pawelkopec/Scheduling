@@ -230,7 +230,7 @@ class ComponentSwapper {
 
         //TODO another vertex from other3Big
 
-        return reduceToPathsAndSwap();
+        return reduceToPathsAndSwap(bigComponent, smallComponent);
     }
 
     private int swapAndMoveToOther(LinkedList<Integer> bigComponent,
@@ -399,8 +399,21 @@ class ComponentSwapper {
         return false;
     }
 
-    private int reduceToPathsAndSwap() {
+    private int reduceToPathsAndSwap(LinkedList<Integer> bigComponent,
+                                     LinkedList<Integer> smallComponent) {
         //TODO
+        BitSet checked = new BitSet(graph.getVertices());
+        LinkedList<Integer> currentPath;
+        int w;
+
+        for (Integer i : bigComponent) {
+            if (!checked.get(i)) {
+                checked.set(i);
+
+                //TODO
+            }
+        }
+
         return 0;
     }
 
