@@ -179,6 +179,7 @@ class ComponentSwapper {
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
         int currentColor, verticesMovedTotal = 0, verticesMoved;
 
+        //TODO situation when useComponentsToDecrease() changes components structure
         for (int i = 0; i < graph.getVertices() && 0 < verticesToMove; i++) {
             if (!checked.get(i)) {
                 checked.set(i);
