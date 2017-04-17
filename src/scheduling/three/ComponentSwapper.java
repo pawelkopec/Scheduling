@@ -278,22 +278,21 @@ class ComponentSwapper {
         int verticesMoved = 0;
 
         for (Integer vertex : small3Big) {
-            if (0 < verticesToMove) {
-                for (Integer neighbour: graph.getNeighbours(vertex)) {
-                    if(X3Y.getNeighboursInY(neighbour, colorSmall, coloring) == 1) {
-                        coloring.set(vertex, colorOther);
-                        coloring.set(neighbour, colorSmall);
-                        compensator.set(vertex, false);
-
-                        verticesMoved++;
-                        verticesToMove--;
-
-                        break;
-                    }
-                }
-            }
-            else {
+            if (verticesToMove < 1) {
                 break;
+            }
+
+            for (Integer neighbour: graph.getNeighbours(vertex)) {
+                if (X3Y.getNeighboursInY(neighbour, colorSmall, coloring) == 1) {
+                    coloring.set(vertex, colorOther);
+                    coloring.set(neighbour, colorSmall);
+                    compensator.set(vertex, false);
+
+                    verticesMoved++;
+                    verticesToMove--;
+
+                    break;
+                }
             }
         }
 
