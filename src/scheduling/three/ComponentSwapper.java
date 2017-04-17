@@ -224,7 +224,7 @@ class ComponentSwapper {
          * have exactly 2 neighbours in smallComponent.
          */
 
-        if (moveCommonNeighbours(small3Big)) {
+        if (moveCommonNeighbours(small3Big, compensator)) {
             return ++decreasedBy;
         }
 
@@ -301,7 +301,8 @@ class ComponentSwapper {
         return verticesMoved;
     }
 
-    private boolean moveCommonNeighbours(LinkedList<Integer> small3Big) {
+    private boolean moveCommonNeighbours(LinkedList<Integer> small3Big,
+                                         BooleanArray compensator) {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
@@ -324,6 +325,7 @@ class ComponentSwapper {
 
             commonNeigh = getCommonNeigh(x, y);
 
+            //TODO rethink and maybe add separate method
             if (commonNeigh.size() == 3) {
                 tmp = x;
                 x = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
@@ -333,7 +335,7 @@ class ComponentSwapper {
                 //TODO changing common neigh and list of potential vertices
             }
 
-            if (moveCommonAndSpare(x, y, w, commonNeigh, small3Big)) {
+            if (moveCommonAndSpare(x, y, w, commonNeigh, small3Big, compensator)) {
                 return true;
             }
         }
@@ -361,13 +363,19 @@ class ComponentSwapper {
     }
 
     private boolean moveCommonAndSpare(int x, int y, int w, LinkedList<Integer> commonNeigh,
-                                       LinkedList<Integer> small3Big) {
+                                       LinkedList<Integer> small3Big, BooleanArray compensator) {
+
         for (Integer neighbour : commonNeigh) {
             if (!graph.hasEdge(neighbour, w)) {
                 coloring.set(neighbour, colorSmall);
                 coloring.set(w, colorSmall);
                 coloring.set(x, colorOther);
                 coloring.set(y, colorOther);
+
+                compensator.set(x, false);
+                compensator.set(y, false);
+                //TODO fixing components structure messed up with w
+                //TODO consider that w might be added to small3Big
 
                 return true;
             }
@@ -379,6 +387,9 @@ class ComponentSwapper {
                     coloring.set(commonNeigh.poll(), colorOther);
                     coloring.set(w, colorSmall);
                     coloring.set(z, colorOther);
+
+                    compensator.set(z, false);
+                    //TODO consider that w might be added to small3Big
 
                     return true;
                 }
