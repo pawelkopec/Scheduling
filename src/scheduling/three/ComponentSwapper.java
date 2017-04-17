@@ -222,9 +222,8 @@ class ComponentSwapper {
          * have exactly 2 neighbours in smallComponent.
          */
 
-        decreasedBy = moveCommonNeighbours(small3Big, compensator, verticesToMove);
-        if (0 < decreasedBy) {
-            return decreasedBy;
+        if (moveCommonNeighbours(small3Big)) {
+            return ++decreasedBy;
         }
 
         //TODO another vertex from other3Big
@@ -301,15 +300,19 @@ class ComponentSwapper {
         return verticesMoved;
     }
 
-    private int moveCommonNeighbours(LinkedList<Integer> small3Big,
-                                     BooleanArray compensator, int verticesToMove) {
+    private boolean moveCommonNeighbours(LinkedList<Integer> small3Big) {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
         LinkedList<Integer> commonNeigh;
-        int x, y, w, tmp, verticesMoved = 0;
+        int x, y, tmp;
+        int w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
 
-        while (true) {
+        if (w == X3Y.NO_VERTEX) {
+            return false;
+        }
+
+        while (!potentialWithCommonNeigh.isEmpty()) {
             withCommonNeigh = findSmall3BigWithCommonNeigh(potentialWithCommonNeigh);
             if (withCommonNeigh == null) {
                 break;
@@ -325,19 +328,16 @@ class ComponentSwapper {
                 x = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
                 coloring.set(tmp, colorOther);
                 coloring.set(x, colorSmall);
+                //TODO changes in components structure and compensator
+                //TODO changing common neigh and list of potential vertices
             }
 
-            w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
-
-            if (w == X3Y.NO_VERTEX) {
-                break;
+            if (moveCommonAndSpare(x, y, w, commonNeigh, small3Big)) {
+                return true;
             }
-
-
-            //TODO swapping x, y, w
         }
 
-        return verticesMoved;
+        return false;
     }
 
     private int[] findSmall3BigWithCommonNeigh(LinkedList<Integer> small3Big) {
@@ -359,8 +359,31 @@ class ComponentSwapper {
         return null;
     }
 
-    private boolean moveCommonAndSpare(int x, int y, int z) {
-        //TODO
+    private boolean moveCommonAndSpare(int x, int y, int w, LinkedList<Integer> commonNeigh,
+                                       LinkedList<Integer> small3Big) {
+        for (Integer neighbour : commonNeigh) {
+            if (!graph.hasEdge(neighbour, w)) {
+                coloring.set(neighbour, colorSmall);
+                coloring.set(w, colorSmall);
+                coloring.set(x, colorOther);
+                coloring.set(y, colorOther);
+
+                return true;
+            }
+        }
+
+        if (2 < small3Big.size()) {
+            for (Integer z : small3Big) {
+                if (z != x && z != y) {
+                    coloring.set(commonNeigh.poll(), colorOther);
+                    coloring.set(w, colorSmall);
+                    coloring.set(z, colorOther);
+
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
