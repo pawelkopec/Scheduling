@@ -306,7 +306,8 @@ class ComponentSwapper {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
-        int x, y, w, verticesMoved = 0;
+        LinkedList<Integer> commonNeigh;
+        int x, y, w, tmp, verticesMoved = 0;
 
         while (true) {
             withCommonNeigh = findSmall3BigWithCommonNeigh(potentialWithCommonNeigh);
@@ -317,11 +318,22 @@ class ComponentSwapper {
             x = withCommonNeigh[0];
             y = withCommonNeigh[1];
 
-            if (countCommonNeigh(x, y) == 3) {
-                //TODO change with w from C3A
+            commonNeigh = getCommonNeigh(x, y);
+
+            if (commonNeigh.size() == 3) {
+                tmp = x;
+                x = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
+                coloring.set(tmp, colorOther);
+                coloring.set(x, colorSmall);
             }
 
             w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
+
+            if (w == X3Y.NO_VERTEX) {
+                break;
+            }
+
+
             //TODO swapping x, y, w
         }
 
@@ -389,6 +401,23 @@ class ComponentSwapper {
 
             for (Integer neighbour : graph.getNeighbours(current)) {
                 if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
+                    queue.add(neighbour);
+                }
+                checked.set(neighbour);
+            }
+        }
+    }
+
+    private void markComponentsAsChecked(int current, BitSet checked) {
+        Queue<Integer> queue = new LinkedList<>();
+
+        queue.add(current);
+
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+
+            for (Integer neighbour : graph.getNeighbours(current)) {
+                if (coloring.get(neighbour) == colorOther && !checked.get(neighbour)) {
                     queue.add(neighbour);
                 }
                 checked.set(neighbour);
@@ -519,16 +548,15 @@ class ComponentSwapper {
         return big3Small;
     }
 
-    private int countCommonNeigh(int x, int y) {
-        LinkedList<Integer> xNeigh = graph.getNeighbours(x);
-        int count = 0;
+    private LinkedList<Integer> getCommonNeigh(int x, int y) {
+        LinkedList<Integer> xNeigh = graph.getNeighbours(x), commonNeigh = new LinkedList<>();
 
         for (Integer neighbour : graph.getNeighbours(y)) {
             if (xNeigh.contains(neighbour)) {
-                count++;
+                commonNeigh.add(neighbour);
             }
         }
 
-        return count;
+        return commonNeigh;
     }
 }

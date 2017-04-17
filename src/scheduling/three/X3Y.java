@@ -13,7 +13,7 @@ import java.util.LinkedList;
  * It is updated lazily. User can specify if the set needs to be updated
  */
 class X3Y {
-    private static final int NO_VERTEX = -1;
+    public static final int NO_VERTEX = -1;
 
     private Graph graph;
     private VertexColoring coloring;
