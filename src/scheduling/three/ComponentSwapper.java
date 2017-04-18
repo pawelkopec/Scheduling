@@ -527,7 +527,7 @@ class ComponentSwapper {
 
         if (2 < path.size()) {
             if (terminalVertices.size() < 2) {
-                int i = 5;
+                return null;
             }
             path.addFirst(terminalVertices.get(0));
             path.addLast(terminalVertices.get(1));
@@ -554,7 +554,7 @@ class ComponentSwapper {
             y = findNeighbourInSmall3Big(end);
         }
 
-        if (y == NO_VERTEX) {
+        if (y == NO_VERTEX || x == y) {
             swapColorsInPath(path);
             coloring.set(x, colorOther);
         }
@@ -611,7 +611,7 @@ class ComponentSwapper {
     }
 
     private boolean isTerminalVertex(int vertex) {
-        if (coloring.get(vertex) == colorSmall && X3Y.getNeighboursInY(vertex, colorBig, coloring) == 1) {
+        if (coloring.get(vertex) == colorSmall && X3Y.getNeighboursInY(vertex, colorBig, coloring) != 2) {
             return true;
         }
 
