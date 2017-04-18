@@ -233,6 +233,18 @@ class ComponentSwapper {
         return reduceToPathsAndSwap(bigComponent, smallComponent);
     }
 
+    /**
+     * Swap components and recover size of smallComponent by
+     * moving vertices that are in compensator, but not
+     * in component to colorOther class.
+     *
+     * @param bigComponent            of bigColor class
+     * @param smallComponent          of smallColor class
+     * @param toRemoveFromCompensator vertices that are also in smallComponent
+     * @param compensator             list of vertices used to compensate
+     * @param verticesToMove          desired change of the coloring width
+     * @return how much the width was decreased
+     */
     private int swapAndMoveToOther(LinkedList<Integer> bigComponent,
                                    LinkedList<Integer> smallComponent,
                                    LinkedList<Integer> toRemoveFromCompensator,
@@ -275,6 +287,15 @@ class ComponentSwapper {
         return 0;
     }
 
+    /**
+     * Decrease the width by moving on vertex from small3Big to otherColor
+     * and one of it's big1Small to smallColor.
+     *
+     * @param small3Big      vertices from smallColor with all neighbours in bigColor
+     * @param compensator    list of vertices that can be used to compensate
+     * @param verticesToMove desired change of the coloring width
+     * @return how much the width was decreased
+     */
     private int moveSoleNeighbours(LinkedList<Integer> small3Big,
                                    BooleanArray compensator, int verticesToMove) {
         int verticesMoved = 0;
@@ -301,6 +322,14 @@ class ComponentSwapper {
         return verticesMoved;
     }
 
+    /**
+     * Decrease the width by making swaps involving pairs of
+     * vertices from small3Big and it's common neighbourhood.
+     *
+     * @param small3Big   vertices from smallColor with all neighbours in bigColor
+     * @param compensator list of vertices that can be used to compensate
+     * @return how much the width was decreased
+     */
     private boolean moveCommonNeighbours(LinkedList<Integer> small3Big,
                                          BooleanArray compensator) {
         //TODO
@@ -343,6 +372,13 @@ class ComponentSwapper {
         return false;
     }
 
+    /**
+     * Find two vertices in small3Big that have some common
+     * neighbourhood.
+     *
+     * @param small3Big vertices from smallColor with all neighbours in bigColor
+     * @return array with two vertices with common neighbours or null if not found
+     */
     private int[] findSmall3BigWithCommonNeigh(LinkedList<Integer> small3Big) {
         int vertex;
 
@@ -362,6 +398,18 @@ class ComponentSwapper {
         return null;
     }
 
+    /**
+     * Decrease the width by making a swap involving 2 vertices
+     * from small3Big and it's common neighbourhood.
+     *
+     * @param x           vertex from small3Big
+     * @param y           vertex from small3Big
+     * @param w           vertex from other3Big
+     * @param commonNeigh list of x and y common neighbours
+     * @param small3Big   vertices from smallColor with all neighbours in bigColor
+     * @param compensator list of vertices used to compensate
+     * @return true if width was decreased
+     */
     private boolean moveCommonAndSpare(int x, int y, int w, LinkedList<Integer> commonNeigh,
                                        LinkedList<Integer> small3Big, BooleanArray compensator) {
 
@@ -404,17 +452,71 @@ class ComponentSwapper {
         //TODO
         BitSet checked = new BitSet(graph.getVertices());
         LinkedList<Integer> currentPath;
-        int w;
 
         for (Integer i : bigComponent) {
             if (!checked.get(i)) {
                 checked.set(i);
 
+                currentPath = findPathInReduced(i, checked);
                 //TODO
             }
         }
 
         return 0;
+    }
+
+    private LinkedList<Integer> findPathInReduced(int current, BitSet checked) {
+        //TODO
+        Queue<Integer> queue = new LinkedList<>();
+        LinkedList<Integer> path = new LinkedList<>();
+        int currentColor, otherColor, neighbourInSmall3Big;
+        boolean notInPath;
+
+        queue.add(current);
+
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+            currentColor = coloring.get(current);
+
+            notInPath = false;
+
+            if (currentColor == colorBig) {
+                otherColor = colorSmall;
+                neighbourInSmall3Big = 0;
+
+                for (Integer neighbour : graph.getNeighbours(current)) {
+                    if (coloring.get(neighbour) == colorOther &&
+                            X3Y.has3NeighboursInY(neighbour, currentColor, coloring)) {
+
+                        if (0 < neighbourInSmall3Big++) {
+                            notInPath = true;
+                            break;
+                        }
+                    }
+                }
+            } else {
+                otherColor = colorBig;
+
+                if (X3Y.has3NeighboursInY(current, otherColor, coloring)) {
+                    notInPath = true;
+                }
+            }
+
+            if (notInPath) {
+                continue;
+            }
+
+            path.add(current);
+
+            for (Integer neighbour : graph.getNeighbours(current)) {
+                if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
+                    queue.add(neighbour);
+                }
+                checked.set(neighbour);
+            }
+        }
+
+        return path;
     }
 
     /**
@@ -471,60 +573,6 @@ class ComponentSwapper {
                 checked.set(neighbour);
             }
         }
-    }
-
-    private LinkedList<Integer> findPathInReduced(int current, BitSet checked) {
-        //TODO
-        Queue<Integer> queue = new LinkedList<>();
-        LinkedList<Integer> path = new LinkedList<>();
-        int currentColor, otherColor, neighbourInSmall3Big;
-        boolean notInPath;
-
-        queue.add(current);
-
-        while (!queue.isEmpty()) {
-            current = queue.poll();
-            currentColor = coloring.get(current);
-
-            notInPath = false;
-
-            if (currentColor == colorBig) {
-                otherColor = colorSmall;
-                neighbourInSmall3Big = 0;
-
-                for (Integer neighbour : graph.getNeighbours(current)) {
-                    if (coloring.get(neighbour) == colorOther &&
-                        X3Y.has3NeighboursInY(neighbour, currentColor, coloring)) {
-
-                        if (0 < neighbourInSmall3Big++) {
-                            notInPath = true;
-                            break;
-                        }
-                    }
-                }
-            } else {
-                otherColor = colorBig;
-
-                if (X3Y.has3NeighboursInY(current, otherColor, coloring)) {
-                    notInPath = true;
-                }
-            }
-
-            if (notInPath) {
-                continue;
-            }
-
-            path.add(current);
-
-            for (Integer neighbour : graph.getNeighbours(current)) {
-                if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
-                    queue.add(neighbour);
-                }
-                checked.set(neighbour);
-            }
-        }
-
-        return path;
     }
 
     /**
