@@ -3,6 +3,7 @@ package scheduling.three;
 import graph.Graph;
 import graph.VertexColoring;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -458,7 +459,12 @@ class ComponentSwapper {
                 checked.set(i);
 
                 currentPath = findPathOfOddSize(i, checked);
-                //TODO
+
+                if (currentPath == null) {
+                    continue;
+                }
+
+
             }
         }
 
@@ -469,9 +475,8 @@ class ComponentSwapper {
         //TODO
         Queue<Integer> queue = new LinkedList<>();
         LinkedList<Integer> path = new LinkedList<>();
-        int currentColor, otherColor, neighbourInSmall3Big;
-        int beginVertex, endVertex;
-        boolean notInPath;
+        int currentColor, otherColor;
+        ArrayList<Integer> terminalVertices = new ArrayList<>(2);
 
         queue.add(current);
 
@@ -479,35 +484,25 @@ class ComponentSwapper {
             current = queue.poll();
             currentColor = coloring.get(current);
 
-            notInPath = false;
-
-            if (currentColor == colorBig) {
-                otherColor = colorSmall;
-                neighbourInSmall3Big = 0;
-
-                for (Integer neighbour : graph.getNeighbours(current)) {
-                    if (coloring.get(neighbour) == colorOther &&
-                            X3Y.has3NeighboursInY(neighbour, currentColor, coloring)) {
-
-                        if (0 < neighbourInSmall3Big++) {
-                            notInPath = true;
-                            break;
-                        }
-                    }
-                }
-            } else {
-                otherColor = colorBig;
-
-                if (X3Y.has3NeighboursInY(current, otherColor, coloring)) {
-                    notInPath = true;
-                }
-            }
-
-            if (notInPath) {
+            if (!isAllowedVertexInPath(current)) {
                 continue;
             }
 
-            path.add(current);
+            if (isTerminalVertex(current)) {
+                if (currentColor == colorSmall) {
+                    return null;
+                }
+                terminalVertices.add(current);
+            }
+            else {
+                path.add(current);
+            }
+
+            if (currentColor == colorBig) {
+                otherColor = colorSmall;
+            } else {
+                otherColor = colorBig;
+            }
 
             for (Integer neighbour : graph.getNeighbours(current)) {
                 if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
@@ -516,6 +511,9 @@ class ComponentSwapper {
                 checked.set(neighbour);
             }
         }
+
+        path.addFirst(terminalVertices.get(0));
+        path.addLast(terminalVertices.get(1));
 
         return path;
     }
@@ -538,6 +536,32 @@ class ComponentSwapper {
         }
 
         return false;
+    }
+
+    private boolean isAllowedVertexInPath(int vertex) {
+        int neighboursInSmall3Big = 0;
+
+        if (coloring.get(vertex) == colorBig) {
+            for (Integer neighbour : graph.getNeighbours(vertex)) {
+                if (X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
+                    neighboursInSmall3Big++;
+                }
+
+                if (1 < neighboursInSmall3Big) {
+                    break;
+                }
+            }
+
+            if (1 < neighboursInSmall3Big) {
+                return false;
+            }
+        }
+
+        if (coloring.get(vertex) == colorSmall && X3Y.has3NeighboursInY(vertex, colorBig, coloring)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
