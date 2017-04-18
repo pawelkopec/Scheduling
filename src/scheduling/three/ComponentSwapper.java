@@ -15,6 +15,11 @@ import static scheduling.three.Const.NO_VERTEX;
  * <p>
  * Class used for swapping colors between components
  * within clw procedure.
+ *
+ * All the confusing names like compensator, x, y, w
+ * are used to match the names in article where unmodified clw
+ * procedure is described. Without reading the article, methods of
+ * the class below would not be understandable anyway.
  */
 class ComponentSwapper {
 
@@ -208,6 +213,7 @@ class ComponentSwapper {
                                         BooleanArray compensator, int verticesToMove) {
         //TODO arguments
         LinkedList<Integer> small3Big = getFrom3To(smallComponent, colorBig);
+        int w;
         int decreasedBy = swapAndMoveToOther(bigComponent, smallComponent,
                 small3Big, compensator, verticesToMove);
 
@@ -225,13 +231,15 @@ class ComponentSwapper {
          * have exactly 2 neighbours in smallComponent.
          */
 
-        if (moveCommonNeighbours(small3Big, compensator)) {
+        w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
+
+        if (moveCommonNeighbours(w, small3Big, compensator)) {
             return ++decreasedBy;
         }
 
         //TODO another vertex from other3Big
 
-        return reduceToPathsAndSwap(bigComponent, smallComponent);
+        return reduceToPathsAndSwap(w, bigComponent);
     }
 
     /**
@@ -331,14 +339,13 @@ class ComponentSwapper {
      * @param compensator list of vertices that can be used to compensate
      * @return how much the width was decreased
      */
-    private boolean moveCommonNeighbours(LinkedList<Integer> small3Big,
+    private boolean moveCommonNeighbours(int w, LinkedList<Integer> small3Big,
                                          BooleanArray compensator) {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
         LinkedList<Integer> commonNeigh;
         int x, y, tmp;
-        int w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
 
         if (w == NO_VERTEX) {
             return false;
@@ -448,11 +455,11 @@ class ComponentSwapper {
         return false;
     }
 
-    private int reduceToPathsAndSwap(LinkedList<Integer> bigComponent,
-                                     LinkedList<Integer> smallComponent) {
+    private int reduceToPathsAndSwap(int w, LinkedList<Integer> bigComponent) {
         //TODO
         BitSet checked = new BitSet(graph.getVertices());
         LinkedList<Integer> currentPath;
+        int begin, end, x, y;
 
         for (Integer i : bigComponent) {
             if (!checked.get(i)) {
@@ -463,6 +470,9 @@ class ComponentSwapper {
                 if (currentPath == null) {
                     continue;
                 }
+
+                begin = currentPath.getFirst();
+                end = currentPath.getLast();
 
 
             }
