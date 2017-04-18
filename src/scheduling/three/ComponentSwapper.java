@@ -186,6 +186,7 @@ class ComponentSwapper {
         int currentColor, verticesMovedTotal = 0, verticesMoved;
 
         //TODO situation when useComponentsToDecrease() changes components structure
+        //TODO maybe stop after first component decreased, to go back to faster and easier cases
         for (int i = 0; i < graph.getVertices() && 0 < verticesToMove; i++) {
             if (!checked.get(i)) {
                 checked.set(i);
@@ -193,6 +194,10 @@ class ComponentSwapper {
 
                 if (currentColor == colorBig || currentColor == colorSmall) {
                     findComponents(i, bigComponent, smallComponent, checked);
+
+                    if (bigComponent.size() - smallComponent.size() < 1) {
+                        continue;
+                    }
 
                     verticesMoved = useComponentsToDecrease(bigComponent, smallComponent,
                             compensatorArray, verticesToMove);
@@ -211,7 +216,7 @@ class ComponentSwapper {
     private int useComponentsToDecrease(LinkedList<Integer> bigComponent,
                                         LinkedList<Integer> smallComponent,
                                         BooleanArray compensator, int verticesToMove) {
-        //TODO arguments
+
         LinkedList<Integer> small3Big = getFrom3To(smallComponent, colorBig);
         int w;
         int decreasedBy = swapAndMoveToOther(bigComponent, smallComponent,
