@@ -457,7 +457,7 @@ class ComponentSwapper {
             if (!checked.get(i)) {
                 checked.set(i);
 
-                currentPath = findPathInReduced(i, checked);
+                currentPath = findPathOfOddSize(i, checked);
                 //TODO
             }
         }
@@ -465,11 +465,12 @@ class ComponentSwapper {
         return 0;
     }
 
-    private LinkedList<Integer> findPathInReduced(int current, BitSet checked) {
+    private LinkedList<Integer> findPathOfOddSize(int current, BitSet checked) {
         //TODO
         Queue<Integer> queue = new LinkedList<>();
         LinkedList<Integer> path = new LinkedList<>();
         int currentColor, otherColor, neighbourInSmall3Big;
+        int beginVertex, endVertex;
         boolean notInPath;
 
         queue.add(current);
@@ -517,6 +518,26 @@ class ComponentSwapper {
         }
 
         return path;
+    }
+
+    private boolean isTerminalVertex(int vertex) {
+        if (coloring.get(vertex) == colorSmall && X3Y.getNeighboursInY(vertex, colorBig, coloring) == 1) {
+            return true;
+        }
+
+        if (coloring.get(vertex) == colorBig) {
+            if (X3Y.getNeighboursInY(vertex, colorBig, coloring) == 1) {
+                return true;
+            }
+
+            for (Integer neighbour : graph.getNeighbours(vertex)) {
+                if (X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**
