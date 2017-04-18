@@ -464,7 +464,6 @@ class ComponentSwapper {
         //TODO
         BitSet checked = new BitSet(graph.getVertices());
         LinkedList<Integer> currentPath;
-        int begin, end, x, y;
 
         for (Integer i : bigComponent) {
             if (!checked.get(i)) {
@@ -476,10 +475,7 @@ class ComponentSwapper {
                     continue;
                 }
 
-                begin = currentPath.getFirst();
-                end = currentPath.getLast();
-
-
+                swapWithinPath(w, currentPath);
             }
         }
 
@@ -531,6 +527,78 @@ class ComponentSwapper {
         path.addLast(terminalVertices.get(1));
 
         return path;
+    }
+
+    private void swapWithinPath(int w, LinkedList<Integer> path) {
+        //TODO
+        int begin, end, x, y = NO_VERTEX;
+
+        begin = path.getFirst();
+        end = path.getLast();
+
+        x = findNeighbourInSmall3Big(begin);
+
+        if (x == NO_VERTEX) {
+            x = findNeighbourInSmall3Big(end);
+        }
+        else {
+            y = findNeighbourInSmall3Big(end);
+        }
+
+        if (y == NO_VERTEX) {
+            swapColorsInPath(path);
+            coloring.set(x, colorOther);
+        }
+        else {
+            coloring.set(w, colorSmall);
+
+            int neighbourInPath = NO_VERTEX;
+
+            for (Integer vertex : path) {
+                if (graph.hasEdge(vertex, w)) {
+                    neighbourInPath = vertex;
+                    break;
+                }
+            }
+
+            if (neighbourInPath == NO_VERTEX) {
+                coloring.set(x, colorOther);
+                coloring.set(y, colorOther);
+                swapColorsInPath(path);
+            }
+            else {
+                coloring.set(neighbourInPath, colorOther);
+
+                if (graph.hasEdge(neighbourInPath, x)) {
+                    coloring.set(y, colorOther);
+                }
+                else {
+                    coloring.set(x, colorOther);
+                }
+            }
+        }
+    }
+
+    private int findNeighbourInSmall3Big(int vertex) {
+        for (Integer neighbour : graph.getNeighbours(vertex)) {
+            if (coloring.get(neighbour) == colorSmall &&
+                    X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
+                return neighbour;
+            }
+        }
+
+        return NO_VERTEX;
+    }
+
+    private void swapColorsInPath(LinkedList<Integer> path) {
+        for (Integer vertex : path) {
+            if (coloring.get(vertex) == colorSmall) {
+                coloring.set(vertex, colorBig);
+            }
+            else {
+                coloring.set(vertex, colorSmall);
+            }
+        }
     }
 
     private boolean isTerminalVertex(int vertex) {
