@@ -183,10 +183,8 @@ class ComponentSwapper {
         BitSet checked = new BitSet(graph.getVertices());
         BooleanArray compensatorArray = vertexListToArray(compensator);
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
-        int currentColor, verticesMovedTotal = 0, verticesMoved;
+        int currentColor, verticesMoved = 0;
 
-        //TODO situation when useComponentsToDecrease() changes components structure
-        //TODO maybe stop after first component decreased, to go back to faster and easier cases
         for (int i = 0; i < graph.getVertices() && 0 < verticesToMove; i++) {
             if (!checked.get(i)) {
                 checked.set(i);
@@ -201,8 +199,10 @@ class ComponentSwapper {
 
                     verticesMoved = useComponentsToDecrease(bigComponent, smallComponent,
                             compensatorArray, verticesToMove);
-                    verticesMovedTotal += verticesMoved;
-                    verticesToMove -= verticesMoved;
+
+                    if (0 < verticesMoved) {
+                        return verticesMoved;
+                    }
 
                     bigComponent.clear();
                     smallComponent.clear();
@@ -210,7 +210,7 @@ class ComponentSwapper {
             }
         }
 
-        return verticesMovedTotal;
+        return verticesMoved;
     }
 
     private int useComponentsToDecrease(LinkedList<Integer> bigComponent,
@@ -315,11 +315,12 @@ class ComponentSwapper {
         int verticesMoved = 0;
 
         for (Integer vertex : small3Big) {
-            if (verticesToMove < 1) {
-                break;
-            }
 
             for (Integer neighbour: graph.getNeighbours(vertex)) {
+                if (verticesToMove < 1) {
+                    return verticesMoved;
+                }
+
                 if (X3Y.getNeighboursInY(neighbour, colorSmall, coloring) == 1) {
                     coloring.set(vertex, colorOther);
                     coloring.set(neighbour, colorSmall);
@@ -476,6 +477,7 @@ class ComponentSwapper {
                 }
 
                 swapWithinPath(w, currentPath);
+                return 1;
             }
         }
 
@@ -524,6 +526,9 @@ class ComponentSwapper {
         }
 
         if (2 < path.size()) {
+            if (terminalVertices.size() < 2) {
+                int i = 5;
+            }
             path.addFirst(terminalVertices.get(0));
             path.addLast(terminalVertices.get(1));
 
@@ -616,7 +621,8 @@ class ComponentSwapper {
             }
 
             for (Integer neighbour : graph.getNeighbours(vertex)) {
-                if (X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
+                if (coloring.get(neighbour) == colorSmall &&
+                    X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
                     return true;
                 }
             }
