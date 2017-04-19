@@ -2,6 +2,7 @@ package graph;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
 
 /**
  * Created by Paweł Kopeć on 30.12.16.
@@ -22,6 +23,19 @@ public class VertexColoring extends VertexAssignment {
         colors = new int[graph.getVertices()];
         colorSizes = new HashMap<>();
         colorSizes.put(0, graph.getVertices());
+    }
+
+    public VertexColoring(Graph graph, String s) {
+        this(graph);
+        scan(s);
+    }
+
+    private void scan(String s) {
+        Scanner scanner = new Scanner(s);
+
+        for (int i = 0; i < graph.getVertices(); i++) {
+            set(i, scanner.nextInt());
+        }
     }
 
     /**
