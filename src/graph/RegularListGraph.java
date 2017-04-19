@@ -21,8 +21,13 @@ public class RegularListGraph extends ListGraph implements RegularGraph {
         setDegree(degree);
     }
 
+    //TODO get rid of this horrible solution when i have time
     public RegularListGraph(InputStream in, int degree) {
-        super(in);
+        if (!validateDegree(degree)) {
+            throw new IllegalArgumentException(CANNOT_BE_REGULAR);
+        }
+        this.degree = degree;
+        scan(new Scanner(in));
     }
 
     //TODO get rid of this horrible solution when i have time
