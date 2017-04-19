@@ -2,9 +2,6 @@ package scheduling.three;
 
 import graph.VertexColoring;
 
-import java.util.Arrays;
-
-import static junit.framework.TestCase.assertTrue;
 import static scheduling.three.Const.*;
 
 /**
@@ -33,20 +30,6 @@ class ClwWithConstantB {
         C3B = new X3Y(coloring, C, B);
     }
 
-    void tmp() {
-        int[] colors = new int[]{coloring.getNumberOfColored(A), coloring.getNumberOfColored(B), coloring.getNumberOfColored(C)};
-        System.out.println("Zostało do przeniesienia: " + verticesToMove);
-        System.out.println("");
-        System.out.println("|A3B| = " + A3B.getSize());
-        System.out.println("|A3C| = " + A3C.getSize());
-        System.out.println("|B3A| = " + B3A.getSize());
-        System.out.println("|C3A| = " + C3A.getSize());
-        System.out.println("|C3B| = " + C3B.getSize());
-        System.out.println("");
-        System.out.println("Kolory :" + Arrays.toString(colors));
-        System.out.println("------------------------------------");
-    }
-
     /**
      * Decrease the width of coloring by given number
      * without changing the size of middle color class.
@@ -55,38 +38,28 @@ class ClwWithConstantB {
      */
     void moveVertices(int desiredVerticesToMove) {
         this.verticesToMove = desiredVerticesToMove;
-        tmp();
 
         while (0 < verticesToMove) {
             if (moveFromA3BToC()) {
-                System.out.println("c <= a3b");
-                tmp();
                 continue;
             }
 
             if (swapBetweenAAndC()) {
-                System.out.println("a <=> c");
-                tmp();
                 continue;
             }
 
             if (makeB3ANotEmpty()) {
-                System.out.println("b3a filled");
-                tmp();
                 continue;
             }
 
             if (swapWithinA3CAndB3A()) {
-                System.out.println("b <= a3c, c <= b3a");
-                tmp();
                 continue;
             }
 
             if (swapBetweenAAndBAndMoveToC()) {
-                System.out.println("a <=> b, c <= b3a");
-                tmp();
                 continue;
             }
+            return;
 
         }
     }
@@ -128,7 +101,6 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean swapBetweenAAndC() {
-        assertTrue(A3B.empty());
         if (1 < verticesToMove || C3A.empty() || (!C3B.empty() && B3A.empty())) {
             int verticesMoved = swapper.swap(A, C, verticesToMove, C3B.getVertices());
             if (0 < verticesMoved) {

@@ -5,6 +5,8 @@ import graph.VertexColoring;
 
 import java.util.LinkedList;
 
+import static scheduling.three.Const.NO_VERTEX;
+
 /**
  * Created by vivace on 04.04.17.
  * <p>
@@ -13,6 +15,7 @@ import java.util.LinkedList;
  * It is updated lazily. User can specify if the set needs to be updated
  */
 class X3Y {
+
     private Graph graph;
     private VertexColoring coloring;
     private LinkedList<Integer> vertices = new LinkedList<>();
@@ -67,6 +70,16 @@ class X3Y {
 
             upToDate = true;
         }
+    }
+
+    static int findOneInX3Y(int colorX, int colorY, VertexColoring coloring) {
+        for (int i = 0; i < coloring.getGraph().getVertices(); i++) {
+            if (coloring.get(i) == colorX && has3NeighboursInY(i, colorY, coloring)) {
+                return i;
+            }
+        }
+
+        return NO_VERTEX;
     }
 
     static int getNeighboursInY(int index, int colorY, VertexColoring coloring) {

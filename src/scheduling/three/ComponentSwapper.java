@@ -3,15 +3,23 @@ package scheduling.three;
 import graph.Graph;
 import graph.VertexColoring;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static scheduling.three.Const.NO_VERTEX;
 
 /**
  * Created by Paweł Kopeć on 15.03.17.
  * <p>
  * Class used for swapping colors between components
  * within clw procedure.
+ *
+ * All the confusing names like compensator, x, y, w
+ * are used to match the names in article where unmodified clw
+ * procedure is described. Without reading the article, methods of
+ * the class below would not be understandable anyway.
  */
 class ComponentSwapper {
 
@@ -172,11 +180,10 @@ class ComponentSwapper {
         this.colorSmall = colorSmall;
         this.colorOther = colorOther;
 
-        //TODO otherCompensator for compensating common neighbours
         BitSet checked = new BitSet(graph.getVertices());
         BooleanArray compensatorArray = vertexListToArray(compensator);
         LinkedList<Integer> bigComponent = new LinkedList<>(), smallComponent = new LinkedList<>();
-        int currentColor, verticesMovedTotal = 0, verticesMoved;
+        int currentColor, verticesMoved = 0;
 
         for (int i = 0; i < graph.getVertices() && 0 < verticesToMove; i++) {
             if (!checked.get(i)) {
@@ -186,10 +193,16 @@ class ComponentSwapper {
                 if (currentColor == colorBig || currentColor == colorSmall) {
                     findComponents(i, bigComponent, smallComponent, checked);
 
+                    if (bigComponent.size() - smallComponent.size() < 1) {
+                        continue;
+                    }
+
                     verticesMoved = useComponentsToDecrease(bigComponent, smallComponent,
                             compensatorArray, verticesToMove);
-                    verticesMovedTotal += verticesMoved;
-                    verticesToMove -= verticesMoved;
+
+                    if (0 < verticesMoved) {
+                        return verticesMoved;
+                    }
 
                     bigComponent.clear();
                     smallComponent.clear();
@@ -197,14 +210,15 @@ class ComponentSwapper {
             }
         }
 
-        return verticesMovedTotal;
+        return verticesMoved;
     }
 
     private int useComponentsToDecrease(LinkedList<Integer> bigComponent,
                                         LinkedList<Integer> smallComponent,
                                         BooleanArray compensator, int verticesToMove) {
-        //TODO arguments
+
         LinkedList<Integer> small3Big = getFrom3To(smallComponent, colorBig);
+        int w;
         int decreasedBy = swapAndMoveToOther(bigComponent, smallComponent,
                 small3Big, compensator, verticesToMove);
 
@@ -222,16 +236,29 @@ class ComponentSwapper {
          * have exactly 2 neighbours in smallComponent.
          */
 
-        decreasedBy = moveCommonNeighbours(small3Big, compensator, verticesToMove);
-        if (0 < decreasedBy) {
-            return decreasedBy;
+        w = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
+
+        if (moveCommonNeighbours(w, small3Big, compensator)) {
+            return ++decreasedBy;
         }
 
         //TODO another vertex from other3Big
 
-        return reduceToPathsAndSwap();
+        return reduceToPathsAndSwap(w, bigComponent);
     }
 
+    /**
+     * Swap components and recover size of smallComponent by
+     * moving vertices that are in compensator, but not
+     * in component to colorOther class.
+     *
+     * @param bigComponent            of bigColor class
+     * @param smallComponent          of smallColor class
+     * @param toRemoveFromCompensator vertices that are also in smallComponent
+     * @param compensator             list of vertices used to compensate
+     * @param verticesToMove          desired change of the coloring width
+     * @return how much the width was decreased
+     */
     private int swapAndMoveToOther(LinkedList<Integer> bigComponent,
                                    LinkedList<Integer> smallComponent,
                                    LinkedList<Integer> toRemoveFromCompensator,
@@ -266,48 +293,71 @@ class ComponentSwapper {
 
                 changeColor(bigComponent, colorSmall);
                 changeColor(smallComponent, colorBig);
+
+                return sizeDifference;
             }
         }
 
-        return sizeDifference;
+        return 0;
     }
 
+    /**
+     * Decrease the width by moving on vertex from small3Big to otherColor
+     * and one of it's big1Small to smallColor.
+     *
+     * @param small3Big      vertices from smallColor with all neighbours in bigColor
+     * @param compensator    list of vertices that can be used to compensate
+     * @param verticesToMove desired change of the coloring width
+     * @return how much the width was decreased
+     */
     private int moveSoleNeighbours(LinkedList<Integer> small3Big,
                                    BooleanArray compensator, int verticesToMove) {
-        //TODO
         int verticesMoved = 0;
 
         for (Integer vertex : small3Big) {
-            if (0 < verticesToMove) {
-                for (Integer neighbour: graph.getNeighbours(vertex)) {
-                    if(X3Y.getNeighboursInY(neighbour, colorSmall, coloring) == 1) {
-                        coloring.set(vertex, colorOther);
-                        coloring.set(neighbour, colorSmall);
-                        compensator.set(vertex, false);
 
-                        verticesMoved++;
-                        verticesToMove--;
-
-                        break;
-                    }
+            for (Integer neighbour: graph.getNeighbours(vertex)) {
+                if (verticesToMove < 1) {
+                    return verticesMoved;
                 }
-            }
-            else {
-                break;
+
+                if (X3Y.getNeighboursInY(neighbour, colorSmall, coloring) == 1) {
+                    coloring.set(vertex, colorOther);
+                    coloring.set(neighbour, colorSmall);
+                    compensator.set(vertex, false);
+
+                    verticesMoved++;
+                    verticesToMove--;
+
+                    break;
+                }
             }
         }
 
         return verticesMoved;
     }
 
-    private int moveCommonNeighbours(LinkedList<Integer> small3Big,
-                                     BooleanArray compensator, int verticesToMove) {
+    /**
+     * Decrease the width by making swaps involving pairs of
+     * vertices from small3Big and it's common neighbourhood.
+     *
+     * @param small3Big   vertices from smallColor with all neighbours in bigColor
+     * @param compensator list of vertices that can be used to compensate
+     * @return how much the width was decreased
+     */
+    private boolean moveCommonNeighbours(int w, LinkedList<Integer> small3Big,
+                                         BooleanArray compensator) {
         //TODO
         LinkedList<Integer> potentialWithCommonNeigh = new LinkedList<>(small3Big);
         int[] withCommonNeigh;
-        int x, y, verticesMoved = 0;
+        LinkedList<Integer> commonNeigh;
+        int x, y, tmp;
 
-        while (true) {
+        if (w == NO_VERTEX) {
+            return false;
+        }
+
+        while (!potentialWithCommonNeigh.isEmpty()) {
             withCommonNeigh = findSmall3BigWithCommonNeigh(potentialWithCommonNeigh);
             if (withCommonNeigh == null) {
                 break;
@@ -316,15 +366,33 @@ class ComponentSwapper {
             x = withCommonNeigh[0];
             y = withCommonNeigh[1];
 
-            if (countCommonNeigh(x, y) == 3) {
-                //TODO change with w from C3A
+            commonNeigh = getCommonNeigh(x, y);
+
+            //TODO rethink and maybe add separate method
+            if (commonNeigh.size() == 3) {
+                tmp = x;
+                x = X3Y.findOneInX3Y(colorOther, colorBig, coloring);
+                coloring.set(tmp, colorOther);
+                coloring.set(x, colorSmall);
+                //TODO changes in components structure and compensator
+                //TODO changing common neigh and list of potential vertices
             }
-            //TODO
+
+            if (moveCommonAndSpare(x, y, w, commonNeigh, small3Big, compensator)) {
+                return true;
+            }
         }
 
-        return verticesMoved;
+        return false;
     }
 
+    /**
+     * Find two vertices in small3Big that have some common
+     * neighbourhood.
+     *
+     * @param small3Big vertices from smallColor with all neighbours in bigColor
+     * @return array with two vertices with common neighbours or null if not found
+     */
     private int[] findSmall3BigWithCommonNeigh(LinkedList<Integer> small3Big) {
         int vertex;
 
@@ -332,7 +400,9 @@ class ComponentSwapper {
             vertex = small3Big.poll();
             for (Integer neighbour : graph.getNeighbours(vertex)) {
                 for (Integer otherVertex : graph.getNeighbours(neighbour)) {
-                    if (X3Y.has3NeighboursInY(otherVertex, colorBig, coloring)) {
+                    if (X3Y.has3NeighboursInY(otherVertex, colorBig, coloring) &&
+                            coloring.get(otherVertex) == colorSmall &&
+                            otherVertex != vertex) {
                         return new int[]{vertex ,otherVertex};
                     }
                 }
@@ -342,14 +412,250 @@ class ComponentSwapper {
         return null;
     }
 
-    private boolean moveCommonAndSpare(int x, int y, int z) {
-        //TODO
+    /**
+     * Decrease the width by making a swap involving 2 vertices
+     * from small3Big and it's common neighbourhood.
+     *
+     * @param x           vertex from small3Big
+     * @param y           vertex from small3Big
+     * @param w           vertex from other3Big
+     * @param commonNeigh list of x and y common neighbours
+     * @param small3Big   vertices from smallColor with all neighbours in bigColor
+     * @param compensator list of vertices used to compensate
+     * @return true if width was decreased
+     */
+    private boolean moveCommonAndSpare(int x, int y, int w, LinkedList<Integer> commonNeigh,
+                                       LinkedList<Integer> small3Big, BooleanArray compensator) {
+
+        for (Integer neighbour : commonNeigh) {
+            if (!graph.hasEdge(neighbour, w)) {
+                coloring.set(neighbour, colorSmall);
+                coloring.set(w, colorSmall);
+                coloring.set(x, colorOther);
+                coloring.set(y, colorOther);
+
+                compensator.set(x, false);
+                compensator.set(y, false);
+                //TODO fixing components structure messed up with w
+                //TODO consider that w might be added to small3Big
+
+                return true;
+            }
+        }
+
+        if (2 < small3Big.size()) {
+            for (Integer z : small3Big) {
+                if (z != x && z != y) {
+                    coloring.set(commonNeigh.poll(), colorOther);
+                    coloring.set(w, colorSmall);
+                    coloring.set(z, colorOther);
+
+                    compensator.set(z, false);
+                    //TODO consider that w might be added to small3Big
+
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
-    private int reduceToPathsAndSwap() {
+    private int reduceToPathsAndSwap(int w, LinkedList<Integer> bigComponent) {
         //TODO
+        BitSet checked = new BitSet(graph.getVertices());
+        LinkedList<Integer> currentPath;
+
+        for (Integer i : bigComponent) {
+            if (!checked.get(i)) {
+                checked.set(i);
+
+                currentPath = findPathOfOddSize(i, checked);
+
+                if (currentPath == null) {
+                    continue;
+                }
+
+                swapWithinPath(w, currentPath);
+                return 1;
+            }
+        }
+
         return 0;
+    }
+
+    private LinkedList<Integer> findPathOfOddSize(int current, BitSet checked) {
+        //TODO
+        Queue<Integer> queue = new LinkedList<>();
+        LinkedList<Integer> path = new LinkedList<>();
+        int currentColor, otherColor;
+        ArrayList<Integer> terminalVertices = new ArrayList<>(2);
+
+        queue.add(current);
+
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+            currentColor = coloring.get(current);
+
+            if (!isAllowedVertexInPath(current)) {
+                continue;
+            }
+
+            if (isTerminalVertex(current)) {
+                if (currentColor == colorSmall) {
+                    return null;
+                }
+                terminalVertices.add(current);
+            }
+            else {
+                path.add(current);
+            }
+
+            if (currentColor == colorBig) {
+                otherColor = colorSmall;
+            } else {
+                otherColor = colorBig;
+            }
+
+            for (Integer neighbour : graph.getNeighbours(current)) {
+                if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
+                    queue.add(neighbour);
+                }
+                checked.set(neighbour);
+            }
+        }
+
+        if (2 < path.size()) {
+            if (terminalVertices.size() < 2) {
+                return null;
+            }
+            path.addFirst(terminalVertices.get(0));
+            path.addLast(terminalVertices.get(1));
+
+            return path;
+        }
+
+        return null;
+    }
+
+    private void swapWithinPath(int w, LinkedList<Integer> path) {
+        //TODO
+        int begin, end, x, y = NO_VERTEX;
+
+        begin = path.getFirst();
+        end = path.getLast();
+
+        x = findNeighbourInSmall3Big(begin);
+
+        if (x == NO_VERTEX) {
+            x = findNeighbourInSmall3Big(end);
+        }
+        else {
+            y = findNeighbourInSmall3Big(end);
+        }
+
+        if (y == NO_VERTEX || x == y) {
+            swapColorsInPath(path);
+            coloring.set(x, colorOther);
+        }
+        else {
+            coloring.set(w, colorSmall);
+
+            int neighbourInPath = NO_VERTEX;
+
+            for (Integer vertex : path) {
+                if (graph.hasEdge(vertex, w)) {
+                    neighbourInPath = vertex;
+                    break;
+                }
+            }
+
+            if (neighbourInPath == NO_VERTEX) {
+                coloring.set(x, colorOther);
+                coloring.set(y, colorOther);
+                swapColorsInPath(path);
+            }
+            else {
+                coloring.set(neighbourInPath, colorOther);
+
+                if (graph.hasEdge(neighbourInPath, x)) {
+                    coloring.set(y, colorOther);
+                }
+                else {
+                    coloring.set(x, colorOther);
+                }
+            }
+        }
+    }
+
+    private int findNeighbourInSmall3Big(int vertex) {
+        for (Integer neighbour : graph.getNeighbours(vertex)) {
+            if (coloring.get(neighbour) == colorSmall &&
+                    X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
+                return neighbour;
+            }
+        }
+
+        return NO_VERTEX;
+    }
+
+    private void swapColorsInPath(LinkedList<Integer> path) {
+        for (Integer vertex : path) {
+            if (coloring.get(vertex) == colorSmall) {
+                coloring.set(vertex, colorBig);
+            }
+            else {
+                coloring.set(vertex, colorSmall);
+            }
+        }
+    }
+
+    private boolean isTerminalVertex(int vertex) {
+        if (coloring.get(vertex) == colorSmall && X3Y.getNeighboursInY(vertex, colorBig, coloring) != 2) {
+            return true;
+        }
+
+        if (coloring.get(vertex) == colorBig) {
+            if (X3Y.getNeighboursInY(vertex, colorSmall, coloring) == 1) {
+                return true;
+            }
+
+            for (Integer neighbour : graph.getNeighbours(vertex)) {
+                if (coloring.get(neighbour) == colorSmall &&
+                    X3Y.has3NeighboursInY(neighbour, colorBig, coloring)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isAllowedVertexInPath(int vertex) {
+        int neighboursInSmall3Big = 0;
+
+        if (coloring.get(vertex) == colorBig) {
+            for (Integer neighbour : graph.getNeighbours(vertex)) {
+                if (X3Y.has3NeighboursInY(neighbour, colorBig, coloring) &&
+                    coloring.get(neighbour) == colorSmall) {
+                    neighboursInSmall3Big++;
+                }
+
+                if (1 < neighboursInSmall3Big) {
+                    break;
+                }
+            }
+
+            if (1 < neighboursInSmall3Big) {
+                return false;
+            }
+        }
+
+        if (coloring.get(vertex) == colorSmall && X3Y.has3NeighboursInY(vertex, colorBig, coloring)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -384,6 +690,23 @@ class ComponentSwapper {
 
             for (Integer neighbour : graph.getNeighbours(current)) {
                 if (coloring.get(neighbour) == otherColor && !checked.get(neighbour)) {
+                    queue.add(neighbour);
+                }
+                checked.set(neighbour);
+            }
+        }
+    }
+
+    private void markComponentsAsChecked(int current, BitSet checked) {
+        Queue<Integer> queue = new LinkedList<>();
+
+        queue.add(current);
+
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+
+            for (Integer neighbour : graph.getNeighbours(current)) {
+                if (coloring.get(neighbour) == colorOther && !checked.get(neighbour)) {
                     queue.add(neighbour);
                 }
                 checked.set(neighbour);
@@ -460,16 +783,15 @@ class ComponentSwapper {
         return big3Small;
     }
 
-    private int countCommonNeigh(int x, int y) {
-        LinkedList<Integer> xNeigh = graph.getNeighbours(x);
-        int count = 0;
+    private LinkedList<Integer> getCommonNeigh(int x, int y) {
+        LinkedList<Integer> xNeigh = graph.getNeighbours(x), commonNeigh = new LinkedList<>();
 
         for (Integer neighbour : graph.getNeighbours(y)) {
             if (xNeigh.contains(neighbour)) {
-                count++;
+                commonNeigh.add(neighbour);
             }
         }
 
-        return count;
+        return commonNeigh;
     }
 }
