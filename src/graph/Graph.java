@@ -1,5 +1,6 @@
 package graph;
 
+import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -79,6 +80,28 @@ public interface Graph {
      * @param degree degree of each vertex
      */
     boolean isRegular(int degree);
+
+    static boolean isConnected(Graph graph) {
+        Queue<Integer> queue = new LinkedList<>();
+        BitSet visited = new BitSet(graph.getVertices());
+        int current = 0, verticesVisited = 0;
+
+        visited.set(current);
+        queue.add(current);
+        while (!queue.isEmpty()) {
+            current = queue.poll();
+            verticesVisited++;
+
+            for (int neighbour : graph.getNeighbours(current)) {
+                if (!visited.get(neighbour)) {
+                    queue.add(neighbour);
+                    visited.set(neighbour);
+                }
+            }
+        }
+
+        return verticesVisited == graph.getVertices();
+    }
 
     /**
      * Check if graph is 2-chromatic via BFS.
