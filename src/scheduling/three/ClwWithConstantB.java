@@ -59,8 +59,6 @@ class ClwWithConstantB {
             if (swapBetweenAAndBAndMoveToC()) {
                 continue;
             }
-            return;
-
         }
     }
 
@@ -80,7 +78,7 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean moveFromA3BToC() {
-        if (A3B.empty()) {
+        if (A3B.empty() || verticesToMove < 1) {
             return false;
         }
 
@@ -109,6 +107,7 @@ class ClwWithConstantB {
                 A3B.setForUpdate();
                 B3A.setForUpdate();
                 C3A.setForUpdate();
+                C3B.setForUpdate();
 
                 return true;
             }

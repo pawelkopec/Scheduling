@@ -123,6 +123,7 @@ class ComponentSwapper {
 
         for (int i = 0; i < graph.getVertices(); i++) {
             if (!checked.get(i)) {
+                checked.set(i);
                 currentColor = coloring.get(i);
 
                 if (currentColor == colorBig || currentColor == colorSmall) {
@@ -525,17 +526,14 @@ class ComponentSwapper {
             }
         }
 
-        if (2 < path.size()) {
-            if (terminalVertices.size() < 2) {
-                return null;
-            }
-            path.addFirst(terminalVertices.get(0));
-            path.addLast(terminalVertices.get(1));
-
-            return path;
+        if (terminalVertices.size() < 2 || path.isEmpty()) {
+            return null;
         }
 
-        return null;
+        path.addFirst(terminalVertices.get(0));
+        path.addLast(terminalVertices.get(1));
+
+        return path;
     }
 
     private void swapWithinPath(int w, LinkedList<Integer> path) {
@@ -651,11 +649,7 @@ class ComponentSwapper {
             }
         }
 
-        if (coloring.get(vertex) == colorSmall && X3Y.has3NeighboursInY(vertex, colorBig, coloring)) {
-            return false;
-        }
-
-        return true;
+        return !(coloring.get(vertex) == colorSmall && X3Y.has3NeighboursInY(vertex, colorBig, coloring));
     }
 
     /**
