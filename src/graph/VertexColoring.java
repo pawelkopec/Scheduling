@@ -105,6 +105,10 @@ public class VertexColoring extends VertexAssignment {
         return colors.clone();
     }
 
+    public HashMap<Integer, Integer> getColorSizes() {
+        return new HashMap<>(colorSizes);
+    }
+
     public Graph getGraph() {
         return graph;
     }
