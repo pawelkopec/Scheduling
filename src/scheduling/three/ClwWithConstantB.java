@@ -99,7 +99,7 @@ class ClwWithConstantB {
      * @return true if width was decreased
      */
     private boolean swapBetweenAAndC() {
-        if (1 < verticesToMove || C3A.empty() || (!C3B.empty() && B3A.empty())) {
+        if (1 < verticesToMove || C3A.empty() || !C3B.empty()) {
             int verticesMoved = swapper.swap(A, C, verticesToMove, C3B.getVertices());
             if (0 < verticesMoved) {
                 verticesToMove -= verticesMoved;
