@@ -1,5 +1,6 @@
 package graph.util;
 
+import graph.Graph;
 import graph.RegularGraph;
 import graph.RegularGraphFactory;
 
@@ -19,6 +20,8 @@ public class RegularGraphGenerator {
     private static final String INVALID_VERTICES_NUMBER = "Number of vertices cannot be less than 0.";
     private static final String INVALID_VERTICES_DEGREE = "Number of vertices times degree must be even.";
     private static final String INVALID_DEGREE_CEILING = "Degree must be at least 1 less than number of vertices";
+
+    protected Random rand = new Random();
 
     /**
      * Build random graph with given parameters.
@@ -79,74 +82,36 @@ public class RegularGraphGenerator {
              * Start with nd points {1, 2, ..., nd} (nd even) in verticesNumber groups.
              * Put points = {1, 2, ..., nd} (points denotes the set of unpaired points.)
              */
-            Random rand = new Random();
-            List<Integer> pairs = new ArrayList<>(verticesNumber * degree +1);
-            pairs.add(0);
-            List<Integer> points = new LinkedList<>();
-            for (int i = 1, nd = verticesNumber * degree; i <= nd; i++) {
-                points.add(i);
-                pairs.add(0);
-            }
-
-            /*
-             * Repeat the following until no suitable pair can be found:
-             * Choose two random points i and j in points,
-             * and if they are suitable, pair i with j and delete i and j from points.
-             */
-            Integer i, j;
-            while (existsSuitable(points, pairs, verticesNumber, degree)) {
-                i = getFirstPoint(rand, points, pairs, verticesNumber, degree);
-                j = getSecondPoint(rand, points, pairs, verticesNumber, degree);
-                if (areSuitable(i, j, pairs, verticesNumber, degree)) {
-                    pairs.set(i, j);
-                    pairs.set(j, i);
-                    points.remove(i);
-                    points.remove(j);
-                }
-
-            }
-
-            /*
-             * Create a graph G with edge from vertex r to vertex s if and only if there is a pair
-             * containing points in the r'th and s'th groups. If G is degree-regular, output it, otherwise
-             * return to Step 1.
-             */
-            for (int a = 1, nd = verticesNumber * degree + 1; a < nd; a++) {
-                if (pairs.get(a) != 0) {
-                    g.addEdge(getPointGroup(pairs.get(a), verticesNumber), getPointGroup(a, verticesNumber));
-                    pairs.set(pairs.get(a), 0);
+            ArrayList<Integer> points = new ArrayList<>(verticesNumber * degree);
+            for (int i = 0; i < verticesNumber; i++) {
+                for (int j = 0; j < degree; j++) {
+                    points.add(i);
                 }
             }
-        } while (!g.isRegular(degree));
+
+            int indexFrom, indexTo, from, to, pointsLeft = verticesNumber * degree;
+            while (0 < pointsLeft) {
+                indexFrom = rand.nextInt(pointsLeft);
+                indexTo = rand.nextInt(pointsLeft);
+                from = points.get(indexFrom);
+                to = points.get(indexTo);
+
+                if (from != to && !g.hasEdge(from, to)) {
+                    if (indexFrom < indexTo) {
+                        int tmp = indexFrom;
+                        indexFrom = indexTo;
+                        indexTo = tmp;
+                    }
+
+                    g.addEdge(from, to);
+                    points.set(indexFrom, points.get(--pointsLeft));
+                    points.set(indexTo, points.get(--pointsLeft));
+                }
+            }
+
+        } while (!g.isRegular(degree) || !Graph.isConnected(g));
 
         return g;
-    }
-
-    protected Integer getFirstPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
-        return points.get(rand.nextInt(points.size()));
-    }
-
-    protected Integer getSecondPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
-        return points.get(rand.nextInt(points.size()));
-    }
-
-
-
-
-    protected boolean existsSuitable(List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
-        if (points.size() == 0) {
-            return false;
-        }
-
-        for (int i = 0; i < points.size(); i++) {
-            for (int j = 0; j < points.size(); j++) {
-                if (areSuitable(points.get(i), points.get(j), pairs, verticesNumber, degree)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     protected int getPointGroup(int point, int verticesNumber) {

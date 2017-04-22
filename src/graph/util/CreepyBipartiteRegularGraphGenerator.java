@@ -68,7 +68,6 @@ public class CreepyBipartiteRegularGraphGenerator extends RegularGraphGenerator 
         return super.areSuitable(a, b, pairs, verticesNumber, degree);
     }
 
-    @Override
     protected Integer getFirstPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
         List<Integer> firstPartitionPoints;
         firstPartitionPoints = points.stream().
@@ -78,7 +77,6 @@ public class CreepyBipartiteRegularGraphGenerator extends RegularGraphGenerator 
         return firstPoint = points.get(rand.nextInt(points.size()));
     }
 
-    @Override
     protected Integer getSecondPoint(Random rand, List<Integer> points, List<Integer> pairs, int verticesNumber, int degree) {
         int firstPointGroupPartition = getGroupPartition(getPointGroup(firstPoint, verticesNumber));
         List<Integer> otherPoints = points.stream().
