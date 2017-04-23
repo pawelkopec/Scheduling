@@ -74,7 +74,7 @@ public class ThreeMachinesSchedulerTest {
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
-            assertCorrectSchedule(scheduling, scheduling.findScheduling());
+            assertCorrectSchedule(scheduling.getDivision(), scheduling.findScheduling());
         }
     }
 
@@ -85,7 +85,7 @@ public class ThreeMachinesSchedulerTest {
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
             ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
-            assertCorrectSchedule(scheduling, scheduling.findScheduling());
+            assertCorrectSchedule(scheduling.getDivision(), scheduling.findScheduling());
         }
     }
 
@@ -94,7 +94,7 @@ public class ThreeMachinesSchedulerTest {
         RegularListGraph graph = new RegularListGraph("10 15 0 5 0 1 0 7 1 8 1 2 2 5 2 9 3 8 3 4 3 6 4 5 4 7 6 9 6 7 8 9", 3);
 
         ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
-        assertCorrectSchedule(scheduling, scheduling.findScheduling());
+        assertCorrectSchedule(scheduling.getDivision(), scheduling.findScheduling());
     }
 
     // TODO
@@ -126,8 +126,7 @@ public class ThreeMachinesSchedulerTest {
         return graph;
     }
 
-    public static void assertCorrectSchedule(ThreeMachinesScheduler scheduler, VertexColoring coloring) {
-        int [] division = scheduler.getDivision();
+    public static void assertCorrectSchedule(int [] division, VertexColoring coloring) {
         assertTrue(coloring.isProper());
         assertEquals(coloring.getNumberOfColored(Const.A), division[Const.FASTEST]);
         assertEquals(coloring.getNumberOfColored(Const.B), division[Const.MIDDLE]);

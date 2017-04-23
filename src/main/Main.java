@@ -1,23 +1,22 @@
 package main;
 
-import graph.test.ListGraphTest;
-import graph.test.MatrixGraphTest;
-import graph.test.VertexColoringTest;
+import graph.RegularGraph;
+import graph.RegularListGraph;
+import graph.VertexColoring;
+import graph.util.BipartiteRegularGraphGenerator;
+import scheduling.three.ThreeMachinesScheduler;
 import scheduling.three.test.ThreeMachinesSchedulerTest;
-
-import java.io.FileNotFoundException;
 
 public class Main {
 
-    public static void main(String[] args) throws FileNotFoundException, ClassNotFoundException {
-        runAllTests();
-    }
+    public static void main(String[] args) {
+        BipartiteRegularGraphGenerator generator = new BipartiteRegularGraphGenerator();
 
-    public static void runAllTests() {
-        Tester tester = new Tester();
-        tester.runClassTest(ListGraphTest.class);
-        tester.runClassTest(MatrixGraphTest.class);
-        tester.runClassTest(VertexColoringTest.class);
-        tester.runClassTest(ThreeMachinesSchedulerTest.class);
+        RegularGraph exampleGraph = generator.getRandomGraph(RegularListGraph.class, 100000, 3);
+        double[] speeds = new double[]{432.3, 321.4, 523.2};
+        ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(exampleGraph, speeds);
+        VertexColoring scheduling = scheduler.findScheduling();
+
+        ThreeMachinesSchedulerTest.assertCorrectSchedule(scheduler.getDivision(), scheduling);
     }
 }
