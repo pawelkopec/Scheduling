@@ -33,5 +33,7 @@ abstract class CubicScheduling {
 
     public abstract VertexColoring findColoring();
 
-    public abstract int[] getDivision();
+    public int[] getDivision() {
+        return division;
+    }
 }

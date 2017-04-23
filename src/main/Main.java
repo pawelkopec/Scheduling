@@ -2,7 +2,6 @@ package main;
 
 import graph.RegularGraph;
 import graph.RegularListGraph;
-import graph.VertexColoring;
 import graph.util.BipartiteRegularGraphGenerator;
 import scheduling.three.ThreeMachinesScheduler;
 import scheduling.three.test.ThreeMachinesSchedulerTest;
@@ -15,8 +14,8 @@ public class Main {
         RegularGraph exampleGraph = generator.getRandomGraph(RegularListGraph.class, 100000, 3);
         double[] speeds = new double[]{432.3, 321.4, 523.2};
         ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(exampleGraph, speeds);
-        VertexColoring scheduling = scheduler.findScheduling();
 
-        ThreeMachinesSchedulerTest.assertCorrectSchedule(scheduler.getDivision(), scheduling);
+
+        ThreeMachinesSchedulerTest.assertCorrectSchedule(scheduler);
     }
 }

@@ -59,6 +59,7 @@ class ClwWithConstantB {
             if (swapBetweenAAndBAndMoveToC()) {
                 continue;
             }
+            return;
         }
     }
 

@@ -124,9 +124,4 @@ class BicubicScheduling extends CubicScheduling {
             index++;
         }
     }
-
-    @Override
-    public int[] getDivision() {
-        return division;
-    }
 }

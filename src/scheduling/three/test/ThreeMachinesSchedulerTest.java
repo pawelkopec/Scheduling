@@ -35,8 +35,8 @@ public class ThreeMachinesSchedulerTest {
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 300, 3);
-            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 7.43});
-            assertEquals(scheduling.getState(), ThreeMachinesScheduler.OPTIMAL);
+            ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 7.43});
+            assertEquals(scheduler.getState(), ThreeMachinesScheduler.OPTIMAL);
         }
     }
 
@@ -44,27 +44,27 @@ public class ThreeMachinesSchedulerTest {
     public void chooseSuboptimalAlgorithm() {
         RegularListGraph graph = tricubic();
 
-        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
+        ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{34.6, 1.43, 1.43});
 
-        assertEquals(scheduling.getState(), ThreeMachinesScheduler.SUBOPTIMAL);
+        assertEquals(scheduler.getState(), ThreeMachinesScheduler.SUBOPTIMAL);
     }
 
     @Test
     public void chooseBruteForceAlgorithm() {
         RegularListGraph graph = tricubic();
 
-        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
+        ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
-        assertEquals(scheduling.getState(), ThreeMachinesScheduler.BRUTE_FORCE);
+        assertEquals(scheduler.getState(), ThreeMachinesScheduler.BRUTE_FORCE);
     }
 
     @Test
     public void applyBruteForceEasyAlgorithm() {
         RegularListGraph graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, 6, 3);
 
-        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
+        ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{34.6, 13.43, 1.43});
 
-        assertEquals(scheduling.getState(), ThreeMachinesScheduler.BRUTE_FORCE_EASY);
+        assertEquals(scheduler.getState(), ThreeMachinesScheduler.BRUTE_FORCE_EASY);
     }
 
     @Test
@@ -73,8 +73,9 @@ public class ThreeMachinesSchedulerTest {
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
-            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
-            assertCorrectSchedule(scheduling.getDivision(), scheduling.findScheduling());
+            ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{34.6, 14.3, 4.43});
+
+            assertCorrectSchedule(scheduler);
         }
     }
 
@@ -84,8 +85,9 @@ public class ThreeMachinesSchedulerTest {
 
         for (int i = 0; i < TEST_NUMBER; i++) {
             graph = bicubicGenerator.getRandomGraph(RegularListGraph.class, randomGraphSize(), 3);
-            ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
-            assertCorrectSchedule(scheduling.getDivision(), scheduling.findScheduling());
+            ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
+
+            assertCorrectSchedule(scheduler);
         }
     }
 
@@ -93,8 +95,9 @@ public class ThreeMachinesSchedulerTest {
     public void applyOptimalAlgorithmForClwForSwappingWhenABComponentsCannotBeSwapped() {
         RegularListGraph graph = new RegularListGraph("10 15 0 5 0 1 0 7 1 8 1 2 2 5 2 9 3 8 3 4 3 6 4 5 4 7 6 9 6 7 8 9", 3);
 
-        ThreeMachinesScheduler scheduling = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
-        assertCorrectSchedule(scheduling.getDivision(), scheduling.findScheduling());
+        ThreeMachinesScheduler scheduler = new ThreeMachinesScheduler(graph, new double[]{334.6, 314.3, 301.43});
+
+        assertCorrectSchedule(scheduler);
     }
 
     // TODO
@@ -126,7 +129,9 @@ public class ThreeMachinesSchedulerTest {
         return graph;
     }
 
-    public static void assertCorrectSchedule(int [] division, VertexColoring coloring) {
+    public static void assertCorrectSchedule(ThreeMachinesScheduler scheduler) {
+        VertexColoring coloring = scheduler.findScheduling();
+        int[] division = scheduler.getDivision();
         assertTrue(coloring.isProper());
         assertEquals(coloring.getNumberOfColored(Const.A), division[Const.FASTEST]);
         assertEquals(coloring.getNumberOfColored(Const.B), division[Const.MIDDLE]);
