@@ -1,7 +1,10 @@
-# Scheduling
+# Scheduling [OBSOLETE]
+
+This repo was used for computational experiments for this article: https://journals.agh.edu.pl/dmms/article/view/2502. The algorithm described runs in O(n^2), but I found a way simpler solution in O(n), which coauthor of the article Szymon Duraj used in MSc thesis. I did not find a public link to it though. I regard this repo as obsolete because of improved algorithm complexity, but I am leaving it as a souvenir.
+
 ## Description
 This repository will include implementation of algorithms for scheduling of unit-length jobs with incompatibility graphs of bounded degree.
-Cubic scheduling algorithms are based on article "Scheduling of unit-length jobs with cubic incompatibility graphs on three uniform machines" written by Hanna Furmańczyk and Marek Kubale. Article is available under a link:  
+Cubic scheduling algorithms are based on article "Scheduling of unit-length jobs with cubic incompatibility graphs on three uniform machines" written by Hanna Furmańczyk and Marek Kubale. Article is available under a link:
 
 http://eti.pg.edu.pl/documents/174618/23783336/Scheduling%20of%20unit-length%20jobs%20with%20cubic%20incompatibility%20graphs%20on%20three%20uniform%20machines.pdf
 
@@ -12,13 +15,5 @@ We are given n unit-length jobs and processing speeds of 3 or 4 machines working
 
 This problem can be presented as finding an appropriate 3-coloring of cubic incompatibility graph. All the details are provided in the above mentioned article.
 
-## Packages
-  * __graph__ package will contain necessary abstractions for building graph algorithms alongside with basic implementations of those abstractions (neighbour list graph, adjacency matrix graph, vertex coloring class etc.)  **[will be soon moved to another repo and used in other project]**
-  * __scheduling__ package will contain classes needed specifically for this scheduling problem
-
 ## Status
-In production. Not for use.   
-
-First algorithm is not yet complete, but works for almost all graphs. Errors occur sometimes for graphs of n < 100. So far my modified implementation seems to have improved complexity from quadratic to linear.
-
-Feedback welcome.
+No sense in using. Algorithm got better.
